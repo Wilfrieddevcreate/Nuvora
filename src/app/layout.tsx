@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { TopBar } from "@/components/top-bar";
+import { SiteFooter } from "@/components/site-footer";
 
-// Superfamille Archivo — utilisée du corps aux titres display (via graisse + largeur en CSS)
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Sans-serif douce et moderne — casse normale, très lisible
+const sans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-// Données, prix alignés, métadonnées — chiffres tabulaires
+// Données, prix, métadonnées ponctuelles
 const mono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
@@ -20,9 +21,9 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nuvora — Le moteur des produits digitaux",
+  title: "Nuvora — Trouvez les meilleurs produits digitaux",
   description:
-    "Nuvora est un annuaire intelligent de produits digitaux francophones : ebooks, formations, templates et logiciels. On aide à découvrir, on redirige vers l'achat.",
+    "Nuvora est le moteur de découverte des produits digitaux francophones : ebooks, formations, templates et logiciels. On vous aide à trouver, on redirige vers l'achat.",
 };
 
 export default function RootLayout({
@@ -34,11 +35,12 @@ export default function RootLayout({
     <html
       lang="fr"
       suppressHydrationWarning
-      className={`${archivo.variable} ${mono.variable} h-full antialiased`}
+      className={`${sans.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper text-ink font-sans">
+      <body className="min-h-full flex flex-col bg-bg text-fg font-sans">
         <TopBar />
         <main className="flex-1">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -13,7 +13,6 @@ function applyTheme(theme: Theme) {
  * Le choix est mémorisé dans localStorage. Pas de dépendance externe.
  */
 export function ThemeToggle() {
-  // undefined tant que non hydraté → évite le flash d'un mauvais libellé.
   const [theme, setTheme] = useState<Theme | undefined>(undefined);
 
   useEffect(() => {
@@ -22,8 +21,7 @@ export function ThemeToggle() {
       "(prefers-color-scheme: dark)",
     ).matches;
     const initial: Theme = stored ?? (prefersDark ? "dark" : "light");
-    // localStorage/matchMedia ne sont dispo que côté client : l'init du thème
-    // doit se faire après montage pour éviter tout décalage d'hydratation.
+    // localStorage/matchMedia ne sont dispo que côté client.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(initial);
     applyTheme(initial);
@@ -36,14 +34,36 @@ export function ThemeToggle() {
     localStorage.setItem("nuvora-theme", next);
   }
 
+  const isDark = theme === "dark";
+
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label="Changer de thème"
-      className="h-9 rounded-[2px] border-2 border-line-strong px-3.5 text-[12px] font-medium uppercase tracking-[0.05em] transition-colors hover:bg-ink hover:text-paper"
+      aria-label={isDark ? "Passer en thème clair" : "Passer en thème sombre"}
+      className="grid size-10 place-items-center rounded-full border border-border-2 text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg"
     >
-      {theme === undefined ? "Thème" : theme === "dark" ? "Clair" : "Sombre"}
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.75}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-[18px]"
+        aria-hidden="true"
+      >
+        {theme === undefined ? (
+          <circle cx="12" cy="12" r="9" />
+        ) : isDark ? (
+          <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />
+        ) : (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </>
+        )}
+      </svg>
     </button>
   );
 }

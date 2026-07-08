@@ -10,21 +10,21 @@ export function SearchBar() {
   return (
     <form
       role="search"
-      className="flex items-center gap-3 border-2 border-line-strong bg-card p-3.5"
       onSubmit={(e) => e.preventDefault()}
+      className="flex items-center gap-2 rounded-full border border-border-2 bg-surface p-2 pl-5 shadow-soft focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft"
     >
-      <SearchIcon className="size-[18px] shrink-0 text-muted" />
+      <SearchIcon className="size-5 shrink-0 text-muted" />
       <input
         type="search"
-        placeholder="Rechercher une formation, un ebook, un template…"
-        className="flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-muted-2"
         aria-label="Rechercher un produit"
+        placeholder="Rechercher une formation, un ebook, un template…"
+        className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
       />
       <button
         type="submit"
-        className="rounded-[2px] bg-accent px-4 py-2 text-[13px] font-medium uppercase tracking-[0.03em] text-white transition-colors hover:bg-ink"
+        className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover"
       >
-        Chercher
+        Rechercher
       </button>
     </form>
   );

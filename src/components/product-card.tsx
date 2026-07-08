@@ -5,61 +5,63 @@ function formatPrice(price: number): string {
   return price === 0 ? "Gratuit" : `${price} €`;
 }
 
-const COVER_CLASS: Record<Product["cover"], string> = {
-  // Motif hachuré diagonal (papier / papier-2)
-  hatch:
-    "bg-[repeating-linear-gradient(45deg,var(--paper-2),var(--paper-2)_12px,var(--paper)_12px,var(--paper)_24px)]",
-  wash: "bg-accent-wash",
-  ink: "bg-ink",
+// Dégradés doux par catégorie pour la couverture (pas d'image externe).
+const COVER_GRADIENT: Record<Product["category"], string> = {
+  Formation: "from-indigo-100 to-violet-50",
+  Ebook: "from-sky-100 to-cyan-50",
+  Template: "from-amber-100 to-orange-50",
+  Logiciel: "from-emerald-100 to-teal-50",
+};
+
+const COVER_GRADIENT_DARK: Record<Product["category"], string> = {
+  Formation: "dark:from-indigo-500/20 dark:to-violet-500/10",
+  Ebook: "dark:from-sky-500/20 dark:to-cyan-500/10",
+  Template: "dark:from-amber-500/20 dark:to-orange-500/10",
+  Logiciel: "dark:from-emerald-500/20 dark:to-teal-500/10",
 };
 
 export function ProductCard({ product }: { product: Product }) {
-  const onInk = product.cover === "ink";
-
   return (
     <Link
       href={`/produit/${product.slug}`}
-      className="group flex flex-col border-b-2 border-r-2 border-line-strong bg-card transition-colors hover:bg-paper-2"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
     >
-      {/* Couverture générée — pas d'image externe */}
+      {/* Couverture — dégradé doux + initiale du produit */}
       <div
-        className={`relative flex aspect-[16/11] items-end justify-between border-b-2 border-line-strong p-3 ${COVER_CLASS[product.cover]}`}
+        className={`relative flex aspect-[16/10] items-center justify-center bg-gradient-to-br ${COVER_GRADIENT[product.category]} ${COVER_GRADIENT_DARK[product.category]}`}
       >
-        <div className="absolute inset-x-3 top-3 flex justify-start">
-          {product.isNew ? (
-            <span className="rounded-[2px] border-[1.5px] border-accent bg-accent-wash px-2 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.04em] text-accent-ink">
+        <span className="text-4xl font-extrabold text-fg/15">
+          {product.title.charAt(0)}
+        </span>
+        <div className="absolute left-3 top-3 flex gap-1.5">
+          {product.isNew && (
+            <span className="rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-fg">
               Nouveau
             </span>
-          ) : product.verified ? (
-            <span className="rounded-[2px] border-[1.5px] border-line-strong bg-paper-2 px-2 py-0.5 font-mono text-[10.5px] uppercase tracking-[0.04em] text-ink">
-              Vérifié
+          )}
+          {product.verified && (
+            <span className="rounded-full bg-surface/90 px-2.5 py-1 text-[11px] font-semibold text-fg-2 backdrop-blur">
+              ✓ Vérifié
             </span>
-          ) : null}
+          )}
         </div>
-        <span
-          className={`font-display text-[15px] ${onInk ? "text-paper opacity-70" : "text-ink opacity-50"}`}
-        >
-          {product.category}
-        </span>
       </div>
 
       {/* Corps */}
-      <div className="flex flex-1 flex-col p-3.5">
-        <div className="font-mono text-[11px] uppercase tracking-[0.04em] text-muted">
+      <div className="flex flex-1 flex-col p-4">
+        <div className="text-xs font-medium text-muted">
           {product.category} · {product.subCategory}
         </div>
-        <h3 className="mt-1.5 font-display text-[19px] normal-case leading-[1.02] tracking-[-0.01em]">
+        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-bold leading-snug text-fg group-hover:text-accent">
           {product.title}
         </h3>
-        <div className="mt-1 text-[12.5px] font-medium text-muted">
-          par {product.creator}
-        </div>
+        <div className="mt-1 text-[13px] text-muted">par {product.creator}</div>
 
-        <div className="mt-auto flex items-center justify-between border-t border-line pt-3">
-          <span className="font-display text-[20px]">
+        <div className="mt-auto flex items-center justify-between pt-4">
+          <span className="text-lg font-extrabold">
             {formatPrice(product.price)}
           </span>
-          <span className="rounded-[2px] border-[1.5px] border-line px-2 py-0.5 font-mono text-[10.5px] uppercase text-muted">
+          <span className="rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-medium text-muted">
             {product.platform}
           </span>
         </div>
