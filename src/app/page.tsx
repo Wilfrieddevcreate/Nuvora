@@ -1,4 +1,4 @@
-import { SearchBar } from "@/components/search-bar";
+import { SearchTabs } from "@/components/search-tabs";
 import { HeroPreview } from "@/components/hero-preview";
 import { CategoryTiles } from "@/components/category-tiles";
 import { ProductCard } from "@/components/product-card";
@@ -30,9 +30,13 @@ export default function Home() {
 
   return (
     <>
-      {/* ---------------- HERO — épuré, aligné à gauche, confiant ---------------- */}
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+      {/* ---------------- HERO — style Estatery : titre gauche, recherche à onglets, aperçu + témoignage à droite ---------------- */}
+      <section className="relative overflow-hidden border-b border-border bg-accent-soft/40">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-[radial-gradient(60%_100%_at_20%_0%,var(--accent-soft),transparent)]"
+        />
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.05fr_0.95fr]">
           {/* Colonne texte */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-[13px] font-medium text-fg-2">
@@ -51,22 +55,13 @@ export default function Home() {
               redirige vers le créateur pour l’achat.
             </p>
 
+            {/* Recherche à onglets (façon Rent/Buy/Sell) */}
             <div className="mt-8 max-w-lg">
-              <SearchBar />
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <ButtonLink href="/catalogue" size="lg">
-                Explorer le catalogue
-                <ArrowRight className="size-4" />
-              </ButtonLink>
-              <ButtonLink href="/inscription" variant="ghost" size="lg">
-                Devenir créateur
-              </ButtonLink>
+              <SearchTabs />
             </div>
 
             {/* preuve de confiance discrète */}
-            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
               <span>
                 <b className="font-bold text-fg">+200</b> produits référencés
               </span>
@@ -79,8 +74,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Colonne visuelle — aperçu produit calme */}
-          <div className="hidden lg:block">
+          {/* Colonne visuelle — aperçu produit + témoignage flottant */}
+          <div className="hidden lg:block lg:pl-6">
             <HeroPreview />
           </div>
         </div>
