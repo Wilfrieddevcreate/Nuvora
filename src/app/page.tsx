@@ -2,6 +2,7 @@ import { SearchTabs } from "@/components/search-tabs";
 import { HeroPreview } from "@/components/hero-preview";
 import { CategoryTiles } from "@/components/category-tiles";
 import { ProductCard } from "@/components/product-card";
+import { Testimonials } from "@/components/testimonials";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { getNewProducts, getPopularProducts } from "@/data/products";
@@ -123,6 +124,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ---------------- AVIS / PREUVE SOCIALE ---------------- */}
+      <Testimonials />
 
       {/* ---------------- COMMENT ÇA MARCHE ---------------- */}
       <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
