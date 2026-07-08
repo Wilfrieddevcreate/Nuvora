@@ -124,3 +124,19 @@
     box-shadow: var(--shadow-soft-lg);
   }
 }
+
+/* Transition douce entre les slides du carrousel hero.
+   Neutralisée par le bloc prefers-reduced-motion ci-dessus. */
+@keyframes heroSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.hero-slide {
+  animation: heroSlideIn 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+}

@@ -240,3 +240,68 @@ export function getNewProducts(limit = 3): Product[] {
 export function getPopularProducts(limit = 6): Product[] {
   return [...PRODUCTS].sort((a, b) => b.views - a.views).slice(0, limit);
 }
+
+// --- Produits phares du hero (carrousel), chacun avec son témoignage ---
+
+export type Testimonial = {
+  author: string;
+  initials: string;
+  role: string;
+  quote: string;
+  stats: { value: string; label: string }[];
+};
+
+export type Featured = {
+  product: Product;
+  testimonial: Testimonial;
+};
+
+const FEATURED_SLUGS: { slug: string; testimonial: Testimonial }[] = [
+  {
+    slug: "maitriser-claude-agents-ia",
+    testimonial: {
+      author: "Amélie R.",
+      initials: "AR",
+      role: "Créatrice · vérifiée",
+      quote: "« J’ai doublé mes ventes grâce à Nuvora. »",
+      stats: [
+        { value: "×2", label: "ventes" },
+        { value: "1 204", label: "clics reçus" },
+      ],
+    },
+  },
+  {
+    slug: "react-de-zero-a-pro",
+    testimonial: {
+      author: "Karim B.",
+      initials: "KB",
+      role: "Formateur · Dev",
+      quote: "« Une audience francophone qui cherchait exactement ma formation. »",
+      stats: [
+        { value: "4 210", label: "vues" },
+        { value: "12 %", label: "taux de clic" },
+      ],
+    },
+  },
+  {
+    slug: "os-createur-notion",
+    testimonial: {
+      author: "Koda",
+      initials: "KO",
+      role: "Créateur · templates",
+      quote: "« Référencer mon template ici m’a apporté de vrais clients. »",
+      stats: [
+        { value: "2 740", label: "vues" },
+        { value: "+40", label: "ventes / mois" },
+      ],
+    },
+  },
+];
+
+export function getFeatured(): Featured[] {
+  return FEATURED_SLUGS.map(({ slug, testimonial }) => {
+    const product = PRODUCTS.find((p) => p.slug === slug);
+    if (!product) throw new Error(`Produit phare introuvable : ${slug}`);
+    return { product, testimonial };
+  });
+}
