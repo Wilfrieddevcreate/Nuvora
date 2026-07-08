@@ -23,7 +23,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Nuvora — Trouvez les meilleurs produits digitaux",
   description:
-    "Nuvora est le moteur de découverte des produits digitaux francophones : ebooks, formations, templates et logiciels. On vous aide à trouver, on redirige vers l'achat.",
+    "Nuvora est le moteur de découverte des produits digitaux : ebooks, formations, templates et logiciels. On vous aide à trouver, on redirige vers l'achat.",
 };
 
 export default function RootLayout({

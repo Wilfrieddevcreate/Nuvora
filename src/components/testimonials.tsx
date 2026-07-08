@@ -15,7 +15,7 @@ export function Testimonials() {
           Ils font confiance à Nuvora
         </h2>
         <p className="mt-2 text-fg-2">
-          Des créateurs francophones gagnent en visibilité et en ventes
+          Des créateurs gagnent en visibilité et en ventes
           en référençant leurs produits.
         </p>
       </div>

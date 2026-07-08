@@ -42,7 +42,7 @@ export default function Home() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-[13px] font-medium text-fg-2">
               <span className="size-1.5 rounded-full bg-accent" />
-              Moteur de découverte francophone
+              Moteur de découverte de produits digitaux
             </div>
 
             <h1 className="mt-6 text-[clamp(34px,5.2vw,54px)] font-extrabold leading-[1.06]">
@@ -51,7 +51,7 @@ export default function Home() {
             </h1>
 
             <p className="mt-5 max-w-lg text-lg text-fg-2">
-              Ebooks, formations, templates et logiciels francophones,
+              Ebooks, formations, templates et logiciels,
               réunis au même endroit. Nuvora vous aide à choisir, puis vous
               redirige vers le créateur pour l’achat.
             </p>
@@ -71,7 +71,7 @@ export default function Home() {
                 <b className="font-bold text-fg">37</b> créateurs vérifiés
               </span>
               <span className="hidden h-4 w-px bg-border sm:block" />
-              <span>100&nbsp;% francophone</span>
+              <span>Paiement chez le créateur</span>
             </div>
           </div>
 
@@ -166,7 +166,7 @@ export default function Home() {
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-accent-fg/80">
             Référencez vos ebooks, formations ou templates gratuitement et
-            touchez une audience francophone qui cherche exactement ce que vous
+            touchez une audience qui cherche exactement ce que vous
             proposez.
           </p>
           <div className="mt-7 flex justify-center">

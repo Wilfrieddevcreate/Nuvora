@@ -39,8 +39,8 @@ export function SiteFooter() {
               Nuvora
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted">
-              Le moteur de découverte des meilleurs produits digitaux
-              francophones. On vous aide à trouver, on redirige vers l’achat.
+              Le moteur de découverte des meilleurs produits digitaux.
+              On vous aide à trouver, on redirige vers l’achat.
             </p>
           </div>
 
