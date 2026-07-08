@@ -17,7 +17,7 @@ export function SearchBar() {
       <input
         type="search"
         aria-label="Rechercher un produit"
-        placeholder="Rechercher une formation, un ebook, un template…"
+        placeholder="Rechercher un produit…"
         className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
       />
       <button

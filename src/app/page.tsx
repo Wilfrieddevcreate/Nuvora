@@ -1,8 +1,9 @@
 import { SearchBar } from "@/components/search-bar";
+import { HeroPreview } from "@/components/hero-preview";
 import { CategoryTiles } from "@/components/category-tiles";
 import { ProductCard } from "@/components/product-card";
 import { ButtonLink } from "@/components/ui/button";
-import { ArrowRight, ArrowUpRight, SparkleIcon } from "@/components/icons";
+import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { getNewProducts, getPopularProducts } from "@/data/products";
 
 const STEPS = [
@@ -29,40 +30,58 @@ export default function Home() {
 
   return (
     <>
-      {/* ---------------- HERO ---------------- */}
-      <section className="relative overflow-hidden">
-        {/* halo doux d'arrière-plan */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-[-20%] -z-10 h-[500px] bg-[radial-gradient(50%_60%_at_50%_0%,var(--accent-soft),transparent)]"
-        />
-        <div className="mx-auto max-w-4xl px-5 pt-20 pb-14 text-center sm:px-8 sm:pt-24">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-[13px] font-medium text-fg-2 shadow-soft">
-            <SparkleIcon className="size-4 text-accent" />
-            Le moteur de découverte des produits digitaux
-          </div>
-          <h1 className="text-[clamp(36px,6vw,60px)] font-extrabold leading-[1.05]">
-            Trouvez le bon produit digital,{" "}
-            <span className="text-accent">sans perdre de temps.</span>
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-fg-2">
-            Ebooks, formations, templates et logiciels francophones —
-            sélectionnés, classés et recommandés par l’IA. On vous aide à
-            trouver, vous achetez chez le créateur.
-          </p>
+      {/* ---------------- HERO — épuré, aligné à gauche, confiant ---------------- */}
+      <section className="border-b border-border">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+          {/* Colonne texte */}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-[13px] font-medium text-fg-2">
+              <span className="size-1.5 rounded-full bg-accent" />
+              Moteur de découverte francophone
+            </div>
 
-          <div className="mx-auto mt-8 max-w-2xl">
-            <SearchBar />
+            <h1 className="mt-6 text-[clamp(34px,5.2vw,54px)] font-extrabold leading-[1.06]">
+              Le meilleur du digital,{" "}
+              <span className="text-accent">trouvé pour vous.</span>
+            </h1>
+
+            <p className="mt-5 max-w-lg text-lg text-fg-2">
+              Ebooks, formations, templates et logiciels francophones,
+              réunis au même endroit. Nuvora vous aide à choisir, puis vous
+              redirige vers le créateur pour l’achat.
+            </p>
+
+            <div className="mt-8 max-w-lg">
+              <SearchBar />
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <ButtonLink href="/catalogue" size="lg">
+                Explorer le catalogue
+                <ArrowRight className="size-4" />
+              </ButtonLink>
+              <ButtonLink href="/inscription" variant="ghost" size="lg">
+                Devenir créateur
+              </ButtonLink>
+            </div>
+
+            {/* preuve de confiance discrète */}
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
+              <span>
+                <b className="font-bold text-fg">+200</b> produits référencés
+              </span>
+              <span className="hidden h-4 w-px bg-border sm:block" />
+              <span>
+                <b className="font-bold text-fg">37</b> créateurs vérifiés
+              </span>
+              <span className="hidden h-4 w-px bg-border sm:block" />
+              <span>100&nbsp;% francophone</span>
+            </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <ButtonLink href="/catalogue" size="lg">
-              Explorer le catalogue
-              <ArrowRight className="size-4" />
-            </ButtonLink>
-            <ButtonLink href="/inscription" variant="secondary" size="lg">
-              Devenir créateur
-            </ButtonLink>
+          {/* Colonne visuelle — aperçu produit calme */}
+          <div className="hidden lg:block">
+            <HeroPreview />
           </div>
         </div>
       </section>
