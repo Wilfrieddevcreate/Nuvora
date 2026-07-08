@@ -62,18 +62,48 @@ export default function Home() {
               <SearchTabs />
             </div>
 
-            {/* preuve de confiance discrète */}
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted">
-              <span>
-                <b className="font-bold text-fg">+200</b> produits référencés
-              </span>
-              <span className="hidden h-4 w-px bg-border sm:block" />
-              <span>
-                <b className="font-bold text-fg">37</b> créateurs vérifiés
-              </span>
-              <span className="hidden h-4 w-px bg-border sm:block" />
-              <span>Paiement chez le créateur</span>
-            </div>
+            {/* preuve de confiance — stats mises en valeur */}
+            <dl className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5 sm:gap-x-10">
+              <div>
+                <dt className="text-2xl font-extrabold tracking-tight sm:text-[26px]">
+                  200+
+                </dt>
+                <dd className="mt-0.5 text-[13px] text-muted">
+                  produits référencés
+                </dd>
+              </div>
+              <div className="h-9 w-px bg-border" aria-hidden />
+              <div>
+                <dt className="text-2xl font-extrabold tracking-tight sm:text-[26px]">
+                  37
+                </dt>
+                <dd className="mt-0.5 text-[13px] text-muted">
+                  créateurs vérifiés
+                </dd>
+              </div>
+              <div className="h-9 w-px bg-border" aria-hidden />
+              <div>
+                <dt className="flex items-center gap-1.5 text-2xl font-extrabold tracking-tight sm:text-[26px]">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-5 text-accent"
+                    aria-hidden="true"
+                  >
+                    <path d="M9 12l2 2 4-4" />
+                    <path d="M12 3a9 9 0 1 0 9 9" />
+                  </svg>
+                  Sécurisé
+                </dt>
+                <dd className="mt-0.5 text-[13px] text-muted">
+                  paiement chez le créateur
+                </dd>
+              </div>
+            </dl>
           </div>
 
           {/* Colonne visuelle — aperçu produit + témoignage flottant */}
@@ -165,10 +195,10 @@ export default function Home() {
             aria-hidden
             className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-white/10 blur-2xl"
           />
-          <h2 className="mx-auto max-w-2xl text-2xl font-extrabold text-accent-fg sm:text-3xl">
+          <h2 className="mx-auto max-w-2xl text-2xl font-extrabold text-white sm:text-3xl">
             Vous êtes créateur ? Donnez de la visibilité à vos produits.
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-accent-fg/80">
+          <p className="mx-auto mt-3 max-w-xl text-white/80">
             Référencez vos ebooks, formations ou templates gratuitement et
             touchez une audience qui cherche exactement ce que vous
             proposez.
@@ -178,7 +208,7 @@ export default function Home() {
               href="/inscription"
               variant="secondary"
               size="lg"
-              className="border-transparent !bg-white !text-accent hover:!bg-white/90"
+              className="border-white/70! bg-transparent! text-white! hover:bg-white/10!"
             >
               Référencer un produit
               <ArrowUpRight className="size-4" />

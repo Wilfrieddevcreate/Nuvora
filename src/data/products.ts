@@ -272,7 +272,7 @@ const FEATURED_SLUGS: { slug: string; testimonial: Testimonial }[] = [
       author: "Amélie R.",
       initials: "AR",
       role: "Créatrice · vérifiée",
-      quote: "« J’ai doublé mes ventes grâce à Nuvora. »",
+      quote: "J’ai doublé mes ventes en référençant mes ebooks sur Nuvora. Le trafic est qualifié et régulier.",
       stats: [
         { value: "×2", label: "ventes" },
         { value: "1 204", label: "clics reçus" },
@@ -285,7 +285,7 @@ const FEATURED_SLUGS: { slug: string; testimonial: Testimonial }[] = [
       author: "Karim B.",
       initials: "KB",
       role: "Formateur · Dev",
-      quote: "« Une audience francophone qui cherchait exactement ma formation. »",
+      quote: "Une audience qui cherchait exactement ma formation. Je n’aurais pas trouvé ces clients ailleurs.",
       stats: [
         { value: "4 210", label: "vues" },
         { value: "12 %", label: "taux de clic" },
@@ -298,7 +298,7 @@ const FEATURED_SLUGS: { slug: string; testimonial: Testimonial }[] = [
       author: "Koda",
       initials: "KO",
       role: "Créateur · templates",
-      quote: "« Référencer mon template ici m’a apporté de vrais clients. »",
+      quote: "Référencer mon template ici m’a apporté de vrais clients, sans budget publicitaire.",
       stats: [
         { value: "2 740", label: "vues" },
         { value: "+40", label: "ventes / mois" },
