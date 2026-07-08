@@ -3,6 +3,7 @@ import { HeroPreview } from "@/components/hero-preview";
 import { CategoryTiles } from "@/components/category-tiles";
 import { ProductCard } from "@/components/product-card";
 import { Testimonials } from "@/components/testimonials";
+import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { getNewProducts, getPopularProducts } from "@/data/products";
@@ -108,6 +109,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ---------------- TEASER ASSISTANT IA ---------------- */}
+      <AiTeaser />
 
       {/* ---------------- POPULAIRES ---------------- */}
       <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">

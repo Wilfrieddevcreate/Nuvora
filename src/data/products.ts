@@ -238,6 +238,15 @@ export function getNewProducts(limit = 3): Product[] {
 }
 
 export function getPopularProducts(limit = 6): Product[] {
+  // On exclut les nouveautés pour éviter le doublon avec la section Nouveautés.
+  return [...PRODUCTS]
+    .filter((p) => !p.isNew)
+    .sort((a, b) => b.views - a.views)
+    .slice(0, limit);
+}
+
+// Version pour le hero/vedette : le plus populaire tous confondus.
+export function getMostPopular(limit = 1): Product[] {
   return [...PRODUCTS].sort((a, b) => b.views - a.views).slice(0, limit);
 }
 

@@ -1,4 +1,4 @@
-import { getPopularProducts } from "@/data/products";
+import { getMostPopular } from "@/data/products";
 
 const COVER: Record<string, string> = {
   Formation:
@@ -16,7 +16,7 @@ const COVER: Record<string, string> = {
  * Statique et sobre.
  */
 export function HeroPreview() {
-  const [featured] = getPopularProducts(1);
+  const [featured] = getMostPopular(1);
 
   return (
     <div className="relative">
