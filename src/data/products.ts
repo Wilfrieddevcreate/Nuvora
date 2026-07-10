@@ -8,8 +8,8 @@ export type Category =
   | "Logiciel";
 
 export type Platform =
-  | "Gumroad"
   | "Chariow"
+  | "Gumroad"
   | "Systeme.io"
   | "Podia";
 
@@ -248,6 +248,267 @@ export function getPopularProducts(limit = 6): Product[] {
 // Version pour le hero/vedette : le plus populaire tous confondus.
 export function getMostPopular(limit = 1): Product[] {
   return [...PRODUCTS].sort((a, b) => b.views - a.views).slice(0, limit);
+}
+
+// --- Assistant IA (maquette : matching mots-clés, aucune vraie IA) ---
+
+// Synonymes/déclencheurs pour rapprocher le langage naturel de nos données.
+const KEYWORD_HINTS: Record<string, string[]> = {
+  ia: ["ia", "intelligence", "claude", "gpt", "prompt", "agent", "automatiser"],
+  business: ["business", "offre", "vendre", "vente", "entreprise", "argent"],
+  dev: ["dev", "code", "react", "javascript", "web", "programmation", "front"],
+  design: ["design", "figma", "ui", "ux", "graphisme", "visuel"],
+  marketing: ["marketing", "growth", "acquisition", "audience", "trafic"],
+  finance: ["finance", "investir", "investissement", "bourse", "argent", "etf"],
+  notion: ["notion", "template", "organisation", "productivité"],
+  debutant: ["débutant", "debutant", "commencer", "zéro", "zero", "base"],
+};
+
+export type Recommendation = {
+  product: Product;
+  reason: string; // phrase de justification, contextualisée par la question
+  meta: string; // specs courtes (sous-catégorie · vérifié · prix)
+};
+
+function scoreProduct(product: Product, tokens: string[]): number {
+  const haystack = [
+    product.title,
+    product.category,
+    product.subCategory,
+    ...product.tags,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  let score = 0;
+  for (const token of tokens) {
+    if (token.length < 3) continue;
+    if (haystack.includes(token)) score += 3;
+    // via synonymes
+    for (const hints of Object.values(KEYWORD_HINTS)) {
+      if (hints.includes(token) && hints.some((h) => haystack.includes(h))) {
+        score += 2;
+        break;
+      }
+    }
+  }
+  // léger bonus popularité / vérifié pour départager
+  score += product.views / 100000;
+  if (product.verified) score += 0.3;
+  return score;
+}
+
+// Specs courtes (ligne secondaire sous la justification).
+function metaFor(product: Product): string {
+  const bits: string[] = [product.subCategory];
+  if (product.verified) bits.push("créateur vérifié");
+  bits.push(product.price === 0 ? "gratuit" : `${product.price} €`);
+  return bits.join(" · ");
+}
+
+// Vraie justification : POURQUOI ce produit répond à la demande.
+// Croise les mots de la question avec les caractéristiques du produit.
+function reasonFor(product: Product, tokens: string[]): string {
+  const has = (...words: string[]) =>
+    tokens.some((t) => words.some((w) => t.includes(w) || w.includes(t)));
+  const beginner = product.tags.some((t) =>
+    ["débutant", "debutant", "base", "bases"].includes(t),
+  );
+
+  const clauses: string[] = [];
+
+  // 1) Pourquoi ça correspond au sujet
+  if (has("react")) {
+    clauses.push("couvre précisément React avec des projets concrets");
+  } else if (has("ia", "intelligence", "claude", "prompt", "agent")) {
+    clauses.push("cible directement l’IA et son usage pratique");
+  } else if (has("business", "offre", "vendre", "vente")) {
+    clauses.push("va droit au but pour lancer et vendre votre offre");
+  } else if (has("design", "figma", "ui", "ux")) {
+    clauses.push("aborde le design de façon accessible");
+  } else if (has("marketing", "growth", "audience", "trafic")) {
+    clauses.push("se concentre sur l’acquisition et la visibilité");
+  } else if (has("finance", "investir", "bourse")) {
+    clauses.push("explique les bases de la finance sans jargon");
+  } else if (has("notion", "template", "organiser")) {
+    clauses.push("fournit un template prêt à l’emploi");
+  } else {
+    clauses.push(`correspond bien à la catégorie ${product.category}`);
+  }
+
+  // 2) Niveau, si demandé
+  if (has("débutant", "debuter", "commencer", "zero", "base")) {
+    clauses.push(
+      beginner
+        ? "et convient parfaitement pour débuter"
+        : "et reste abordable même en partant de zéro",
+    );
+  }
+
+  // 3) Élément de confiance
+  if (product.verified) {
+    clauses.push("créateur vérifié");
+  } else if (product.views > 3000) {
+    clauses.push("l’un des plus consultés sur Nuvora");
+  }
+
+  const sentence = clauses.join(", ");
+  return sentence.charAt(0).toUpperCase() + sentence.slice(1) + ".";
+}
+
+/**
+ * Recommandation mockée : score les produits selon les mots de la question
+ * et renvoie un top-N. Aucune vraie IA — juste du matching côté client.
+ */
+export function recommendProducts(query: string, limit = 3): Recommendation[] {
+  const tokens = query
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // enlève les accents pour matcher plus large
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+
+  const scored = PRODUCTS.map((product) => ({
+    product,
+    score: scoreProduct(product, tokens),
+  })).sort((a, b) => b.score - a.score);
+
+  // Si rien ne matche vraiment, on retombe sur les plus populaires.
+  const top = scored.filter((s) => s.score > 0.6).slice(0, limit);
+  const chosen = top.length > 0 ? top : scored.slice(0, limit);
+
+  return chosen.map(({ product }) => ({
+    product,
+    reason: reasonFor(product, tokens),
+    meta: metaFor(product),
+  }));
+}
+
+// --- Fiche produit ---
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return PRODUCTS.find((p) => p.slug === slug);
+}
+
+export function getAllSlugs(): string[] {
+  return PRODUCTS.map((p) => p.slug);
+}
+
+// Produits similaires : même catégorie, sinon complète par les plus populaires.
+export function getRelatedProducts(product: Product, limit = 3): Product[] {
+  const sameCategory = PRODUCTS.filter(
+    (p) => p.slug !== product.slug && p.category === product.category,
+  ).sort((a, b) => b.views - a.views);
+
+  if (sameCategory.length >= limit) return sameCategory.slice(0, limit);
+
+  const fillers = PRODUCTS.filter(
+    (p) => p.slug !== product.slug && !sameCategory.includes(p),
+  ).sort((a, b) => b.views - a.views);
+
+  return [...sameCategory, ...fillers].slice(0, limit);
+}
+
+// --- Catalogue : filtrage & tri (côté client, sans backend) ---
+
+export const LANGUAGES: Product["language"][] = ["Français", "Anglais"];
+
+export const PLATFORMS: Platform[] = [
+  "Chariow",
+  "Gumroad",
+  "Systeme.io",
+  "Podia",
+];
+
+export type PriceBand = "gratuit" | "-25" | "25-100" | "100+";
+
+export const PRICE_BANDS: { id: PriceBand; label: string }[] = [
+  { id: "gratuit", label: "Gratuit" },
+  { id: "-25", label: "Moins de 25 €" },
+  { id: "25-100", label: "25 € – 100 €" },
+  { id: "100+", label: "Plus de 100 €" },
+];
+
+export type SortId = "populaires" | "nouveautes" | "prix-asc" | "prix-desc";
+
+export const SORTS: { id: SortId; label: string }[] = [
+  { id: "populaires", label: "Populaires" },
+  { id: "nouveautes", label: "Nouveautés" },
+  { id: "prix-asc", label: "Prix croissant" },
+  { id: "prix-desc", label: "Prix décroissant" },
+];
+
+export type CatalogFilters = {
+  query: string;
+  categories: Category[];
+  prices: PriceBand[];
+  languages: Product["language"][];
+  platforms: Platform[];
+  sort: SortId;
+};
+
+function inPriceBand(price: number, band: PriceBand): boolean {
+  switch (band) {
+    case "gratuit":
+      return price === 0;
+    case "-25":
+      return price > 0 && price < 25;
+    case "25-100":
+      return price >= 25 && price <= 100;
+    case "100+":
+      return price > 100;
+  }
+}
+
+export function filterProducts(filters: CatalogFilters): Product[] {
+  const q = filters.query.trim().toLowerCase();
+
+  const result = PRODUCTS.filter((p) => {
+    // recherche texte : titre, créateur, tags
+    if (q) {
+      const haystack = [p.title, p.creator, p.subCategory, ...p.tags]
+        .join(" ")
+        .toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    // catégories (OU)
+    if (filters.categories.length && !filters.categories.includes(p.category)) {
+      return false;
+    }
+    // prix (OU sur les tranches)
+    if (
+      filters.prices.length &&
+      !filters.prices.some((b) => inPriceBand(p.price, b))
+    ) {
+      return false;
+    }
+    // langues (OU)
+    if (filters.languages.length && !filters.languages.includes(p.language)) {
+      return false;
+    }
+    // plateformes (OU)
+    if (filters.platforms.length && !filters.platforms.includes(p.platform)) {
+      return false;
+    }
+    return true;
+  });
+
+  switch (filters.sort) {
+    case "nouveautes":
+      result.sort((a, b) => Number(b.isNew) - Number(a.isNew) || b.views - a.views);
+      break;
+    case "prix-asc":
+      result.sort((a, b) => a.price - b.price);
+      break;
+    case "prix-desc":
+      result.sort((a, b) => b.price - a.price);
+      break;
+    case "populaires":
+    default:
+      result.sort((a, b) => b.views - a.views);
+  }
+
+  return result;
 }
 
 // --- Produits phares du hero (carrousel), chacun avec son témoignage ---
