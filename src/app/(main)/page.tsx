@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { SearchTabs } from "@/components/search-tabs";
 import { HeroPreview } from "@/components/hero-preview";
 import { CategoryTiles } from "@/components/category-tiles";
@@ -6,7 +7,57 @@ import { Testimonials } from "@/components/testimonials";
 import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
-import { getNewProducts, getPopularProducts } from "@/data/products";
+import { getNewProducts, getPopularProducts, CREATORS } from "@/data/products";
+
+export const metadata: Metadata = {
+  title: "Trouvez les meilleurs produits digitaux",
+  description:
+    "Nuvora réunit ebooks, formations, templates et logiciels en un seul endroit. Explorez, comparez, puis achetez directement chez le créateur.",
+  keywords: [
+    "produits digitaux",
+    "ebooks",
+    "formations en ligne",
+    "templates Notion",
+    "logiciels",
+    "créateurs indépendants",
+  ],
+  openGraph: {
+    title: "Nuvora — Trouvez les meilleurs produits digitaux",
+    description:
+      "Nuvora réunit ebooks, formations, templates et logiciels en un seul endroit. Explorez, comparez, puis achetez directement chez le créateur.",
+    url: "https://nuvora.app",
+    type: "website",
+  },
+  twitter: {
+    title: "Nuvora — Trouvez les meilleurs produits digitaux",
+    description:
+      "Nuvora réunit ebooks, formations, templates et logiciels en un seul endroit.",
+  },
+  alternates: { canonical: "https://nuvora.app" },
+};
+
+const FAQS = [
+  {
+    q: "Nuvora vend-il directement les produits ?",
+    a: "Non. Nuvora est un moteur de découverte. On référence les produits et on vous redirige vers la boutique du créateur (Gumroad, Systeme.io, Podia…) pour finaliser l'achat. On ne traite aucun paiement.",
+  },
+  {
+    q: "Les produits sont-ils vérifiés ?",
+    a: "Chaque produit soumis est examiné manuellement par notre équipe avant publication. Les créateurs qui passent une vérification approfondie obtiennent le badge « Vérifié ».",
+  },
+  {
+    q: "Comment fonctionne l'assistant IA ?",
+    a: "Décrivez votre besoin en langage naturel et l'assistant analyse le catalogue pour vous recommander les produits les plus adaptés, avec une explication personnalisée pour chacun.",
+  },
+  {
+    q: "Est-ce gratuit pour les acheteurs ?",
+    a: "Totalement. Parcourir Nuvora, utiliser l'assistant et être redirigé vers un produit est 100 % gratuit. Vous ne payez que le produit, directement chez le créateur.",
+  },
+  {
+    q: "Je suis créateur, comment référencer mes produits ?",
+    a: "Créez un compte, soumettez vos produits avec les informations demandées et notre équipe valide sous 24 à 72 h. Le référencement est gratuit et Nuvora ne prend aucune commission.",
+  },
+];
 
 const STEPS = [
   {
@@ -201,6 +252,77 @@ export default function Home() {
                 <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
                 <p className="mt-1.5 text-[15px] text-fg-2">{s.desc}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- CRÉATEURS VEDETTES ---------------- */}
+      <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-extrabold">Créateurs vérifiés</h2>
+            <p className="mt-1 text-fg-2">Des experts indépendants, chacun dans son domaine.</p>
+          </div>
+          <ButtonLink href="/catalogue" variant="ghost" size="sm">
+            Voir tout
+            <ArrowRight className="size-4" />
+          </ButtonLink>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
+          {CREATORS.filter((c) => c.verified).slice(0, 4).map((c) => (
+            <a
+              key={c.slug}
+              href={`/createur/${c.slug}`}
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-5 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
+            >
+              <span className={`grid size-12 shrink-0 place-items-center rounded-xl ${c.color} text-lg font-extrabold text-white`}>
+                {c.name.charAt(0)}
+              </span>
+              <div className="min-w-0 w-full">
+                <p className="truncate font-bold text-sm group-hover:text-accent">{c.name}</p>
+                <p className="mt-0.5 text-xs text-muted line-clamp-2 leading-relaxed">{c.specialty}</p>
+              </div>
+              {c.verified && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
+                  <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  Vérifié
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------------- FAQ ---------------- */}
+      <section className="bg-surface-2/50">
+        <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-extrabold sm:text-3xl">Questions fréquentes</h2>
+            <p className="mt-2 text-fg-2">Tout ce qu&apos;il faut savoir avant de commencer.</p>
+          </div>
+
+          <div className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
+            {FAQS.map((item) => (
+              <details key={item.q} className="group px-6 py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg">
+                  {item.q}
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180"
+                    aria-hidden="true"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <p className="mt-3 text-[15px] leading-relaxed text-fg-2">{item.a}</p>
+              </details>
             ))}
           </div>
         </div>

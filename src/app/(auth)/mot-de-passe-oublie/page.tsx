@@ -3,9 +3,10 @@ import { ForgotPasswordForm } from "@/components/auth-flows";
 import { AuthScreen } from "@/components/auth-screen";
 
 export const metadata: Metadata = {
-  title: "Mot de passe oublié — Nuvora",
+  title: "Mot de passe oublié",
   description:
     "Réinitialisez le mot de passe de votre compte Nuvora en recevant un lien par email.",
+  robots: { index: false, follow: false },
 };
 
 export default function ForgotPasswordPage() {

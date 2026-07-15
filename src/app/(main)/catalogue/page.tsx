@@ -3,9 +3,30 @@ import { Suspense } from "react";
 import { CatalogView } from "@/components/catalog-view";
 
 export const metadata: Metadata = {
-  title: "Catalogue — Nuvora",
+  title: "Catalogue de produits digitaux",
   description:
-    "Explorez tous les produits digitaux référencés sur Nuvora : ebooks, formations, templates et logiciels. Filtrez par catégorie, prix et langue.",
+    "Explorez tous les produits digitaux référencés sur Nuvora : ebooks, formations, templates et logiciels. Filtrez par catégorie, prix, langue et plateforme.",
+  keywords: [
+    "catalogue produits digitaux",
+    "ebooks",
+    "formations en ligne",
+    "templates",
+    "logiciels",
+    "filtrer produits digitaux",
+  ],
+  openGraph: {
+    title: "Catalogue — Nuvora",
+    description:
+      "Explorez tous les produits digitaux référencés sur Nuvora : ebooks, formations, templates et logiciels.",
+    url: "https://nuvora.app/catalogue",
+    type: "website",
+  },
+  twitter: {
+    title: "Catalogue — Nuvora",
+    description:
+      "Explorez ebooks, formations, templates et logiciels sur Nuvora.",
+  },
+  alternates: { canonical: "https://nuvora.app/catalogue" },
 };
 
 export default function CataloguePage() {

@@ -4,8 +4,9 @@ import { LogoBadge } from "@/components/logo";
 import { ButtonLink } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Email envoyé — Nuvora",
+  title: "Email envoyé",
   description: "Un lien de réinitialisation a été envoyé à votre adresse email.",
+  robots: { index: false, follow: false },
 };
 
 export default function ResetSentPage() {
@@ -41,8 +42,11 @@ export default function ResetSentPage() {
             réinitialiser votre mot de passe. Pensez à vérifier vos spams.
           </p>
 
-          <div className="mt-8">
-            <ButtonLink href="/connexion" size="lg" className="w-full">
+          <div className="mt-8 flex flex-col gap-3">
+            <ButtonLink href="/mot-de-passe-oublie/nouveau" size="lg" className="w-full">
+              Simuler le clic sur le lien
+            </ButtonLink>
+            <ButtonLink href="/connexion" variant="secondary" size="lg" className="w-full">
               Revenir à la connexion
             </ButtonLink>
           </div>

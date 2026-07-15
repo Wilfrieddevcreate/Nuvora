@@ -3,9 +3,10 @@ import { ConfirmationForm } from "@/components/auth-flows";
 import { AuthScreen } from "@/components/auth-screen";
 
 export const metadata: Metadata = {
-  title: "Confirmer votre compte — Nuvora",
+  title: "Confirmer votre compte",
   description:
     "Saisissez le code de confirmation reçu par email pour activer votre compte Nuvora.",
+  robots: { index: false, follow: false },
 };
 
 export default function ConfirmationPage() {

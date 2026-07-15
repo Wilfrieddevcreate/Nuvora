@@ -8,21 +8,24 @@ const COLS = [
       { href: "/catalogue", label: "Catalogue" },
       { href: "/catalogue?categorie=Formation", label: "Formations" },
       { href: "/catalogue?categorie=Ebook", label: "Ebooks" },
+      { href: "/catalogue?categorie=Template", label: "Templates" },
       { href: "/assistant", label: "Assistant IA" },
     ],
   },
   {
     title: "Créateurs",
     links: [
-      { href: "/inscription", label: "Devenir créateur" },
-      { href: "/createur", label: "Espace créateur" },
+      { href: "/createur", label: "Pourquoi Nuvora ?" },
+      { href: "/inscription", label: "Référencer un produit" },
     ],
   },
   {
     title: "Nuvora",
     links: [
-      { href: "/", label: "À propos" },
-      { href: "/", label: "Contact" },
+      { href: "/mentions-legales", label: "Mentions légales" },
+      { href: "/cgu", label: "CGU" },
+      { href: "/confidentialite", label: "Confidentialité" },
+      { href: "mailto:contact@nuvora.app", label: "Contact" },
     ],
   },
 ];
@@ -62,9 +65,13 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <span>© {2026} Nuvora. Tous droits réservés.</span>
-          <span>Aucun paiement n’est traité sur Nuvora.</span>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/mentions-legales" className="transition-colors hover:text-fg">Mentions légales</Link>
+            <Link href="/cgu" className="transition-colors hover:text-fg">CGU</Link>
+            <Link href="/confidentialite" className="transition-colors hover:text-fg">Confidentialité</Link>
+          </div>
         </div>
       </div>
     </footer>

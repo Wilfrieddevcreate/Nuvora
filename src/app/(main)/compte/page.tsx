@@ -1,0 +1,152 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useFavorites } from "@/contexts/favorites";
+import { getProductBySlug, PRODUCTS } from "@/data/products";
+import { ProductCard } from "@/components/product-card";
+
+const TABS = [
+  { id: "favoris", label: "Mes favoris" },
+  { id: "historique", label: "Historique" },
+  { id: "parametres", label: "Paramètres" },
+] as const;
+
+type Tab = typeof TABS[number]["id"];
+
+// Mock historique
+const MOCK_HISTORY = PRODUCTS.slice(0, 4).map((p) => ({
+  slug: p.slug,
+  visitedAt: "Il y a 2 h",
+}));
+
+function EmptyState({ icon, title, desc, cta }: { icon: React.ReactNode; title: string; desc: string; cta?: React.ReactNode }) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-16 text-center">
+      <div className="grid size-16 place-items-center rounded-2xl bg-surface-2 text-muted">{icon}</div>
+      <p className="font-semibold text-fg">{title}</p>
+      <p className="max-w-xs text-sm text-muted">{desc}</p>
+      {cta}
+    </div>
+  );
+}
+
+export default function ComptePage() {
+  const [tab, setTab] = useState<Tab>("favoris");
+  const { favorites } = useFavorites();
+  const favProducts = favorites.map((slug) => getProductBySlug(slug)).filter(Boolean);
+
+  return (
+    <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
+      {/* En-tête profil */}
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <div className="grid size-16 place-items-center rounded-full bg-indigo-500 text-2xl font-extrabold text-white">
+          W
+        </div>
+        <div>
+          <h1 className="text-2xl font-extrabold">Wilfried H.</h1>
+          <p className="mt-0.5 text-sm text-muted">wilfried@example.com · Membre depuis 2024</p>
+        </div>
+      </div>
+
+      {/* Onglets */}
+      <div className="mb-6 flex gap-1 rounded-xl border border-border bg-surface p-1">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTab(t.id)}
+            className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              tab === t.id
+                ? "bg-accent text-accent-fg shadow-soft"
+                : "text-muted hover:text-fg"
+            }`}
+          >
+            {t.label}
+            {t.id === "favoris" && favorites.length > 0 && (
+              <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[11px] font-bold ${tab === "favoris" ? "bg-white/20" : "bg-accent-soft text-accent"}`}>
+                {favorites.length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Contenu */}
+      {tab === "favoris" && (
+        favProducts.length === 0 ? (
+          <EmptyState
+            icon={<svg viewBox="0 0 24 24" className="size-8" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>}
+            title="Aucun favori pour l'instant"
+            desc="Cliquez sur le cœur d'un produit pour le retrouver ici."
+            cta={<Link href="/catalogue" className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">Explorer le catalogue</Link>}
+          />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {favProducts.map((p) => p && <ProductCard key={p.slug} product={p} />)}
+          </div>
+        )
+      )}
+
+      {tab === "historique" && (
+        <div className="space-y-3">
+          {MOCK_HISTORY.map(({ slug, visitedAt }) => {
+            const p = getProductBySlug(slug);
+            if (!p) return null;
+            return (
+              <Link
+                key={slug}
+                href={`/produit/${slug}`}
+                className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-soft-lg"
+              >
+                <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-lg font-extrabold text-accent">
+                  {p.title.charAt(0)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold text-fg">{p.title}</p>
+                  <p className="mt-0.5 text-xs text-muted">{p.category} · {p.creator}</p>
+                </div>
+                <span className="shrink-0 text-xs text-muted">{visitedAt}</span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
+      {tab === "parametres" && (
+        <div className="max-w-lg space-y-6">
+          <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft space-y-5">
+            <h2 className="font-bold text-fg">Informations personnelles</h2>
+            <div className="space-y-4">
+              {[
+                { label: "Prénom", placeholder: "Wilfried", type: "text" },
+                { label: "Nom", placeholder: "Heloussato", type: "text" },
+                { label: "Email", placeholder: "wilfried@example.com", type: "email" },
+              ].map(({ label, placeholder, type }) => (
+                <div key={label}>
+                  <label className="mb-1.5 block text-sm font-semibold text-fg">{label}</label>
+                  <input
+                    type={type}
+                    defaultValue={placeholder}
+                    className="w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+                  />
+                </div>
+              ))}
+            </div>
+            <button type="button" className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover">
+              Enregistrer
+            </button>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft space-y-3">
+            <h2 className="font-bold text-fg">Zone de danger</h2>
+            <p className="text-sm text-muted">La suppression de votre compte est irréversible.</p>
+            <button type="button" className="rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/5">
+              Supprimer mon compte
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

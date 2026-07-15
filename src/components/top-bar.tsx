@@ -89,6 +89,12 @@ export function TopBar() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link
+            href="/compte"
+            className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
+          >
+            Mon compte
+          </Link>
+          <Link
             href="/connexion"
             className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
           >
@@ -180,6 +186,15 @@ export function TopBar() {
                 onClick={() => setMenuOpen(false)}
               >
                 Connexion
+              </ButtonLink>
+              <ButtonLink
+                href="/compte"
+                variant="secondary"
+                size="lg"
+                className="w-full"
+                onClick={() => setMenuOpen(false)}
+              >
+                Mon compte
               </ButtonLink>
             </div>
           </nav>

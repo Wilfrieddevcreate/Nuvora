@@ -7,7 +7,29 @@ import { NovaMark } from "@/components/logo";
 export const metadata: Metadata = {
   title: "Vendre sur Nuvora — Donnez de la visibilité à vos produits digitaux",
   description:
-    "Référencez vos ebooks, formations, templates et logiciels sur Nuvora gratuitement. Touchez une audience qui cherche exactement ce que vous créez.",
+    "Référencez vos ebooks, formations, templates et logiciels sur Nuvora gratuitement. Zéro commission. Touchez une audience qui cherche exactement ce que vous créez.",
+  keywords: [
+    "vendre produits digitaux",
+    "référencer ebook",
+    "créateur numérique",
+    "marketplace créateurs",
+    "vendre formation en ligne",
+    "visibilité produit digital",
+    "Gumroad Systeme.io Podia",
+  ],
+  openGraph: {
+    title: "Vendre sur Nuvora — Donnez de la visibilité à vos produits digitaux",
+    description:
+      "Référencez vos ebooks, formations et templates gratuitement. Zéro commission, votre boutique reste chez vous.",
+    url: "https://nuvora.app/createur",
+    type: "website",
+  },
+  twitter: {
+    title: "Vendre sur Nuvora — 0 % de commission",
+    description:
+      "Référencez vos produits digitaux gratuitement. Touchez une audience qualifiée sans payer de commission.",
+  },
+  alternates: { canonical: "https://nuvora.app/createur" },
 };
 
 const PLATFORMS = [

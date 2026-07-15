@@ -3,9 +3,11 @@ import { AuthScreen } from "@/components/auth-screen";
 import { LoginForm } from "@/components/auth-forms";
 
 export const metadata: Metadata = {
-  title: "Connexion — Nuvora",
+  title: "Connexion",
   description:
     "Connectez-vous à votre compte Nuvora pour retrouver vos produits sauvegardés, vos recommandations et votre espace créateur.",
+  robots: { index: false, follow: false },
+  alternates: { canonical: "https://nuvora.app/connexion" },
 };
 
 export default function ConnexionPage() {

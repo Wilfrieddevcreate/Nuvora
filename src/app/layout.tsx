@@ -19,9 +19,47 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nuvora — Trouvez les meilleurs produits digitaux",
+  metadataBase: new URL("https://nuvora.app"),
+  title: {
+    default: "Nuvora — Trouvez les meilleurs produits digitaux",
+    template: "%s — Nuvora",
+  },
   description:
-    "Nuvora est le moteur de découverte des produits digitaux : ebooks, formations, templates et logiciels. On vous aide à trouver, on redirige vers l'achat.",
+    "Nuvora est le moteur de découverte des produits digitaux : ebooks, formations, templates et logiciels. On vous aide à trouver, on vous redirige vers l'achat chez le créateur.",
+  keywords: [
+    "produits digitaux",
+    "ebooks",
+    "formations en ligne",
+    "templates",
+    "logiciels",
+    "marketplace digital",
+    "créateurs",
+  ],
+  authors: [{ name: "Nuvora" }],
+  creator: "Nuvora",
+  openGraph: {
+    siteName: "Nuvora",
+    locale: "fr_FR",
+    type: "website",
+    title: "Nuvora — Trouvez les meilleurs produits digitaux",
+    description:
+      "Moteur de découverte de produits digitaux : ebooks, formations, templates, logiciels. Nuvora vous oriente, l'achat se fait chez le créateur.",
+    url: "https://nuvora.app",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nuvora — Trouvez les meilleurs produits digitaux",
+    description:
+      "Moteur de découverte de produits digitaux : ebooks, formations, templates, logiciels. Nuvora vous oriente, l'achat se fait chez le créateur.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  alternates: {
+    canonical: "https://nuvora.app",
+  },
 };
 
 export default function RootLayout({

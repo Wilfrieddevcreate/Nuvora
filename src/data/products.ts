@@ -13,6 +13,98 @@ export type Platform =
   | "Systeme.io"
   | "Podia";
 
+export type Creator = {
+  slug: string;
+  name: string;
+  tagline: string;
+  bio: string;
+  verified: boolean;
+  joinedYear: number;
+  specialty: string;
+  platform: Platform;
+  color: string; // classe Tailwind bg pour l'avatar
+};
+
+export const CREATORS: Creator[] = [
+  {
+    slug: "studio-lumen",
+    name: "Studio Lumen",
+    tagline: "IA appliquée & marketing de contenu",
+    bio: "Studio spécialisé dans la création de formations et ressources autour de l'intelligence artificielle et du copywriting. Nos produits sont pensés pour les créateurs et entrepreneurs qui veulent gagner du temps sans sacrifier la qualité.",
+    verified: true,
+    joinedYear: 2023,
+    specialty: "IA & Marketing",
+    platform: "Gumroad",
+    color: "bg-indigo-500",
+  },
+  {
+    slug: "amelie-r",
+    name: "Amélie R.",
+    tagline: "Solopreneure · Business digital",
+    bio: "J'aide les solopreneurs à structurer et lancer leur première offre digitale. Après avoir accompagné plus de 200 créateurs, j'ai mis en forme ma méthode dans des guides pratiques et actionnables.",
+    verified: true,
+    joinedYear: 2022,
+    specialty: "Business & Offre",
+    platform: "Gumroad",
+    color: "bg-violet-500",
+  },
+  {
+    slug: "koda",
+    name: "Koda",
+    tagline: "Templates Notion pour créateurs",
+    bio: "Je conçois des systèmes de productivité dans Notion pour les créateurs de contenu et freelances. Chaque template est testé en conditions réelles avant d'être publié.",
+    verified: false,
+    joinedYear: 2024,
+    specialty: "Notion & Productivité",
+    platform: "Chariow",
+    color: "bg-amber-500",
+  },
+  {
+    slug: "devacademy",
+    name: "DevAcademy",
+    tagline: "Formations web en français, du débutant au pro",
+    bio: "DevAcademy propose des formations vidéo complètes pour apprendre le développement web en français. Plus de 40 h de contenu, des projets concrets et un accès à vie pour progresser à votre rythme.",
+    verified: true,
+    joinedYear: 2021,
+    specialty: "Dev web",
+    platform: "Systeme.io",
+    color: "bg-sky-500",
+  },
+  {
+    slug: "m-diallo",
+    name: "M. Diallo",
+    tagline: "Growth & acquisition sans budget pub",
+    bio: "Consultant en acquisition depuis 8 ans, j'accompagne les créateurs solo qui veulent développer leur audience sans dépenser en publicité. Mes formations distillent ce qui fonctionne vraiment.",
+    verified: false,
+    joinedYear: 2023,
+    specialty: "Growth & Marketing",
+    platform: "Gumroad",
+    color: "bg-emerald-500",
+  },
+  {
+    slug: "atelier-pixel",
+    name: "Atelier Pixel",
+    tagline: "Design accessible & templates prêts à l'emploi",
+    bio: "Atelier Pixel crée des ressources design pour les non-designers : formations Figma pédagogiques et templates professionnels (Framer, Webflow) que n'importe qui peut personnaliser en une soirée.",
+    verified: false,
+    joinedYear: 2023,
+    specialty: "Design & Templates",
+    platform: "Chariow",
+    color: "bg-orange-500",
+  },
+  {
+    slug: "c-bernard",
+    name: "C. Bernard",
+    tagline: "Finance personnelle sans jargon",
+    bio: "Ancien analyste financier reconverti formateur, j'explique l'investissement, la bourse et la gestion de patrimoine avec des mots simples. Mon objectif : démocratiser la culture financière.",
+    verified: false,
+    joinedYear: 2022,
+    specialty: "Finance & Investissement",
+    platform: "Podia",
+    color: "bg-slate-500",
+  },
+];
+
 export type Product = {
   slug: string;
   title: string;
@@ -20,6 +112,7 @@ export type Product = {
   category: Category;
   subCategory: string;
   creator: string;
+  creatorSlug: string;
   verified: boolean;
   isNew: boolean;
   price: number; // 0 = gratuit
@@ -50,6 +143,7 @@ export const PRODUCTS: Product[] = [
     category: "Formation",
     subCategory: "IA",
     creator: "Studio Lumen",
+    creatorSlug: "studio-lumen",
     verified: true,
     isNew: true,
     price: 49,
@@ -71,6 +165,7 @@ export const PRODUCTS: Product[] = [
     category: "Ebook",
     subCategory: "Business",
     creator: "Amélie R.",
+    creatorSlug: "amelie-r",
     verified: true,
     isNew: false,
     price: 19,
@@ -92,6 +187,7 @@ export const PRODUCTS: Product[] = [
     category: "Template",
     subCategory: "Notion",
     creator: "Koda",
+    creatorSlug: "koda",
     verified: false,
     isNew: true,
     price: 29,
@@ -113,6 +209,7 @@ export const PRODUCTS: Product[] = [
     category: "Formation",
     subCategory: "Dev",
     creator: "DevAcademy",
+    creatorSlug: "devacademy",
     verified: true,
     isNew: false,
     price: 89,
@@ -134,6 +231,7 @@ export const PRODUCTS: Product[] = [
     category: "Formation",
     subCategory: "Marketing",
     creator: "M. Diallo",
+    creatorSlug: "m-diallo",
     verified: false,
     isNew: false,
     price: 59,
@@ -155,6 +253,7 @@ export const PRODUCTS: Product[] = [
     category: "Formation",
     subCategory: "Design",
     creator: "Atelier Pixel",
+    creatorSlug: "atelier-pixel",
     verified: false,
     isNew: false,
     price: 39,
@@ -176,6 +275,7 @@ export const PRODUCTS: Product[] = [
     category: "Ebook",
     subCategory: "IA",
     creator: "Studio Lumen",
+    creatorSlug: "studio-lumen",
     verified: true,
     isNew: true,
     price: 15,
@@ -197,6 +297,7 @@ export const PRODUCTS: Product[] = [
     category: "Template",
     subCategory: "Framer",
     creator: "Atelier Pixel",
+    creatorSlug: "atelier-pixel",
     verified: false,
     isNew: true,
     price: 25,
@@ -218,6 +319,7 @@ export const PRODUCTS: Product[] = [
     category: "Ebook",
     subCategory: "Finance",
     creator: "C. Bernard",
+    creatorSlug: "c-bernard",
     verified: false,
     isNew: false,
     price: 45,
@@ -509,6 +611,22 @@ export function filterProducts(filters: CatalogFilters): Product[] {
   }
 
   return result;
+}
+
+// --- Créateurs ---
+
+export function getCreatorBySlug(slug: string): Creator | undefined {
+  return CREATORS.find((c) => c.slug === slug);
+}
+
+export function getAllCreatorSlugs(): string[] {
+  return CREATORS.map((c) => c.slug);
+}
+
+export function getProductsByCreator(creatorSlug: string): Product[] {
+  return PRODUCTS.filter((p) => p.creatorSlug === creatorSlug).sort(
+    (a, b) => b.views - a.views,
+  );
 }
 
 // --- Produits phares du hero (carrousel), chacun avec son témoignage ---

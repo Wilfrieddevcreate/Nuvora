@@ -3,9 +3,11 @@ import { AuthScreen } from "@/components/auth-screen";
 import { SignupForm } from "@/components/auth-forms";
 
 export const metadata: Metadata = {
-  title: "Inscription — Nuvora",
+  title: "Inscription",
   description:
     "Créez un compte Nuvora pour enregistrer vos recherches, suivre vos produits favoris et préparer votre espace créateur.",
+  robots: { index: false, follow: false },
+  alternates: { canonical: "https://nuvora.app/inscription" },
 };
 
 export default function InscriptionPage() {

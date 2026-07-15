@@ -32,10 +32,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const product = getProductBySlug(slug);
-  if (!product) return { title: "Produit introuvable — Nuvora" };
+  if (!product) return { title: "Produit introuvable" };
+  const url = `https://nuvora.app/produit/${product.slug}`;
   return {
-    title: `${product.title} — Nuvora`,
+    title: product.title,
     description: product.description,
+    keywords: [
+      product.category,
+      product.subCategory,
+      product.creator,
+      ...product.tags,
+      "produit digital",
+      product.platform,
+    ],
+    authors: [{ name: product.creator }],
+    openGraph: {
+      title: `${product.title} — Nuvora`,
+      description: product.description,
+      url,
+      type: "article",
+      tags: product.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.description,
+    },
+    alternates: { canonical: url },
   };
 }
 
@@ -85,7 +108,7 @@ export default async function ProductPage({
         {/* Colonne gauche : visuel + description */}
         <div>
           <div
-            className={`flex aspect-[16/10] items-center justify-center rounded-3xl border border-border bg-gradient-to-br ${COVER[product.category]}`}
+            className={`flex aspect-16/10 items-center justify-center rounded-3xl border border-border bg-linear-to-br ${COVER[product.category]}`}
           >
             <span className="text-7xl font-extrabold text-fg/15">
               {product.title.charAt(0)}
@@ -115,7 +138,12 @@ export default async function ProductPage({
           </h1>
           <div className="mt-2 text-fg-2">
             {product.category} · {product.subCategory} · par{" "}
-            <span className="font-semibold text-fg">{product.creator}</span>
+            <Link
+              href={`/createur/${product.creatorSlug}`}
+              className="font-semibold text-fg hover:text-accent"
+            >
+              {product.creator}
+            </Link>
           </div>
 
           <div className="mt-8">
@@ -143,11 +171,14 @@ export default async function ProductPage({
           )}
 
           {/* à propos du créateur */}
-          <div className="mt-8 flex items-center gap-4 rounded-2xl border border-border bg-surface p-5">
+          <Link
+            href={`/createur/${product.creatorSlug}`}
+            className="mt-8 flex items-center gap-4 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-border-2 hover:shadow-soft"
+          >
             <span className="grid size-12 shrink-0 place-items-center rounded-full bg-accent text-base font-bold text-accent-fg">
               {product.creator.charAt(0)}
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span className="font-bold">{product.creator}</span>
                 {product.verified && (
@@ -160,7 +191,19 @@ export default async function ProductPage({
                 Créateur sur {product.platform}
               </p>
             </div>
-          </div>
+            <svg
+              viewBox="0 0 24 24"
+              className="size-4 shrink-0 text-muted"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m9 6 6 6-6 6" />
+            </svg>
+          </Link>
         </div>
 
         {/* Colonne droite : carte d'achat (sticky) */}
@@ -191,7 +234,17 @@ export default async function ProductPage({
             </p>
 
             <dl className="mt-6 divide-y divide-border border-t border-border">
-              <InfoRow label="Créateur" value={product.creator} />
+              <InfoRow
+                label="Créateur"
+                value={
+                  <Link
+                    href={`/createur/${product.creatorSlug}`}
+                    className="text-accent hover:text-accent-hover"
+                  >
+                    {product.creator}
+                  </Link>
+                }
+              />
               <InfoRow
                 label="Catégorie"
                 value={`${product.category} · ${product.subCategory}`}
