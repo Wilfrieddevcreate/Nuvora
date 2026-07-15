@@ -28,11 +28,11 @@ export function SearchTabs() {
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-2 shadow-soft-lg">
-      {/* Onglets */}
+      {/* Onglets — défilent horizontalement sur mobile, sans scrollbar */}
       <div
         role="tablist"
         aria-label="Type de produit"
-        className="flex flex-wrap gap-1 px-1 pb-2"
+        className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {TABS.map((tab) => {
           const isActive = tab === active;
@@ -43,7 +43,7 @@ export function SearchTabs() {
               aria-selected={isActive}
               onClick={() => setActive(tab)}
               className={
-                "rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors " +
+                "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors " +
                 (isActive
                   ? "bg-accent-soft text-accent"
                   : "text-fg-2 hover:bg-surface-2 hover:text-fg")
@@ -84,9 +84,12 @@ export function SearchTabs() {
         />
         <button
           type="submit"
-          className="shrink-0 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover"
+          aria-label="Rechercher"
+          className="flex shrink-0 items-center justify-center rounded-lg bg-accent px-3.5 py-2.5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover sm:px-5"
         >
-          Rechercher
+          {/* icône seule sur très petit écran, libellé dès sm */}
+          <SearchIcon className="size-5 sm:hidden" />
+          <span className="hidden sm:inline">Rechercher</span>
         </button>
       </form>
     </div>

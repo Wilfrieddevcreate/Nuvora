@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { TopBar } from "@/components/top-bar";
-import { SiteFooter } from "@/components/site-footer";
 
 // Sans-serif douce et moderne — casse normale, très lisible
 const sans = Plus_Jakarta_Sans({
@@ -37,10 +35,8 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${sans.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bg text-fg font-sans">
-        <TopBar />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+      <body className="min-h-full overflow-x-hidden bg-bg text-fg font-sans">
+        {children}
       </body>
     </html>
   );

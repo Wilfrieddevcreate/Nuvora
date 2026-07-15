@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoBadge } from "@/components/logo";
 
 const COLS = [
   {
@@ -33,9 +34,7 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
             <Link href="/" className="flex items-center gap-2 text-lg font-extrabold">
-              <span className="grid size-7 place-items-center rounded-lg bg-accent text-accent-fg text-sm">
-                N
-              </span>
+              <LogoBadge className="size-7" />
               Nuvora
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted">

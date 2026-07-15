@@ -40,10 +40,10 @@ export default function Home() {
         />
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.05fr_0.95fr]">
           {/* Colonne texte */}
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-[13px] font-medium text-fg-2">
-              <span className="size-1.5 rounded-full bg-accent" />
-              Moteur de découverte de produits digitaux
+          <div className="min-w-0">
+            <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-fg-2 sm:text-[13px]">
+              <span className="size-1.5 shrink-0 rounded-full bg-accent" />
+              <span className="truncate">Moteur de découverte de produits digitaux</span>
             </div>
 
             <h1 className="mt-6 text-[clamp(34px,5.2vw,54px)] font-extrabold leading-[1.06]">
@@ -62,47 +62,65 @@ export default function Home() {
               <SearchTabs />
             </div>
 
-            {/* preuve de confiance — stats mises en valeur */}
-            <dl className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5 sm:gap-x-10">
-              <div>
-                <dt className="text-2xl font-extrabold tracking-tight sm:text-[26px]">
-                  200+
-                </dt>
-                <dd className="mt-0.5 text-[13px] text-muted">
-                  produits référencés
-                </dd>
-              </div>
-              <div className="h-9 w-px bg-border" aria-hidden />
-              <div>
-                <dt className="text-2xl font-extrabold tracking-tight sm:text-[26px]">
-                  37
-                </dt>
-                <dd className="mt-0.5 text-[13px] text-muted">
-                  créateurs vérifiés
-                </dd>
-              </div>
-              <div className="h-9 w-px bg-border" aria-hidden />
-              <div>
-                <dt className="flex items-center gap-1.5 text-2xl font-extrabold tracking-tight sm:text-[26px]">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5 text-accent"
-                    aria-hidden="true"
-                  >
-                    <path d="M9 12l2 2 4-4" />
-                    <path d="M12 3a9 9 0 1 0 9 9" />
-                  </svg>
-                  Sécurisé
-                </dt>
-                <dd className="mt-0.5 text-[13px] text-muted">
-                  paiement chez le créateur
-                </dd>
-              </div>
+            {/* preuve de confiance — trois repères, même registre visuel */}
+            <dl className="mt-10 grid grid-cols-3 gap-3 sm:gap-4">
+              {[
+                {
+                  value: "200+",
+                  label: "produits référencés",
+                  icon: (
+                    <path d="M4 7h16M4 12h16M4 17h10" />
+                  ),
+                },
+                {
+                  value: "37",
+                  label: "créateurs vérifiés",
+                  icon: (
+                    <>
+                      <path d="M12 3l7 4v5c0 4-3 7-7 8-4-1-7-4-7-8V7z" />
+                      <path d="M9 12l2 2 4-4" />
+                    </>
+                  ),
+                },
+                {
+                  value: "Sécurisé",
+                  label: "achat chez le créateur",
+                  icon: (
+                    <>
+                      <rect x="5" y="11" width="14" height="9" rx="2" />
+                      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+                    </>
+                  ),
+                },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex flex-col items-start gap-2.5 rounded-2xl border border-border bg-surface/70 p-3.5 sm:p-4"
+                >
+                  <span className="grid size-9 place-items-center rounded-xl bg-accent-soft text-accent">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.75}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-5"
+                      aria-hidden="true"
+                    >
+                      {item.icon}
+                    </svg>
+                  </span>
+                  <div>
+                    <dt className="text-base font-extrabold leading-none tracking-tight sm:text-lg">
+                      {item.value}
+                    </dt>
+                    <dd className="mt-1 text-xs text-muted sm:text-[13px]">
+                      {item.label}
+                    </dd>
+                  </div>
+                </div>
+              ))}
             </dl>
           </div>
 
@@ -133,7 +151,7 @@ export default function Home() {
             <ArrowRight className="size-4" />
           </ButtonLink>
         </div>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {nouveautes.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
@@ -152,7 +170,7 @@ export default function Home() {
             <ArrowRight className="size-4" />
           </ButtonLink>
         </div>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {populaires.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
