@@ -1,8 +1,11 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogoBadge } from "@/components/logo";
+import { useAuth } from "@/contexts/auth";
+import { Modal, ModalActions } from "@/components/modal";
 
 type NavItem = {
   href: string;
@@ -164,7 +167,18 @@ export function AdminMobileSidebar({
 }
 
 function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
+  const { logout } = useAuth();
+  const router = useRouter();
+  const [confirmLogout, setConfirmLogout] = useState(false);
+
+  function handleLogout() {
+    logout();
+    if (onNavClick) onNavClick();
+    router.push("/");
+  }
+
   return (
+    <>
     <div className="flex h-full flex-col gap-1 overflow-y-auto px-3 py-4">
       {/* Logo */}
       <Link
@@ -210,10 +224,10 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             <p className="truncate text-xs text-muted">admin@nuvora.app</p>
           </div>
         </div>
-        <Link
-          href="/connexion"
-          onClick={onNavClick}
-          className="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+        <button
+          type="button"
+          onClick={() => setConfirmLogout(true)}
+          className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -221,8 +235,36 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
           Se déconnecter
-        </Link>
+        </button>
       </div>
     </div>
+
+    <Modal
+      open={confirmLogout}
+      onClose={() => setConfirmLogout(false)}
+      title="Se déconnecter ?"
+      size="sm"
+    >
+      <p className="text-[15px] text-fg-2">
+        Vous allez être déconnecté de l'espace d'administration Nuvora.
+      </p>
+      <ModalActions>
+        <button
+          type="button"
+          onClick={() => setConfirmLogout(false)}
+          className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex-1 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-opacity hover:opacity-85"
+        >
+          Se déconnecter
+        </button>
+      </ModalActions>
+    </Modal>
+    </>
   );
 }

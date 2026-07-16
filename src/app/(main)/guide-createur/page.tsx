@@ -4,13 +4,13 @@ import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "Guide créateur — Comment référencer vos produits sur Nuvora",
+  title: "Guide créateur : comment référencer vos produits sur Nuvora",
   description:
     "Tout ce que vous devez savoir pour référencer vos ebooks, formations et templates sur Nuvora et attirer des acheteurs.",
   alternates: { canonical: "https://nuvora.app/guide-createur" },
   openGraph: {
-    title: "Guide créateur Nuvora — Référencer vos produits digitaux",
-    description: "Tout ce qu'il faut savoir pour référencer et vendre vos produits digitaux sur Nuvora. Gratuit, sans commission.",
+    title: "Guide créateur Nuvora : référencer vos produits digitaux",
+    description: "Tout ce qu'il faut savoir pour référencer vos produits digitaux sur Nuvora et être découvert par des acheteurs qualifiés. Gratuit, sans commission.",
     url: "https://nuvora.app/guide-createur",
     type: "website",
   },
@@ -26,7 +26,7 @@ const PREREQUISITES = [
       </>
     ),
     title: "Un produit digital existant",
-    desc: "Votre produit doit déjà être hébergé et en vente sur une plateforme externe (Gumroad, Systeme.io, Podia, Chariow…). Nuvora n'héberge pas les fichiers.",
+    desc: "Votre produit doit déjà être hébergé sur une plateforme externe (Gumroad, Systeme.io, Podia, Chariow…). Nuvora n'héberge pas les fichiers.",
   },
   {
     icon: (
@@ -36,7 +36,7 @@ const PREREQUISITES = [
       </>
     ),
     title: "Un lien de vente public",
-    desc: "Vous devez avoir un lien URL permanent vers la page de vente ou de téléchargement de votre produit. Ce lien sera fourni lors du référencement.",
+    desc: "Vous devez avoir un lien URL permanent vers la page de vente ou de téléchargement de votre produit. Ce lien vous sera demandé lors du référencement.",
   },
   {
     icon: (
@@ -46,7 +46,7 @@ const PREREQUISITES = [
       </>
     ),
     title: "Comprendre le modèle Nuvora",
-    desc: "Nuvora est un annuaire de découverte — pas une boutique. Les acheteurs sont redirigés vers votre plateforme. Aucun paiement ne transite par Nuvora.",
+    desc: "Nuvora est un annuaire de découverte, pas une boutique. Les visiteurs sont redirigés vers votre plateforme. Aucun paiement ne transite par Nuvora.",
   },
 ];
 
@@ -59,7 +59,7 @@ const STEPS = [
   {
     n: "2",
     title: "Compléter votre profil public",
-    desc: "Depuis votre dashboard, renseignez votre biographie, vos spécialités et vos liens sociaux. Un profil complet renforce la confiance des acheteurs et améliore votre visibilité dans les résultats de l'assistant IA. Le badge « Créateur vérifié » s'affiche une fois le profil validé.",
+    desc: "Depuis votre dashboard, renseignez votre biographie, vos spécialités et vos liens sociaux. Un profil complet renforce la confiance des acheteurs et améliore votre visibilité dans les résultats de l'assistant IA. Le badge « Créateur vérifié » s'affiche une fois votre profil examiné par notre équipe (délai estimé : 24 à 72 h).",
   },
   {
     n: "3",
@@ -89,7 +89,7 @@ const BEST_PRACTICES = [
   },
   {
     title: "Une bonne image de couverture",
-    desc: "Utilisez une image au format 16:9 (1200×675 px recommandé), à fond clair ou sombre contrasté. Évitez les captures d'écran floues — une belle couverture est le premier facteur de clic dans le catalogue.",
+    desc: "Utilisez une image au format 16:9 (1200×675 px recommandé), à fond clair ou sombre contrasté. Évitez les captures d'écran floues. Une belle couverture est le premier facteur de clic dans le catalogue.",
   },
   {
     title: "Des tags pertinents",
@@ -100,7 +100,7 @@ const BEST_PRACTICES = [
 const FAQS = [
   {
     q: "Mon produit peut-il être en plusieurs langues ?",
-    a: "Oui. Nuvora est ouvert à tous les créateurs, quelle que soit la langue du produit. Vous pouvez indiquer la langue lors du référencement — un filtre dédié permet aux acheteurs de filtrer par langue dans le catalogue.",
+    a: "Oui. Nuvora est ouvert à tous les créateurs, quelle que soit la langue du produit. Vous pouvez indiquer la langue lors du référencement — un filtre dédié permet aux visiteurs de filtrer par langue dans le catalogue.",
   },
   {
     q: "Puis-je référencer plusieurs produits ?",
@@ -108,11 +108,11 @@ const FAQS = [
   },
   {
     q: "Que se passe-t-il si mon lien de vente change ?",
-    a: "Depuis votre dashboard, vous pouvez modifier le lien à tout moment. La modification est effective immédiatement — aucune nouvelle validation n'est nécessaire pour un changement de lien uniquement.",
+    a: "Depuis votre dashboard, vous pouvez modifier le lien à tout moment. La modification est effective immédiatement. Aucune nouvelle validation n'est nécessaire pour un simple changement de lien.",
   },
   {
     q: "Comment être mis en avant dans le catalogue ?",
-    a: "Les fiches les plus complètes (image, description longue, tags pertinents, profil vérifié) sont favorisées algorithmiquement. Les produits très bien notés par les visiteurs remontent naturellement dans les résultats.",
+    a: "Les fiches les plus complètes (image, description longue, tags pertinents, profil vérifié) sont favorisées algorithmiquement. Chaque critère de complétion améliore directement votre position dans le catalogue.",
   },
 ];
 
@@ -134,11 +134,11 @@ export default function GuideCreateurPage() {
           <h1 className="mt-6 text-[clamp(32px,5vw,56px)] font-extrabold leading-[1.06]">
             Le guide complet
             <br />
-            <span className="text-accent">pour vendre sur Nuvora</span>
+            <span className="text-accent">pour être découvert sur Nuvora</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-xl text-lg text-fg-2">
-            Tout ce que vous devez savoir pour référencer vos produits, attirer des acheteurs qualifiés et optimiser votre visibilité sur la marketplace.
+            Tout ce que vous devez savoir pour référencer vos produits, toucher des acheteurs qualifiés et maximiser votre visibilité dans l'annuaire.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -236,7 +236,7 @@ export default function GuideCreateurPage() {
             Bonnes pratiques
           </h2>
           <p className="mt-2 text-fg-2">
-            Les créateurs qui appliquent ces conseils obtiennent en moyenne 3× plus de clics.
+            Les créateurs qui appliquent ces conseils multiplient leur visibilité dans le catalogue.
           </p>
         </div>
 

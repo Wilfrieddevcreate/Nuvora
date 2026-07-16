@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useFavorites } from "@/contexts/favorites";
+import { useAuth } from "@/contexts/auth";
 import { getProductBySlug, PRODUCTS } from "@/data/products";
 import { ProductCard } from "@/components/product-card";
+import { Modal, ModalActions } from "@/components/modal";
 
 const TABS = [
   { id: "favoris", label: "Mes favoris" },
@@ -34,9 +37,13 @@ function EmptyState({ icon, title, desc, cta }: { icon: React.ReactNode; title: 
 export default function CompteClient() {
   const [tab, setTab] = useState<Tab>("favoris");
   const { favorites } = useFavorites();
+  const { logout } = useAuth();
+  const router = useRouter();
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const favProducts = favorites.map((slug) => getProductBySlug(slug)).filter(Boolean);
 
   return (
+    <>
     <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
       {/* En-tête profil */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
@@ -60,7 +67,7 @@ export default function CompteClient() {
             aria-controls={`panel-${t.id}`}
             id={`tab-${t.id}`}
             onClick={() => setTab(t.id)}
-            className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+            className={`shrink-0 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
               tab === t.id
                 ? "bg-accent text-accent-fg shadow-soft"
                 : "text-muted hover:text-fg"
@@ -149,6 +156,23 @@ export default function CompteClient() {
             </div>
 
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft space-y-3">
+              <h2 className="font-bold text-fg">Déconnexion</h2>
+              <p className="text-sm text-muted">En vous déconnectant, vous serez redirigé vers la page d'accueil.</p>
+              <button
+                type="button"
+                onClick={() => setConfirmLogout(true)}
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:border-danger/40 hover:bg-danger/5 hover:text-danger"
+              >
+                <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Se déconnecter
+              </button>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft space-y-3">
               <h2 className="font-bold text-fg">Zone de danger</h2>
               <p className="text-sm text-muted">La suppression de votre compte est irréversible.</p>
               <button type="button" className="rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/5">
@@ -159,5 +183,33 @@ export default function CompteClient() {
         </div>
       )}
     </div>
+
+    <Modal
+      open={confirmLogout}
+      onClose={() => setConfirmLogout(false)}
+      title="Se déconnecter ?"
+      size="sm"
+    >
+      <p className="text-[15px] text-fg-2">
+        Vous allez être déconnecté de votre compte Nuvora. Vos favoris resteront sauvegardés localement.
+      </p>
+      <ModalActions>
+        <button
+          type="button"
+          onClick={() => setConfirmLogout(false)}
+          className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          onClick={() => { logout(); router.push("/"); }}
+          className="flex-1 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-opacity hover:opacity-85"
+        >
+          Se déconnecter
+        </button>
+      </ModalActions>
+    </Modal>
+    </>
   );
 }

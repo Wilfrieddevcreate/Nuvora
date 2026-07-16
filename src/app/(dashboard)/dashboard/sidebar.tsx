@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogoBadge } from "@/components/logo";
 import { useAuth } from "@/contexts/auth";
+import { Modal, ModalActions } from "@/components/modal";
 
 type NavItem = {
   href: string;
@@ -156,14 +158,16 @@ export function MobileSidebar({
 function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const { logout } = useAuth();
   const router = useRouter();
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   function handleLogout() {
     logout();
     if (onNavClick) onNavClick();
-    router.push("/connexion");
+    router.push("/");
   }
 
   return (
+    <>
     <div className="flex h-full flex-col gap-1 overflow-y-auto px-3 py-4">
       {/* Logo */}
       <Link
@@ -211,7 +215,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
         </div>
         <button
           type="button"
-          onClick={handleLogout}
+          onClick={() => setConfirmLogout(true)}
           className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -223,5 +227,33 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
         </button>
       </div>
     </div>
+
+    <Modal
+      open={confirmLogout}
+      onClose={() => setConfirmLogout(false)}
+      title="Se déconnecter ?"
+      size="sm"
+    >
+      <p className="text-[15px] text-fg-2">
+        Vous allez être déconnecté de votre espace créateur.
+      </p>
+      <ModalActions>
+        <button
+          type="button"
+          onClick={() => setConfirmLogout(false)}
+          className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex-1 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-opacity hover:opacity-85"
+        >
+          Se déconnecter
+        </button>
+      </ModalActions>
+    </Modal>
+    </>
   );
 }

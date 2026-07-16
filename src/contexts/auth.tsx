@@ -7,6 +7,7 @@ export type AuthUser = {
   email: string;
   initial: string;
   isCreator: boolean;
+  slug: string;
 };
 
 interface AuthCtx {
@@ -27,6 +28,7 @@ const MOCK_USER: AuthUser = {
   email: "wilfried@example.com",
   initial: "W",
   isCreator: false,
+  slug: "wilfried-h",
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

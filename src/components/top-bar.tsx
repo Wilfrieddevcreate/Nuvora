@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/auth";
 const NAV = [
   { href: "/catalogue", label: "Explorer" },
   { href: "/assistant", label: "Assistant IA" },
-  { href: "/createur", label: "Vendre" },
+  { href: "/createur", label: "Référencer" },
 ];
 
 const RESOURCES = [
@@ -166,7 +166,7 @@ export function TopBar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-5 sm:px-8">
         <Link
           href="/"
-          aria-label="Nuvora — accueil"
+          aria-label="Nuvora, page d'accueil"
           className="flex items-center gap-2 text-lg font-extrabold"
         >
           <LogoBadge className="size-7" />
@@ -292,6 +292,8 @@ export function TopBar() {
                 <button
                   type="button"
                   onClick={() => setResourcesOpen((o) => !o)}
+                  aria-expanded={resourcesOpen}
+                  aria-controls="mobile-resources-submenu"
                   className="flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
                 >
                   Ressources
@@ -309,7 +311,7 @@ export function TopBar() {
                   </svg>
                 </button>
                 {resourcesOpen && (
-                  <ul className="mb-1 ml-3 space-y-0.5 border-l border-border pl-3">
+                  <ul id="mobile-resources-submenu" className="mb-1 ml-3 space-y-0.5 border-l border-border pl-3">
                     {RESOURCES.map((r) => (
                       <li key={r.href}>
                         <Link

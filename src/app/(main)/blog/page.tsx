@@ -1,88 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
+import { POSTS } from "@/data/blog";
 
 export const metadata: Metadata = {
-  title: "Blog — Ressources pour créateurs et acheteurs",
+  title: "Blog : ressources pour créateurs et acheteurs",
   description:
-    "Conseils, guides et ressources pour créateurs de produits digitaux et acheteurs. Formations, ebooks, templates — tout ce que vous devez savoir.",
+    "Conseils, guides et ressources pour créateurs de produits digitaux et acheteurs. Formations, ebooks, templates : tout ce que vous devez savoir.",
   alternates: { canonical: "https://nuvora.app/blog" },
   openGraph: {
-    title: "Blog Nuvora — Conseils pour créateurs et acheteurs",
+    title: "Blog Nuvora : conseils pour créateurs et acheteurs",
     description: "Guides, comparatifs et ressources pour créateurs de produits digitaux et acheteurs. Formations, ebooks, templates.",
     url: "https://nuvora.app/blog",
     type: "website",
   },
 };
-
-const POSTS = [
-  {
-    slug: "comment-vendre-ebook-en-ligne",
-    title: "Comment vendre votre ebook en ligne en 2025",
-    excerpt:
-      "Guide complet pour lancer et monétiser votre ebook : choix de la plateforme, pricing, promotion.",
-    category: "Guide créateur",
-    readTime: "8 min",
-    date: "12 juillet 2025",
-    author: "Léa M.",
-    featured: true,
-  },
-  {
-    slug: "meilleures-formations-ia-2025",
-    title: "Les meilleures formations IA pour débutants en 2025",
-    excerpt:
-      "Notre sélection des formations IA les plus accessibles et complètes pour apprendre l'intelligence artificielle.",
-    category: "Sélection",
-    readTime: "5 min",
-    date: "8 juillet 2025",
-    author: "Karim B.",
-    featured: true,
-  },
-  {
-    slug: "notion-templates-productivite",
-    title: "5 templates Notion pour booster votre productivité",
-    excerpt:
-      "Découvrez les templates Notion les plus utilisés par les freelances et créateurs pour s'organiser efficacement.",
-    category: "Ressources",
-    readTime: "4 min",
-    date: "3 juillet 2025",
-    author: "Léa M.",
-    featured: false,
-  },
-  {
-    slug: "tarifer-formation-en-ligne",
-    title: "Comment tarifer votre formation en ligne",
-    excerpt:
-      "Les stratégies de pricing pour vos formations : positionnement, test de prix, augmentation progressive.",
-    category: "Guide créateur",
-    readTime: "6 min",
-    date: "28 juin 2025",
-    author: "Wilfried H.",
-    featured: false,
-  },
-  {
-    slug: "gumroad-vs-systeme-io",
-    title: "Gumroad vs Systeme.io : lequel choisir en 2025 ?",
-    excerpt:
-      "Comparatif détaillé des deux plateformes les plus populaires pour vendre des produits digitaux.",
-    category: "Comparatif",
-    readTime: "7 min",
-    date: "20 juin 2025",
-    author: "Karim B.",
-    featured: false,
-  },
-  {
-    slug: "seo-produits-digitaux",
-    title: "SEO pour produits digitaux : se faire trouver sur Google",
-    excerpt:
-      "Stratégies SEO adaptées aux créateurs de produits digitaux pour générer du trafic organique.",
-    category: "Marketing",
-    readTime: "9 min",
-    date: "15 juin 2025",
-    author: "Wilfried H.",
-    featured: false,
-  },
-];
 
 const CATEGORY_STYLES: Record<string, string> = {
   "Guide créateur":
@@ -150,7 +82,7 @@ export default function BlogPage() {
 
           <p className="mx-auto mt-4 max-w-xl text-lg text-fg-2">
             Conseils, guides et ressources pour créateurs de produits digitaux et
-            acheteurs — ebooks, formations, templates et plus.
+            acheteurs : ebooks, formations, templates et plus.
           </p>
         </div>
       </section>
@@ -225,12 +157,12 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* ─── NOTE BAS DE PAGE ─── */}
+        {/* ─── CTA BAS DE PAGE ─── */}
         <div className="rounded-2xl border border-border bg-surface-2/60 px-6 py-5 text-center text-sm text-fg-2">
-          Les articles seront cliquables dès le lancement.{" "}
-          <span className="font-medium text-fg">
-            Abonnez-vous à la newsletter pour être notifié.
-          </span>
+          Vous créez des produits digitaux ?{" "}
+          <Link href="/createur" className="font-medium text-accent hover:underline">
+            Référencez-les gratuitement sur Nuvora →
+          </Link>
         </div>
 
       </div>

@@ -22,14 +22,14 @@ export const metadata: Metadata = {
     "créateurs indépendants",
   ],
   openGraph: {
-    title: "Nuvora — Trouvez les meilleurs produits digitaux",
+    title: "Nuvora : trouvez les meilleurs produits digitaux",
     description:
       "Nuvora réunit ebooks, formations, templates et logiciels en un seul endroit. Explorez, comparez, puis achetez directement chez le créateur.",
     url: "https://nuvora.app",
     type: "website",
   },
   twitter: {
-    title: "Nuvora — Trouvez les meilleurs produits digitaux",
+    title: "Nuvora : trouvez les meilleurs produits digitaux",
     description:
       "Nuvora réunit ebooks, formations, templates et logiciels en un seul endroit.",
   },
@@ -134,7 +134,7 @@ export default function Home() {
                   ),
                 },
                 {
-                  value: "Sécurisé",
+                  value: "Direct",
                   label: "achat chez le créateur",
                   icon: (
                     <>

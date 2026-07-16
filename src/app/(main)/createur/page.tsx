@@ -5,27 +5,27 @@ import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { NovaMark } from "@/components/logo";
 
 export const metadata: Metadata = {
-  title: "Vendre sur Nuvora — Donnez de la visibilité à vos produits digitaux",
+  title: "Référencez vos produits digitaux gratuitement",
   description:
-    "Référencez vos ebooks, formations, templates et logiciels sur Nuvora gratuitement. Zéro commission. Touchez une audience qui cherche exactement ce que vous créez.",
+    "Référencez vos ebooks, formations et logiciels gratuitement. Zéro commission. Touchez une audience qui cherche exactement ce que vous créez.",
   keywords: [
-    "vendre produits digitaux",
+    "référencer produits digitaux",
     "référencer ebook",
     "créateur numérique",
-    "marketplace créateurs",
-    "vendre formation en ligne",
+    "annuaire créateurs indépendants",
+    "référencer formation en ligne",
     "visibilité produit digital",
     "Gumroad Systeme.io Podia",
   ],
   openGraph: {
-    title: "Vendre sur Nuvora — Donnez de la visibilité à vos produits digitaux",
+    title: "Référencez vos produits digitaux gratuitement | Nuvora",
     description:
-      "Référencez vos ebooks, formations et templates gratuitement. Zéro commission, votre boutique reste chez vous.",
+      "Référencez vos ebooks, formations et templates gratuitement. Zéro commission, vos ventes restent sur votre plateforme.",
     url: "https://nuvora.app/createur",
     type: "website",
   },
   twitter: {
-    title: "Vendre sur Nuvora — 0 % de commission",
+    title: "Référencez gratuitement, 0 % de commission Nuvora",
     description:
       "Référencez vos produits digitaux gratuitement. Touchez une audience qualifiée sans payer de commission.",
   },
@@ -80,7 +80,7 @@ const BENEFITS = [
       </>
     ),
     title: "Zéro commission Nuvora",
-    desc: "On ne touche pas à vos revenus. L'acheteur est redirigé vers votre plateforme — 100 % de la vente vous revient.",
+    desc: "On ne touche pas à vos revenus. L'acheteur est redirigé vers votre plateforme. 100 % de la vente vous revient.",
   },
   {
     icon: (
@@ -100,7 +100,7 @@ const BENEFITS = [
       </>
     ),
     title: "Assistant IA qui recommande",
-    desc: "Notre assistant analyse les besoins des visiteurs et recommande vos produits au bon moment — comme un vendeur qui ne dort jamais.",
+    desc: "Notre assistant analyse les besoins des visiteurs et recommande vos produits au bon moment, disponible en permanence.",
   },
   {
     icon: (
@@ -110,7 +110,7 @@ const BENEFITS = [
       </>
     ),
     title: "Badge créateur vérifié",
-    desc: "Votre profil affiche un badge de confiance visible sur toutes vos fiches produit — un signal fort pour les acheteurs.",
+    desc: "Votre profil affiche un badge de confiance visible sur toutes vos fiches produit. Un signal fort pour les visiteurs.",
   },
 ];
 
@@ -118,7 +118,7 @@ const HOW_IT_WORKS = [
   {
     n: "1",
     title: "Créez votre compte",
-    desc: "Inscrivez-vous en moins de 2 minutes. Renseignez votre profil créateur et ajoutez vos liens de vente existants.",
+    desc: "Inscrivez-vous en moins de 2 minutes. Renseignez votre profil créateur et ajoutez les liens vers vos pages produit (Gumroad, Systeme.io, etc.).",
   },
   {
     n: "2",
@@ -139,11 +139,11 @@ const FAQS = [
   },
   {
     q: "Mes ventes se passent où ?",
-    a: "Sur votre propre plateforme (Gumroad, Systeme.io, etc.). Nuvora redirige l'acheteur vers votre lien — vous gardez 100 % du contrôle.",
+    a: "Sur votre propre plateforme (Gumroad, Systeme.io, etc.). Nuvora redirige le visiteur vers votre lien. Vous gardez 100 % du contrôle.",
   },
   {
     q: "Quel type de produits peut-on référencer ?",
-    a: "Ebooks, formations vidéo, templates (Notion, Figma, Excel…), logiciels, presets, plugins, guides PDF — tout produit 100 % digital.",
+    a: "Ebooks, formations vidéo, templates (Notion, Figma, Excel…), logiciels, presets, plugins, guides PDF : tout produit 100 % digital.",
   },
   {
     q: "Combien de temps pour être référencé ?",
@@ -174,7 +174,7 @@ export default function CreateurPage() {
 
           <p className="mx-auto mt-5 max-w-xl text-lg text-fg-2">
             Nuvora référence vos ebooks, formations et templates gratuitement.
-            Vous gardez 100&nbsp;% de vos revenus — on s&apos;occupe de la visibilité.
+            Vous gardez 100&nbsp;% de vos revenus. On s&apos;occupe de la visibilité.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -197,7 +197,7 @@ export default function CreateurPage() {
             { value: "200+", label: "produits référencés" },
             { value: "37", label: "créateurs actifs" },
             { value: "0 %", label: "de commission Nuvora" },
-            { value: "24 h", label: "délai de validation" },
+            { value: "72 h", label: "délai max de validation" },
           ].map((s) => (
             <div key={s.label} className="py-8 text-center sm:py-10">
               <p className="text-2xl font-extrabold text-accent sm:text-3xl">

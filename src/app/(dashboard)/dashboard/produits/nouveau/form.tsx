@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, PLATFORMS } from "@/data/products";
+import { useCreatorProducts } from "@/contexts/creator-products";
+import { useToast } from "@/contexts/toast";
 
 const SUB_CATEGORIES: Record<string, string[]> = {
   Formation: ["IA", "Dev", "Design", "Marketing", "Business", "Finance", "Autre"],
@@ -41,15 +43,15 @@ const TIPS: Record<number, { title: string; items: string[] }> = {
     title: "Conseils pour bien démarrer",
     items: [
       "Un titre clair et précis génère 2× plus de clics.",
-      "Décrivez le résultat concret que l'acheteur va obtenir.",
-      "Choisissez des tags que les acheteurs utiliseraient pour vous trouver.",
+      "Décrivez le résultat concret que le visiteur va obtenir.",
+      "Choisissez des tags que vos futurs clients utiliseraient pour vous trouver.",
     ],
   },
   2: {
     title: "Comment fixer votre prix ?",
     items: [
-      "Les formations se vendent bien entre 29 € et 97 €.",
-      "Les ebooks entre 9 € et 29 €.",
+      "Les formations sont généralement proposées entre 29 € et 97 €.",
+      "Les ebooks, entre 9 € et 29 €.",
       "Un prix gratuit augmente la visibilité mais réduit la perception de valeur.",
     ],
   },
@@ -57,7 +59,7 @@ const TIPS: Record<number, { title: string; items: string[] }> = {
     title: "Votre lien d'achat",
     items: [
       "Copiez l'URL exacte de la page produit sur votre plateforme.",
-      "Testez le lien avant de soumettre — les acheteurs y seront redirigés directement.",
+      "Testez le lien avant de soumettre : les visiteurs y seront redirigés directement.",
       "Nuvora ne prend aucune commission sur vos ventes.",
     ],
   },
@@ -131,6 +133,8 @@ function Stepper({ current }: { current: number }) {
 
 export function NewProductForm() {
   const router = useRouter();
+  const { addProduct } = useCreatorProducts();
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
 
@@ -195,7 +199,11 @@ export function NewProductForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (validateStep(3)) setSubmitted(true);
+    if (validateStep(3)) {
+      addProduct({ title, description, category, subCategory, tags, price: isFree ? 0 : parseFloat(price) || 0, isFree, language, country, platform, purchaseUrl });
+      toast("Produit soumis, en attente de validation", "success");
+      setSubmitted(true);
+    }
   }
 
   function resetForm() {
@@ -261,7 +269,7 @@ export function NewProductForm() {
         <div className="space-y-5 rounded-2xl border border-border bg-surface p-6 shadow-soft">
           <div className="border-b border-border pb-4">
             <h2 className="font-bold text-fg">Informations principales</h2>
-            <p className="mt-0.5 text-xs text-muted">Ce que verront les acheteurs en premier.</p>
+            <p className="mt-0.5 text-xs text-muted">Ce que verront les visiteurs en premier.</p>
           </div>
 
           <div>
@@ -278,7 +286,7 @@ export function NewProductForm() {
           </div>
 
           <div>
-            <Label label="Description" required hint="Pour qui c'est fait et ce que l'acheteur va obtenir." />
+            <Label label="Description" required hint="Pour qui c'est conçu et ce que l'utilisateur en retirera." />
             <textarea
               value={description}
               onChange={(e) => { setDescription(e.target.value); clearErr("description"); }}
@@ -319,7 +327,7 @@ export function NewProductForm() {
           </div>
 
           <div>
-            <Label label="Tags" hint="Jusqu'à 6 tags — Entrée ou virgule pour ajouter." />
+            <Label label="Tags" hint="Jusqu'à 6 tags. Appuyez sur Entrée ou virgule pour en ajouter." />
             <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-border bg-bg px-3 py-2 transition-colors focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft">
               {tags.map((tag) => (
                 <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
@@ -350,7 +358,7 @@ export function NewProductForm() {
         <div className="space-y-5 rounded-2xl border border-border bg-surface p-6 shadow-soft">
           <div className="border-b border-border pb-4">
             <h2 className="font-bold text-fg">Prix & langue</h2>
-            <p className="mt-0.5 text-xs text-muted">Ces informations aident les acheteurs à filtrer.</p>
+            <p className="mt-0.5 text-xs text-muted">Ces informations aident les visiteurs à filtrer.</p>
           </div>
 
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-bg px-4 py-3 select-none hover:bg-surface-2 transition-colors">
@@ -405,11 +413,11 @@ export function NewProductForm() {
         <div className="space-y-5 rounded-2xl border border-border bg-surface p-6 shadow-soft">
           <div className="border-b border-border pb-4">
             <h2 className="font-bold text-fg">Plateforme de vente</h2>
-            <p className="mt-0.5 text-xs text-muted">Nuvora redirigera les acheteurs vers votre lien.</p>
+            <p className="mt-0.5 text-xs text-muted">Nuvora redirigera les visiteurs intéressés vers votre lien d'achat.</p>
           </div>
 
           <div>
-            <Label label="Lien d'achat" required hint="Collez l'URL — la plateforme sera détectée automatiquement." />
+            <Label label="Lien d'achat" required hint="Collez l'URL : la plateforme sera détectée automatiquement." />
             <input
               type="url"
               value={purchaseUrl}
@@ -450,7 +458,7 @@ export function NewProductForm() {
           </div>
 
           <p className="text-xs text-muted">
-            Nuvora ne traite aucun paiement — l&apos;achat se fait entièrement sur votre plateforme.
+            Nuvora ne traite aucun paiement. L&apos;achat se fait entièrement sur votre plateforme.
           </p>
         </div>
       )}

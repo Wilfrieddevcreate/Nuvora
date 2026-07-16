@@ -237,10 +237,11 @@ export default function AdminParametresPage() {
           {/* Select : délai de validation */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold text-fg">Délai de validation</p>
+              <label htmlFor="validation-delay" className="text-sm font-semibold text-fg">Délai de validation</label>
               <p className="text-xs text-muted mt-0.5">Délai maximum attendu pour traiter une soumission.</p>
             </div>
             <select
+              id="validation-delay"
               value={validationDelay}
               onChange={(e) => setValidationDelay(e.target.value)}
               className="rounded-xl border border-border bg-surface-2 px-3 py-2 text-sm font-medium text-fg outline-none transition-colors focus:border-rose-400 focus:ring-4 focus:ring-rose-500/10"
@@ -272,7 +273,9 @@ export default function AdminParametresPage() {
 
           {/* Ajouter une plateforme */}
           <div className="mt-4 flex gap-2 pt-1">
+            <label htmlFor="new-platform" className="sr-only">Nom de la nouvelle plateforme</label>
             <input
+              id="new-platform"
               type="text"
               value={newPlatform}
               onChange={(e) => setNewPlatform(e.target.value)}

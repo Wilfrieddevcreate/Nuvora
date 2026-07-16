@@ -57,7 +57,7 @@ const TIPS: Record<number, { title: string; items: string[] }> = {
     title: "Votre lien d'achat",
     items: [
       "Copiez l'URL exacte de la page produit sur votre plateforme.",
-      "Testez le lien avant de soumettre — les acheteurs y seront redirigés directement.",
+      "Testez le lien avant de soumettre : les visiteurs y seront redirigés directement.",
       "Nuvora ne prend aucune commission sur vos ventes.",
     ],
   },
@@ -312,7 +312,7 @@ export function EditProductForm({ product }: { product: Product }) {
               </div>
 
               <div>
-                <Label label="Tags" hint="Jusqu'à 6 tags — Entrée ou virgule pour ajouter." />
+                <Label label="Tags" hint="Jusqu'à 6 tags. Appuyez sur Entrée ou virgule pour en ajouter." />
                 <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-border bg-bg px-3 py-2 transition-colors focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft">
                   {tags.map((tag) => (
                     <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
@@ -402,7 +402,7 @@ export function EditProductForm({ product }: { product: Product }) {
               </div>
 
               <div>
-                <Label label="Lien d'achat" required hint="Collez l'URL — la plateforme sera détectée automatiquement." />
+                <Label label="Lien d'achat" required hint="Collez l'URL : la plateforme sera détectée automatiquement." />
                 <input
                   type="url"
                   value={purchaseUrl}
@@ -443,7 +443,7 @@ export function EditProductForm({ product }: { product: Product }) {
               </div>
 
               <p className="text-xs text-muted">
-                Nuvora ne traite aucun paiement — l&apos;achat se fait entièrement sur votre plateforme.
+                Nuvora ne traite aucun paiement. L&apos;achat se fait entièrement sur votre plateforme.
               </p>
             </div>
           )}

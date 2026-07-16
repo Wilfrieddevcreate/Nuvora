@@ -23,7 +23,7 @@ export async function generateMetadata({
   const products = getProductsByCreator(slug);
   const url = `https://nuvora.app/createur/${creator.slug}`;
   return {
-    title: `${creator.name} — Créateur sur Nuvora`,
+    title: `${creator.name}, créateur sur Nuvora`,
     description: `${creator.tagline}. Découvrez les ${products.length} produit${products.length > 1 ? "s" : ""} digital${products.length > 1 ? "s" : ""} de ${creator.name} référencé${products.length > 1 ? "s" : ""} sur Nuvora.`,
     keywords: [
       creator.name,
@@ -34,14 +34,14 @@ export async function generateMetadata({
     ],
     authors: [{ name: creator.name }],
     openGraph: {
-      title: `${creator.name} — Créateur sur Nuvora`,
+      title: `${creator.name}, créateur sur Nuvora`,
       description: creator.bio,
       url,
       type: "profile",
     },
     twitter: {
       card: "summary",
-      title: `${creator.name} — Nuvora`,
+      title: `${creator.name} sur Nuvora`,
       description: creator.tagline,
     },
     alternates: { canonical: url },
@@ -65,9 +65,9 @@ export default async function CreatorProfilePage({
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
       {/* Fil d'ariane */}
       <nav aria-label="Fil d'ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-muted">
-        <Link href="/catalogue" className="hover:text-fg">
-          Catalogue
-        </Link>
+        <Link href="/" className="hover:text-fg">Accueil</Link>
+        <span>/</span>
+        <Link href="/catalogue" className="hover:text-fg">Catalogue</Link>
         <span>/</span>
         <span aria-current="page" className="text-fg">{creator.name}</span>
       </nav>
@@ -144,7 +144,7 @@ export default async function CreatorProfilePage({
               <p className="text-xl font-extrabold">
                 {totalClicks.toLocaleString("fr-FR")}
               </p>
-              <p className="text-sm text-muted">clics vers la boutique</p>
+              <p className="text-sm text-muted">clics sortants</p>
             </div>
             <div>
               <p className="text-xl font-extrabold">{creator.platform}</p>
@@ -166,10 +166,10 @@ export default async function CreatorProfilePage({
             </p>
           </div>
           <Link
-            href={`/catalogue?q=${encodeURIComponent(creator.name)}`}
+            href="/catalogue"
             className="text-sm font-medium text-accent hover:text-accent-hover"
           >
-            Voir dans le catalogue →
+            Voir tout le catalogue →
           </Link>
         </div>
 

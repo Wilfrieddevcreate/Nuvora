@@ -4,12 +4,12 @@ import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "À propos de Nuvora",
+  title: "À propos",
   description:
-    "Nuvora est une vitrine de découverte de produits digitaux — ebooks, formations, templates et logiciels créés par des indépendants.",
+    "Nuvora est une vitrine de découverte de produits digitaux : ebooks, formations, templates et logiciels créés par des indépendants.",
   alternates: { canonical: "https://nuvora.app/a-propos" },
   openGraph: {
-    title: "À propos de Nuvora — Notre mission",
+    title: "À propos de Nuvora | Notre mission",
     description: "Nuvora est une vitrine de découverte de produits digitaux indépendants. Aucune commission, validation manuelle, avis vérifiés.",
     url: "https://nuvora.app/a-propos",
     type: "website",
@@ -25,7 +25,7 @@ const VALUES = [
       </>
     ),
     title: "Transparence",
-    desc: "0 % de commission, aucun frais caché. Le créateur garde 100 % de ses revenus — nous ne touchons pas à votre argent.",
+    desc: "0 % de commission, aucun frais caché. Le créateur garde 100 % de ses revenus. Nous ne touchons pas à votre argent.",
   },
   {
     icon: (
@@ -78,7 +78,7 @@ export default function AProposPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg text-fg-2">
-            Nuvora est une vitrine de découverte — pas une marketplace avec commissions.
+            Nuvora est une vitrine de découverte, pas une marketplace avec commissions.
             Chaque produit est créé par un indépendant, vérifié par notre équipe, et
             accessible directement sur la plateforme du créateur.
           </p>
@@ -92,8 +92,8 @@ export default function AProposPage() {
             <h2 className="text-2xl font-extrabold sm:text-3xl">Notre histoire</h2>
             <p className="mt-5 text-[15px] leading-relaxed text-fg-2">
               Nuvora est née en 2024 d&apos;un constat simple : les créateurs indépendants
-              produisent des ressources de grande qualité — ebooks approfondis, formations
-              soignées, templates efficaces — mais restent invisibles face aux grandes
+              produisent des ressources de grande qualité (ebooks approfondis, formations
+              soignées, templates efficaces), mais restent invisibles face aux grandes
               plateformes qui captent l&apos;essentiel du trafic et imposent des commissions
               élevées.
             </p>
@@ -101,13 +101,13 @@ export default function AProposPage() {
               Nous avons voulu créer l&apos;espace qui manquait : une vitrine dédiée aux
               produits digitaux indépendants, où chaque fiche est soignée, vérifiée et mise
               en valeur. L&apos;acheteur est redirigé directement vers la plateforme du
-              créateur — pas de friction, pas de commission cachée.
+              créateur. Pas de friction, pas de commission cachée.
             </p>
             <p className="mt-4 text-[15px] leading-relaxed text-fg-2">
               Notre objectif est simple : permettre à n&apos;importe quel créateur sérieux,
               qu&apos;il ait 200 abonnés ou 20&nbsp;000, d&apos;être découvert par les bonnes
-              personnes au bon moment. Pas besoin d&apos;un gros budget marketing — juste un
-              bon produit et une fiche bien faite.
+              personnes au bon moment. Pas besoin d&apos;un gros budget marketing. Il suffit d&apos;un
+              bon produit et d&apos;une fiche bien faite.
             </p>
           </div>
 
@@ -126,7 +126,7 @@ export default function AProposPage() {
                 <li key={item.label} className="flex items-start gap-3">
                   <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-accent" />
                   <span className="text-[15px] text-fg-2">
-                    <span className="font-semibold text-fg">{item.label} — </span>
+                    <span className="font-semibold text-fg">{item.label} : </span>
                     {item.value}
                   </span>
                 </li>
@@ -190,7 +190,7 @@ export default function AProposPage() {
                     </svg>
                   ),
                   title: "Chaque produit est vérifié à la main",
-                  desc: "Notre équipe passe en revue chaque fiche avant publication — contenu, prix, plateforme. Vous ne trouverez ici aucun produit bâclé ou trompeur.",
+                  desc: "Notre équipe passe en revue chaque fiche avant publication : contenu, prix, plateforme. Vous ne trouverez ici aucun produit bâclé ou trompeur.",
                 },
                 {
                   icon: (
@@ -198,8 +198,8 @@ export default function AProposPage() {
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
                   ),
-                  title: "Des avis d'acheteurs vérifiés",
-                  desc: "Les notes et commentaires sur Nuvora proviennent uniquement de personnes ayant réellement acheté le produit. Aucun faux avis, aucun témoignage payé.",
+                  title: "Des avis modérés par notre équipe",
+                  desc: "Les avis affichés sur Nuvora sont vérifiés manuellement. Nous supprimons tout témoignage anonyme ou manifestement frauduleux.",
                 },
                 {
                   icon: (
@@ -209,7 +209,7 @@ export default function AProposPage() {
                     </svg>
                   ),
                   title: "Prix clairs, aucun frais surprise",
-                  desc: "Le prix affiché est le prix réel. Vous êtes redirigé directement vers la plateforme du créateur — Nuvora ne touche pas à votre paiement.",
+                  desc: "Le prix affiché est le prix réel. Vous êtes redirigé directement vers la plateforme du créateur. Nuvora ne touche pas à votre paiement.",
                 },
                 {
                   icon: (
@@ -240,15 +240,15 @@ export default function AProposPage() {
               Pour les acheteurs
             </span>
             <h2 className="mt-3 text-2xl font-extrabold sm:text-3xl">
-              Achetez en confiance,
+              Choisissez en confiance,
               <br />
               <span className="text-accent">pas au hasard.</span>
             </h2>
             <p className="mt-5 text-[15px] leading-relaxed text-fg-2">
-              Trouver un bon produit digital ne devrait pas ressembler à un jeu de loterie. Trop souvent, on achète une formation ou un ebook sur la foi d'une landing page soignée — pour se retrouver déçu une fois dedans.
+              Trouver un bon produit digital ne devrait pas ressembler à un jeu de loterie. Trop souvent, on se tourne vers une formation ou un ebook sur la foi d'une landing page soignée, pour se retrouver déçu une fois dedans.
             </p>
             <p className="mt-4 text-[15px] leading-relaxed text-fg-2">
-              Nuvora existe pour changer ça. Chaque produit que vous voyez sur la plateforme a été examiné par un humain, noté par de vrais acheteurs, et décrit honnêtement. Vous n'achetez pas dans le noir.
+              Nuvora existe pour changer ça. Chaque produit que vous voyez sur la plateforme a été examiné par un humain, décrit honnêtement et sourcé chez le créateur. Vous ne choisissez pas à l'aveugle.
             </p>
             <Link
               href="/catalogue"
@@ -318,10 +318,10 @@ export default function AProposPage() {
                 Vous achetez ?
               </span>
               <h3 className="text-xl font-extrabold text-fg">
-                Des milliers de produits vérifiés vous attendent.
+                Des produits vérifiés, sélectionnés pour vous.
               </h3>
               <p className="text-[15px] text-fg-2">
-                Formations, ebooks, templates — filtrés par notre équipe, notés par de vrais acheteurs. Aucune mauvaise surprise.
+                Formations, ebooks, templates : chaque fiche est examinée par notre équipe avant publication. Aucune mauvaise surprise.
               </p>
               <Link
                 href="/catalogue"

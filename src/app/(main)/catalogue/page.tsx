@@ -15,14 +15,14 @@ export const metadata: Metadata = {
     "filtrer produits digitaux",
   ],
   openGraph: {
-    title: "Catalogue — Nuvora",
+    title: "Catalogue | Nuvora",
     description:
       "Explorez tous les produits digitaux référencés sur Nuvora : ebooks, formations, templates et logiciels.",
     url: "https://nuvora.app/catalogue",
     type: "website",
   },
   twitter: {
-    title: "Catalogue — Nuvora",
+    title: "Catalogue | Nuvora",
     description:
       "Explorez ebooks, formations, templates et logiciels sur Nuvora.",
   },
