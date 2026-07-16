@@ -8,6 +8,7 @@ import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { db } from "@/lib/db";
+import { Recommendations } from "@/components/recommendations";
 
 const AVATAR_COLORS = [
   "bg-indigo-500", "bg-violet-500", "bg-rose-500", "bg-amber-500",
@@ -244,6 +245,9 @@ export default async function Home() {
         </div>
         <CategoryTiles />
       </section>
+
+      {/* ---------------- RECOMMANDATIONS (utilisateur connecté) ---------------- */}
+      <Recommendations />
 
       {/* ---------------- NOUVEAUTÉS ---------------- */}
       <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">

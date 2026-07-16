@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/auth";
 import { ProductCard, type DbProduct } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
 import { BuyButton } from "@/components/buy-button";
@@ -75,29 +76,45 @@ export default async function ProductPage({
   });
   if (!product) notFound();
 
-  // Incrémente views après le rendu, sans bloquer la réponse
+  const session = await getSession();
+
+  // Post-render : views + RecentView si connecté
   after(async () => {
     await db.product.update({
       where: { id: product.id },
       data: { views: { increment: 1 } },
     });
+    if (session?.userId) {
+      await db.recentView.upsert({
+        where: { userId_productId: { userId: session.userId, productId: product.id } },
+        update: { viewedAt: new Date() },
+        create: { userId: session.userId, productId: product.id },
+      });
+    }
   });
 
   const tags = JSON.parse(product.tags ?? "[]") as string[];
   const isNew = (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000;
 
-  const relatedRaw = await db.product.findMany({
-    where: {
-      status: "active",
-      category: product.category,
-      NOT: { id: product.id },
-    },
+  // Produits similaires avec scoring : catégorie +3, sous-catégorie +2, tag commun +1
+  const candidatesRaw = await db.product.findMany({
+    where: { status: "active", category: product.category, NOT: { id: product.id } },
     include: { creator: { select: { slug: true, verified: true, user: { select: { name: true } } } } },
-    orderBy: { views: "desc" },
-    take: 3,
+    take: 20,
   });
 
-  const related: DbProduct[] = relatedRaw.map((p) => ({
+  const scored = candidatesRaw
+    .map((p) => {
+      const pTags = JSON.parse(p.tags ?? "[]") as string[];
+      let score = 3; // même catégorie garantie
+      if (p.subCategory && p.subCategory === product.subCategory) score += 2;
+      score += pTags.filter((t) => tags.includes(t)).length;
+      return { p, score };
+    })
+    .sort((a, b) => b.score - a.score || b.p.views - a.p.views)
+    .slice(0, 3);
+
+  const related: DbProduct[] = scored.map(({ p }) => ({
     id: p.id,
     slug: p.slug,
     title: p.title,
