@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ButtonLink } from "@/components/ui/button";
 import { LogoBadge } from "@/components/logo";
+import { useAuth } from "@/contexts/auth";
 
 const NAV = [
   { href: "/catalogue", label: "Explorer" },
@@ -18,6 +19,7 @@ export function TopBar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     let raf = 0;
@@ -88,23 +90,39 @@ export function TopBar() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link
-            href="/compte"
-            className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
-          >
-            Mon compte
-          </Link>
-          <Link
-            href="/connexion"
-            className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
-          >
-            Connexion
-          </Link>
-          <span className="hidden md:inline-flex">
-            <ButtonLink href="/inscription" size="sm">
-              S’inscrire
-            </ButtonLink>
-          </span>
+          {user ? (
+            <>
+              {user.isCreator && (
+                <Link
+                  href="/dashboard"
+                  className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
+                >
+                  Dashboard
+                </Link>
+              )}
+              <Link
+                href="/compte"
+                aria-label="Mon compte"
+                className="grid size-9 place-items-center rounded-full bg-indigo-500 text-sm font-bold text-white transition-opacity hover:opacity-85"
+              >
+                {user.initial}
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/connexion"
+                className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
+              >
+                Connexion
+              </Link>
+              <span className="hidden md:inline-flex">
+                <ButtonLink href="/inscription" size="sm">
+                  S’inscrire
+                </ButtonLink>
+              </span>
+            </>
+          )}
 
           {/* Bouton hamburger — mobile uniquement */}
           <button
@@ -170,32 +188,34 @@ export function TopBar() {
             </ul>
 
             <div className="mt-4 flex flex-col gap-2.5 border-t border-border pt-4">
-              <ButtonLink
-                href="/inscription"
-                size="lg"
-                className="w-full"
-                onClick={() => setMenuOpen(false)}
-              >
-                S’inscrire
-              </ButtonLink>
-              <ButtonLink
-                href="/connexion"
-                variant="secondary"
-                size="lg"
-                className="w-full"
-                onClick={() => setMenuOpen(false)}
-              >
-                Connexion
-              </ButtonLink>
-              <ButtonLink
-                href="/compte"
-                variant="secondary"
-                size="lg"
-                className="w-full"
-                onClick={() => setMenuOpen(false)}
-              >
-                Mon compte
-              </ButtonLink>
+              {user ? (
+                <>
+                  <ButtonLink href="/compte" size="lg" className="w-full" onClick={() => setMenuOpen(false)}>
+                    Mon compte
+                  </ButtonLink>
+                  {user.isCreator && (
+                    <ButtonLink href="/dashboard" variant="secondary" size="lg" className="w-full" onClick={() => setMenuOpen(false)}>
+                      Dashboard créateur
+                    </ButtonLink>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => { logout(); setMenuOpen(false); }}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
+                  >
+                    Se déconnecter
+                  </button>
+                </>
+              ) : (
+                <>
+                  <ButtonLink href="/inscription" size="lg" className="w-full" onClick={() => setMenuOpen(false)}>
+                    S’inscrire
+                  </ButtonLink>
+                  <ButtonLink href="/connexion" variant="secondary" size="lg" className="w-full" onClick={() => setMenuOpen(false)}>
+                    Connexion
+                  </ButtonLink>
+                </>
+              )}
             </div>
           </nav>
         </div>

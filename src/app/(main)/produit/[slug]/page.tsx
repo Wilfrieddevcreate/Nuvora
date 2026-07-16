@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
+import { ProductReviews } from "@/components/product-reviews";
 import { ArrowUpRight } from "@/components/icons";
 import {
   getAllSlugs,
@@ -276,6 +277,8 @@ export default async function ProductPage({
           </div>
         </section>
       )}
+
+      <ProductReviews slug={product.slug} />
     </div>
   );
 }

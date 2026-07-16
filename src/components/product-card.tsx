@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Product } from "@/data/products";
 import { useFavorites } from "@/contexts/favorites";
+import { useToast } from "@/contexts/toast";
 
 function formatPrice(price: number): string {
   return price === 0 ? "Gratuit" : `${price} €`;
@@ -25,11 +26,16 @@ const COVER_GRADIENT_DARK: Record<Product["category"], string> = {
 
 function FavButton({ slug }: { slug: string }) {
   const { isFav, toggle } = useFavorites();
+  const { toast } = useToast();
   const active = isFav(slug);
   return (
     <button
       type="button"
-      onClick={(e) => { e.preventDefault(); toggle(slug); }}
+      onClick={(e) => {
+        e.preventDefault();
+        toast(active ? "Retiré des favoris" : "Ajouté aux favoris ♥", active ? "info" : "success");
+        toggle(slug);
+      }}
       aria-label={active ? "Retirer des favoris" : "Ajouter aux favoris"}
       className={`absolute right-3 top-3 grid size-8 place-items-center rounded-full border backdrop-blur transition-colors ${
         active

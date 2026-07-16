@@ -68,7 +68,7 @@ const SECONDARY: NavItem[] = [
     ),
   },
   {
-    href: "/createur",
+    href: "/guide-createur",
     label: "Guide créateur",
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

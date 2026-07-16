@@ -6,9 +6,10 @@ const COLS = [
     title: "Découvrir",
     links: [
       { href: "/catalogue", label: "Catalogue" },
-      { href: "/catalogue?categorie=Formation", label: "Formations" },
-      { href: "/catalogue?categorie=Ebook", label: "Ebooks" },
-      { href: "/catalogue?categorie=Template", label: "Templates" },
+      { href: "/catalogue/formation", label: "Formations" },
+      { href: "/catalogue/ebook", label: "Ebooks" },
+      { href: "/catalogue/template", label: "Templates" },
+      { href: "/catalogue/logiciel", label: "Logiciels" },
       { href: "/assistant", label: "Assistant IA" },
     ],
   },
@@ -16,6 +17,7 @@ const COLS = [
     title: "Créateurs",
     links: [
       { href: "/createur", label: "Pourquoi Nuvora ?" },
+      { href: "/tarifs", label: "Tarifs" },
       { href: "/inscription", label: "Référencer un produit" },
     ],
   },
