@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
@@ -178,6 +179,13 @@ export default function ConfidentialitePage() {
       <p className="mt-12 text-sm text-muted">
         Dernière mise à jour : juillet 2026.
       </p>
+
+      <div className="mt-12 flex flex-wrap items-center justify-center gap-4 border-t border-border pt-8 text-sm">
+        <Link href="/" className="text-muted hover:text-fg transition-colors">Accueil</Link>
+        <Link href="/catalogue" className="text-muted hover:text-fg transition-colors">Catalogue</Link>
+        <Link href="/cgu" className="text-muted hover:text-fg transition-colors">CGU</Link>
+        <Link href="/mentions-legales" className="text-muted hover:text-fg transition-colors">Mentions légales</Link>
+      </div>
     </div>
   );
 }

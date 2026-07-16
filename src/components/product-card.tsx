@@ -58,7 +58,7 @@ export function ProductCard({ product }: { product: Product }) {
     >
       {/* Couverture — dégradé doux + initiale du produit */}
       <div
-        className={`relative flex aspect-[16/10] items-center justify-center bg-gradient-to-br ${COVER_GRADIENT[product.category]} ${COVER_GRADIENT_DARK[product.category]}`}
+        className={`relative flex aspect-16/10 items-center justify-center bg-linear-to-br ${COVER_GRADIENT[product.category]} ${COVER_GRADIENT_DARK[product.category]}`}
       >
         <span className="text-4xl font-extrabold text-fg/15">
           {product.title.charAt(0)}

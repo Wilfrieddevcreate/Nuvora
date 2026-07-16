@@ -39,6 +39,7 @@ export default function ProduitsPage() {
       </div>
 
       {/* Table desktop / cards mobile */}
+      {products.length > 0 && (
       <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
         {/* En-tête — desktop */}
         <div className="hidden grid-cols-[auto_1fr_100px_100px_80px_60px] items-center gap-4 border-b border-border bg-surface-2 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted sm:grid">
@@ -108,8 +109,10 @@ export default function ProduitsPage() {
           ))}
         </ul>
       </div>
+      )}
 
       {/* CTA vide si pas de produits */}
+      {products.length === 0 && (
       <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border-2 py-12 text-center">
         <svg viewBox="0 0 24 24" className="size-8 text-muted" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
         <p className="font-semibold text-fg">Référencez votre prochain produit</p>
@@ -121,6 +124,7 @@ export default function ProduitsPage() {
           Ajouter un produit
         </Link>
       </div>
+      )}
     </div>
   );
 }

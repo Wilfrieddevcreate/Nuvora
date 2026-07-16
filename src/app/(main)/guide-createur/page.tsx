@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description:
     "Tout ce que vous devez savoir pour référencer vos ebooks, formations et templates sur Nuvora et attirer des acheteurs.",
   alternates: { canonical: "https://nuvora.app/guide-createur" },
+  openGraph: {
+    title: "Guide créateur Nuvora — Référencer vos produits digitaux",
+    description: "Tout ce qu'il faut savoir pour référencer et vendre vos produits digitaux sur Nuvora. Gratuit, sans commission.",
+    url: "https://nuvora.app/guide-createur",
+    type: "website",
+  },
 };
 
 const PREREQUISITES = [

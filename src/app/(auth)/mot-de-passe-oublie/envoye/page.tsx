@@ -42,10 +42,7 @@ export default function ResetSentPage() {
             réinitialiser votre mot de passe. Pensez à vérifier vos spams.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3">
-            <ButtonLink href="/mot-de-passe-oublie/nouveau" size="lg" className="w-full">
-              Simuler le clic sur le lien
-            </ButtonLink>
+          <div className="mt-8">
             <ButtonLink href="/connexion" variant="secondary" size="lg" className="w-full">
               Revenir à la connexion
             </ButtonLink>

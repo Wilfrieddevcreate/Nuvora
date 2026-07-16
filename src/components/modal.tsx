@@ -22,9 +22,51 @@ export function Modal({ open, onClose, title, children, size = "md" }: ModalProp
 
   useEffect(() => {
     if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+
+    const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    function getFocusable(): HTMLElement[] {
+      if (!panelRef.current) return [];
+      return Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        (el) => !el.hasAttribute("disabled") && el.offsetParent !== null
+      );
     }
+
+    // Focus the first focusable element on open
+    const focusables = getFocusable();
+    if (focusables.length > 0) focusables[0].focus();
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const els = getFocusable();
+        if (els.length === 0) {
+          e.preventDefault();
+          return;
+        }
+        const first = els[0];
+        const last = els[els.length - 1];
+
+        if (e.shiftKey) {
+          // Shift+Tab: focus previous, wrap to last
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          // Tab: focus next, wrap to first
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    }
+
     document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";

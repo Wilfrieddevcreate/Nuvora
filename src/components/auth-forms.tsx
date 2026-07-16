@@ -10,24 +10,45 @@ import { AuthActionButton, FormField } from "@/components/auth-screen";
  * Même style que FormField, mais interactif (client).
  */
 function PasswordField({
+  id,
+  name,
   label,
   placeholder,
   autoComplete,
+  required,
+  error,
+  value,
+  onChange,
 }: {
+  id: string;
+  name?: string;
   label: string;
   placeholder: string;
   autoComplete?: string;
+  required?: boolean;
+  error?: string;
+  value?: string;
+  onChange?: (v: string) => void;
 }) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-semibold text-fg">{label}</span>
+    <div>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-fg">
+        {label}
+      </label>
       <div className="relative">
         <input
+          id={id}
+          name={name}
           type={visible ? "text" : "password"}
           placeholder={placeholder}
           autoComplete={autoComplete}
+          aria-required={required ? true : undefined}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
+          value={value}
+          onChange={onChange ? (e) => onChange(e.target.value) : undefined}
           className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 pr-11 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
         />
         <button
@@ -55,37 +76,65 @@ function PasswordField({
           )}
         </button>
       </div>
-    </label>
+      {error && (
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
 
 export function LoginForm() {
   const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const newErrors: typeof errors = {};
+    if (!email.trim()) newErrors.email = "L'adresse e-mail est obligatoire.";
+    if (!password) newErrors.password = "Le mot de passe est obligatoire.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+    router.push("/");
+  }
+
   return (
-    <form
-      className="space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        router.push("/");
-      }}
-    >
+    <form className="space-y-4" onSubmit={handleSubmit} noValidate>
       <div className="grid gap-4">
         <FormField
+          id="email-login"
+          name="email"
           label="Adresse e-mail"
           type="email"
           placeholder="vous@exemple.com"
           autoComplete="email"
+          required
+          error={errors.email}
         />
         <PasswordField
+          id="password-login"
+          name="password"
           label="Mot de passe"
           placeholder="••••••••"
           autoComplete="current-password"
+          required
+          value={password}
+          onChange={setPassword}
+          error={errors.password}
         />
       </div>
 
       <div className="flex items-center justify-between gap-3 text-sm">
         <label className="flex cursor-pointer items-center gap-2 text-fg-2 select-none">
           <input
+            id="remember-login"
             type="checkbox"
             className="size-4 rounded border-border text-accent focus:ring-accent"
           />
@@ -106,54 +155,84 @@ export function LoginForm() {
 
 export function SignupForm() {
   const router = useRouter();
+
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [passwordError, setPasswordError] = useState<string | undefined>();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (password !== confirm) {
+      setPasswordError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    setPasswordError(undefined);
+    router.push("/confirmation");
+  }
+
   return (
-    <form
-      className="space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        // Inscription réussie (maquette) → page de confirmation par code.
-        router.push("/confirmation");
-      }}
-    >
+    <form className="space-y-4" onSubmit={handleSubmit} noValidate>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField
+          id="firstName-signup"
+          name="firstName"
           label="Prénom"
           placeholder="Amélie"
           autoComplete="given-name"
+          required
         />
         <FormField
+          id="lastName-signup"
+          name="lastName"
           label="Nom"
           placeholder="Rossi"
           autoComplete="family-name"
+          required
         />
       </div>
 
       <FormField
+        id="email-signup"
+        name="email"
         label="Adresse e-mail"
         type="email"
         placeholder="vous@exemple.com"
         autoComplete="email"
+        required
       />
+
       <div className="grid gap-4 sm:grid-cols-2">
         <PasswordField
+          id="password-signup"
+          name="password"
           label="Mot de passe"
           placeholder="Créer un mot de passe"
           autoComplete="new-password"
+          required
+          value={password}
+          onChange={setPassword}
         />
         <PasswordField
+          id="confirm-signup"
+          name="confirm"
           label="Confirmer"
           placeholder="Répéter le mot de passe"
           autoComplete="new-password"
+          required
+          value={confirm}
+          onChange={setConfirm}
+          error={passwordError}
         />
       </div>
 
       <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-fg-2 select-none">
         <input
+          id="terms-signup"
           type="checkbox"
           className="mt-0.5 size-4 rounded border-border text-accent focus:ring-accent"
         />
         <span className="leading-relaxed">
-          J’accepte les conditions d’utilisation et la politique de
+          J'accepte les conditions d'utilisation et la politique de
           confidentialité.
         </span>
       </label>

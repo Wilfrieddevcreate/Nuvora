@@ -198,7 +198,7 @@ export default function AdminAvisPage() {
                 {/* Pied de card */}
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <Link
-                    href={`/catalogue/${review.productSlug}`}
+                    href={`/produit/${review.productSlug}`}
                     className="inline-flex items-center gap-1.5 text-xs font-medium text-muted transition-colors hover:text-fg"
                   >
                     <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

@@ -64,12 +64,12 @@ export default async function CreatorProfilePage({
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
       {/* Fil d'ariane */}
-      <nav className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-muted">
+      <nav aria-label="Fil d'ariane" className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-muted">
         <Link href="/catalogue" className="hover:text-fg">
           Catalogue
         </Link>
         <span>/</span>
-        <span className="text-fg">{creator.name}</span>
+        <span aria-current="page" className="text-fg">{creator.name}</span>
       </nav>
 
       {/* ─── EN-TÊTE CRÉATEUR ─── */}

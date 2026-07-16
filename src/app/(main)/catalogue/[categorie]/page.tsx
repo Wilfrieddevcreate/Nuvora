@@ -86,7 +86,7 @@ export default async function CategoryPage({
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-sm text-muted">
+      <nav aria-label="Fil d'ariane" className="mb-6 flex items-center gap-2 text-sm text-muted">
         <Link href="/catalogue" className="hover:text-fg transition-colors">
           Catalogue
         </Link>
@@ -102,7 +102,7 @@ export default async function CategoryPage({
         >
           <path d="m9 18 6-6-6-6" />
         </svg>
-        <span className="font-semibold text-fg">{category}</span>
+        <span aria-current="page" className="font-semibold text-fg">{category}</span>
       </nav>
 
       {/* Hero catégorie */}

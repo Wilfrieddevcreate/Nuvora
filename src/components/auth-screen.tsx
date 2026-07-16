@@ -122,26 +122,46 @@ export function AuthScreen({
 // --- Primitives de formulaire (réutilisées par login/signup) ---
 
 export function FormField({
+  id,
+  name,
   label,
   type = "text",
   placeholder,
   autoComplete,
+  required,
+  error,
 }: {
+  id: string;
+  name?: string;
   label: string;
   type?: string;
   placeholder: string;
   autoComplete?: string;
+  required?: boolean;
+  error?: string;
 }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-semibold text-fg">{label}</span>
+    <div>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-fg">
+        {label}
+      </label>
       <input
+        id={id}
+        name={name}
         type={type}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        aria-required={required ? true : undefined}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${id}-error` : undefined}
         className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
       />
-    </label>
+      {error && (
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
 

@@ -267,7 +267,7 @@ export default function CreateurPage() {
             {/* Ligne de connexion — desktop uniquement */}
             <div
               aria-hidden
-              className="absolute left-1/2 top-5 hidden h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-transparent md:block"
+              className="absolute left-1/2 top-5 hidden h-px w-2/3 -translate-x-1/2 bg-linear-to-r from-transparent via-border to-transparent md:block"
             />
 
             <div className="grid gap-8 md:grid-cols-3">

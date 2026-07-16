@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PRODUCTS, CREATORS, CATEGORIES } from "@/data/products";
+import { RefreshButton } from "./refresh-button";
 
 export const metadata: Metadata = {
   title: "Admin — Vue d'ensemble",
@@ -79,26 +80,31 @@ const KPIS = [
 
 const ACTIVITY = [
   {
+    id: "activity-submit-studio-lumen",
     text: "Nouveau produit soumis par Studio Lumen",
     time: "Il y a 1 h",
     type: "submit",
   },
   {
+    id: "activity-verify-devacademy",
     text: "Créateur DevAcademy vérifié",
     time: "Il y a 3 h",
     type: "verify",
   },
   {
+    id: "activity-flag-pack-prompts",
     text: "Avis signalé sur « Pack de prompts marketing »",
     time: "Il y a 5 h",
     type: "flag",
   },
   {
+    id: "activity-user-atelier-pixel",
     text: "Nouveau créateur inscrit : Atelier Pixel",
     time: "Il y a 1 j",
     type: "user",
   },
   {
+    id: "activity-milestone-maitriser-claude",
     text: "Produit « Maîtriser Claude » atteint 5 000 vues",
     time: "Il y a 2 j",
     type: "milestone",
@@ -178,17 +184,7 @@ export default function AdminOverviewPage() {
           <h1 className="text-2xl font-extrabold">Bonjour, Admin 👋</h1>
           <p className="mt-1 text-sm text-muted capitalize">{today}</p>
         </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 self-start rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-fg shadow-soft transition-colors hover:bg-surface-2 sm:self-auto"
-        >
-          <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M23 4v6h-6" />
-            <path d="M1 20v-6h6" />
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-          </svg>
-          Actualiser
-        </button>
+        <RefreshButton />
       </div>
 
       {/* ── KPIs ── */}
@@ -264,12 +260,14 @@ export default function AdminOverviewPage() {
                   <div className="flex shrink-0 items-center gap-2">
                     <button
                       type="button"
+                      aria-label={`Valider ${p.title}`}
                       className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30"
                     >
                       Valider
                     </button>
                     <button
                       type="button"
+                      aria-label={`Rejeter ${p.title}`}
                       className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-100 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30"
                     >
                       Rejeter
@@ -285,8 +283,8 @@ export default function AdminOverviewPage() {
         <section>
           <h2 className="mb-4 font-bold">Activité récente</h2>
           <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-            {ACTIVITY.map((a, i) => (
-              <div key={i} className="flex items-start gap-3 px-4 py-4">
+            {ACTIVITY.map((a) => (
+              <div key={a.id} className="flex items-start gap-3 px-4 py-4">
                 <ActivityIcon type={a.type} />
                 <div className="min-w-0">
                   <p className="text-[13px] leading-relaxed text-fg-2">{a.text}</p>

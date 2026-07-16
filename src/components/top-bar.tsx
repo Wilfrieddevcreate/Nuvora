@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -14,10 +14,118 @@ const NAV = [
   { href: "/createur", label: "Vendre" },
 ];
 
+const RESOURCES = [
+  {
+    href: "/guide-createur",
+    label: "Guide créateur",
+    desc: "Tout pour référencer vos produits",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 3l7 4v5c0 4-3 7-7 8-4-1-7-4-7-8V7z" />
+        <path d="M9 12l2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    href: "/blog",
+    label: "Blog",
+    desc: "Conseils, guides et ressources",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </svg>
+    ),
+  },
+  {
+    href: "/a-propos",
+    label: "À propos",
+    desc: "Notre mission et notre histoire",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4M12 8h.01" />
+      </svg>
+    ),
+  },
+];
+
+function ResourcesMenu() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // ferme au changement de page
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  // ferme au clic extérieur
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const isActive = RESOURCES.some((r) => pathname.startsWith(r.href));
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition-colors lg:px-3.5 ${
+          isActive ? "bg-surface-2 text-fg" : "text-fg-2 hover:bg-surface-2 hover:text-fg"
+        }`}
+      >
+        Ressources
+        <svg
+          viewBox="0 0 24 24"
+          className={`size-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute left-0 top-full mt-2 w-64 overflow-hidden rounded-2xl border border-border bg-surface shadow-soft-lg">
+          <ul className="p-1.5">
+            {RESOURCES.map((r) => (
+              <li key={r.href}>
+                <Link
+                  href={r.href}
+                  onClick={() => setOpen(false)}
+                  className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface-2"
+                >
+                  <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+                    {r.icon}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-fg">{r.label}</p>
+                    <p className="text-xs text-muted">{r.desc}</p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TopBar() {
-  // scrolled = true dès qu'on quitte le haut de page → le mot "Nuvora" se replie.
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
@@ -27,7 +135,7 @@ export function TopBar() {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => setScrolled(window.scrollY > 16));
     }
-    onScroll(); // état initial (ex. rechargement en cours de page)
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -35,13 +143,10 @@ export function TopBar() {
     };
   }, []);
 
-  // Ferme le menu quand on change de page (navigation via un lien du menu).
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false);
   }, [pathname]);
 
-  // Bloque le scroll du body + ferme à Échap quand le menu est ouvert.
   useEffect(() => {
     if (!menuOpen) return;
     const prev = document.body.style.overflow;
@@ -65,7 +170,6 @@ export function TopBar() {
           className="flex items-center gap-2 text-lg font-extrabold"
         >
           <LogoBadge className="size-7" />
-          {/* Le mot se replie au scroll (largeur + opacité) et revient en haut */}
           <span
             className={`overflow-hidden whitespace-nowrap transition-all duration-300 ease-out motion-reduce:transition-none ${
               scrolled ? "max-w-0 opacity-0" : "max-w-32 opacity-100"
@@ -86,6 +190,7 @@ export function TopBar() {
               {item.label}
             </Link>
           ))}
+          <ResourcesMenu />
         </nav>
 
         <div className="flex items-center gap-2">
@@ -118,7 +223,7 @@ export function TopBar() {
               </Link>
               <span className="hidden md:inline-flex">
                 <ButtonLink href="/inscription" size="sm">
-                  S’inscrire
+                  S'inscrire
                 </ButtonLink>
               </span>
             </>
@@ -161,30 +266,67 @@ export function TopBar() {
       {/* Panneau mobile */}
       {menuOpen && (
         <div className="fixed inset-0 top-16 z-40 md:hidden">
-          {/* overlay */}
           <button
             type="button"
             aria-label="Fermer le menu"
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-black/40"
           />
-          {/* contenu */}
           <nav className="relative border-b border-border bg-bg px-5 pb-6 pt-2 shadow-soft-lg">
             <ul className="flex flex-col">
-              {NAV.map(
-                (item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
-                    >
-                      {item.label}
-                      <svg viewBox="0 0 24 24" className="size-4 text-muted" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
-                    </Link>
-                  </li>
-                ),
-              )}
+              {NAV.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
+                  >
+                    {item.label}
+                    <svg viewBox="0 0 24 24" className="size-4 text-muted" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
+                  </Link>
+                </li>
+              ))}
+
+              {/* Ressources mobile — section dépliable */}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setResourcesOpen((o) => !o)}
+                  className="flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
+                >
+                  Ressources
+                  <svg
+                    viewBox="0 0 24 24"
+                    className={`size-4 text-muted transition-transform duration-200 ${resourcesOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                {resourcesOpen && (
+                  <ul className="mb-1 ml-3 space-y-0.5 border-l border-border pl-3">
+                    {RESOURCES.map((r) => (
+                      <li key={r.href}>
+                        <Link
+                          href={r.href}
+                          onClick={() => { setMenuOpen(false); setResourcesOpen(false); }}
+                          className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[14px] font-medium text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg"
+                        >
+                          <span className="grid size-6 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+                            {r.icon}
+                          </span>
+                          {r.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
             </ul>
 
             <div className="mt-4 flex flex-col gap-2.5 border-t border-border pt-4">
@@ -209,7 +351,7 @@ export function TopBar() {
               ) : (
                 <>
                   <ButtonLink href="/inscription" size="lg" className="w-full" onClick={() => setMenuOpen(false)}>
-                    S’inscrire
+                    S'inscrire
                   </ButtonLink>
                   <ButtonLink href="/connexion" variant="secondary" size="lg" className="w-full" onClick={() => setMenuOpen(false)}>
                     Connexion

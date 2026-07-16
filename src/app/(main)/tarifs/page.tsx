@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description:
     "Nuvora est gratuit pour les créateurs. Référencez vos produits digitaux sans commission, sans abonnement.",
   alternates: { canonical: "https://nuvora.app/tarifs" },
+  openGraph: {
+    title: "Tarifs Nuvora — Gratuit pour les créateurs",
+    description: "Découvrez nos offres pour créateurs de produits digitaux. Référencement gratuit, zéro commission.",
+    url: "https://nuvora.app/tarifs",
+    type: "website",
+  },
 };
 
 const FREE_FEATURES = [
@@ -265,7 +271,7 @@ export default function TarifsPage() {
           <div className="relative mt-12">
             <div
               aria-hidden
-              className="absolute left-1/2 top-5 hidden h-px w-2/3 -translate-x-1/2 bg-gradient-to-r from-transparent via-border to-transparent md:block"
+              className="absolute left-1/2 top-5 hidden h-px w-2/3 -translate-x-1/2 bg-linear-to-r from-transparent via-border to-transparent md:block"
             />
 
             <div className="grid gap-8 md:grid-cols-3">

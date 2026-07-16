@@ -33,7 +33,7 @@ export function HeroPreview() {
       {/* carte vedette */}
       <div className="relative overflow-hidden rounded-3xl border border-border bg-surface shadow-soft-lg">
         <div
-          className={`flex aspect-[16/11] items-center justify-center bg-gradient-to-br ${COVER[featured.category]}`}
+          className={`flex aspect-16/11 items-center justify-center bg-linear-to-br ${COVER[featured.category]}`}
         >
           <span className="text-5xl font-extrabold text-fg/15">
             {featured.title.charAt(0)}

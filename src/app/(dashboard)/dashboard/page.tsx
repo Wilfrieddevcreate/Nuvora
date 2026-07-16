@@ -190,8 +190,8 @@ export default function DashboardPage() {
         <section>
           <h2 className="mb-4 font-bold">Activité récente</h2>
           <div className="rounded-2xl border border-border bg-surface shadow-soft divide-y divide-border overflow-hidden">
-            {RECENT_ACTIVITY.map((a, i) => (
-              <div key={i} className="flex items-start gap-3 px-4 py-4">
+            {RECENT_ACTIVITY.map((a) => (
+              <div key={a.type} className="flex items-start gap-3 px-4 py-4">
                 <span className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg text-xs ${
                   a.type === "view" ? "bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400" :
                   a.type === "click" ? "bg-accent-soft text-accent" :

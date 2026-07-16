@@ -1,8 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { LogoBadge } from "@/components/logo";
+import { useAuth } from "@/contexts/auth";
 
 type NavItem = {
   href: string;
@@ -153,6 +154,15 @@ export function MobileSidebar({
 }
 
 function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  function handleLogout() {
+    logout();
+    if (onNavClick) onNavClick();
+    router.push("/connexion");
+  }
+
   return (
     <div className="flex h-full flex-col gap-1 overflow-y-auto px-3 py-4">
       {/* Logo */}
@@ -199,10 +209,10 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             <p className="truncate text-xs text-muted">studio@lumen.co</p>
           </div>
         </div>
-        <Link
-          href="/connexion"
-          onClick={onNavClick}
-          className="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -210,7 +220,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
           Se déconnecter
-        </Link>
+        </button>
       </div>
     </div>
   );

@@ -11,6 +11,13 @@ import {
   type Product,
 } from "@/data/products";
 
+const CATEGORY_SLUG: Record<Product["category"], string> = {
+  Formation: "formation",
+  Ebook: "ebook",
+  Template: "template",
+  Logiciel: "logiciel",
+};
+
 const COVER: Record<Product["category"], string> = {
   Formation:
     "from-indigo-100 to-violet-50 dark:from-indigo-500/20 dark:to-violet-500/10",
@@ -90,19 +97,19 @@ export default async function ProductPage({
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-10">
       {/* Fil d'ariane */}
-      <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-muted">
+      <nav aria-label="Fil d'ariane" className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-muted">
         <Link href="/catalogue" className="hover:text-fg">
           Catalogue
         </Link>
         <span>/</span>
         <Link
-          href={`/catalogue?categorie=${encodeURIComponent(product.category)}`}
+          href={`/catalogue/${CATEGORY_SLUG[product.category]}`}
           className="hover:text-fg"
         >
           {product.category}
         </Link>
         <span>/</span>
-        <span className="truncate text-fg">{product.title}</span>
+        <span aria-current="page" className="truncate text-fg">{product.title}</span>
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
@@ -208,7 +215,7 @@ export default async function ProductPage({
         </div>
 
         {/* Colonne droite : carte d'achat (sticky) */}
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside className="order-first lg:order-none lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft">
             <div className="flex items-end justify-between">
               <span className="text-4xl font-extrabold">

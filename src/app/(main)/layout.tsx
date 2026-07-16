@@ -13,8 +13,14 @@ export default function MainLayout({
       <AuthProvider>
         <FavoritesProvider>
           <div className="flex min-h-dvh flex-col">
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-9999 focus:rounded-xl focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-accent-fg focus:shadow-soft-lg"
+            >
+              Aller au contenu principal
+            </a>
             <TopBar />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">{children}</main>
             <SiteFooter />
           </div>
         </FavoritesProvider>

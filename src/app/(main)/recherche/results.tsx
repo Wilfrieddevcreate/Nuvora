@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { ProductCard } from "@/components/product-card";
 import { SearchIcon } from "@/components/icons";
 import { recommendProducts, CATEGORIES, type Category } from "@/data/products";
@@ -28,12 +28,12 @@ export function SearchResults({ initialQuery }: { initialQuery: string }) {
   }
 
   // calcul des résultats
-  const results = useCallback(() => {
+  const results = useMemo(() => {
     if (!query.trim()) return [];
     const recommended = recommendProducts(query, 20).map((r) => r.product);
     if (activeCategory) return recommended.filter((p) => p.category === activeCategory);
     return recommended;
-  }, [query, activeCategory])();
+  }, [query, activeCategory]);
 
   const noQuery = !query.trim();
 

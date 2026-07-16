@@ -68,7 +68,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <span>© {2026} Nuvora. Tous droits réservés.</span>
+          <span>© {new Date().getFullYear()} Nuvora. Tous droits réservés.</span>
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/mentions-legales" className="transition-colors hover:text-fg">Mentions légales</Link>
             <Link href="/cgu" className="transition-colors hover:text-fg">CGU</Link>
