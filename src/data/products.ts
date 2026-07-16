@@ -693,3 +693,23 @@ export function getFeatured(): Featured[] {
     return { product, testimonial };
   });
 }
+
+import type { DbProduct } from "@/components/product-card";
+export function toDbProduct(p: Product): DbProduct {
+  return {
+    slug: p.slug,
+    title: p.title,
+    category: p.category,
+    subCategory: p.subCategory,
+    tags: p.tags,
+    price: p.price,
+    isFree: p.price === 0,
+    language: p.language,
+    platform: p.platform,
+    views: p.views,
+    clicks: p.clicks,
+    creatorName: p.creator,
+    creatorSlug: p.creatorSlug,
+    creatorVerified: p.verified,
+  };
+}

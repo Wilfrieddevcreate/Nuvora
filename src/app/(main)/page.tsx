@@ -7,7 +7,7 @@ import { Testimonials } from "@/components/testimonials";
 import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
-import { getNewProducts, getPopularProducts, CREATORS } from "@/data/products";
+import { getNewProducts, getPopularProducts, CREATORS, toDbProduct } from "@/data/products";
 
 export const metadata: Metadata = {
   title: "Trouvez les meilleurs produits digitaux",
@@ -78,8 +78,8 @@ const STEPS = [
 ];
 
 export default function Home() {
-  const nouveautes = getNewProducts(4);
-  const populaires = getPopularProducts(4);
+  const nouveautes = getNewProducts(4).map(toDbProduct);
+  const populaires = getPopularProducts(4).map(toDbProduct);
 
   return (
     <>

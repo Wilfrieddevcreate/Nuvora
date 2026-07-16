@@ -64,6 +64,42 @@ export async function submitProduct(input: ProductInput): Promise<ProductState> 
   redirect("/dashboard/produits");
 }
 
+export async function updateProduct(
+  productId: string,
+  input: ProductInput
+): Promise<ProductState> {
+  const session = await verifySession();
+
+  const product = await db.product.findUnique({
+    where: { id: productId },
+    include: { creator: { select: { userId: true } } },
+  });
+
+  if (!product || product.creator.userId !== session.userId) {
+    return { error: "Produit introuvable ou accès refusé." };
+  }
+
+  await db.product.update({
+    where: { id: productId },
+    data: {
+      title: input.title,
+      description: input.description,
+      category: input.category,
+      subCategory: input.subCategory,
+      tags: JSON.stringify(input.tags),
+      price: input.isFree ? 0 : input.price,
+      isFree: input.isFree,
+      language: input.language,
+      country: input.country || null,
+      platform: input.platform,
+      purchaseUrl: input.purchaseUrl,
+      status: "pending",
+    },
+  });
+
+  redirect("/dashboard/produits");
+}
+
 export async function deleteProduct(productId: string): Promise<ProductState> {
   const session = await verifySession();
 

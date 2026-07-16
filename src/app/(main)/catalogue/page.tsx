@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { db } from "@/lib/db";
 import { CatalogView } from "@/components/catalog-view";
+import type { DbProduct } from "@/components/product-card";
 
 export const metadata: Metadata = {
   title: "Catalogue de produits digitaux",
@@ -23,16 +25,46 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: "Catalogue | Nuvora",
-    description:
-      "Explorez ebooks, formations, templates et logiciels sur Nuvora.",
+    description: "Explorez ebooks, formations, templates et logiciels sur Nuvora.",
   },
   alternates: { canonical: "https://nuvora.app/catalogue" },
 };
 
-export default function CataloguePage() {
+async function getProducts(): Promise<DbProduct[]> {
+  const rows = await db.product.findMany({
+    where: { status: "active" },
+    orderBy: { views: "desc" },
+    include: {
+      creator: {
+        select: { slug: true, verified: true, user: { select: { name: true } } },
+      },
+    },
+  });
+  return rows.map((p) => ({
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    category: p.category as DbProduct["category"],
+    subCategory: p.subCategory ?? "",
+    tags: JSON.parse(p.tags ?? "[]") as string[],
+    price: p.price,
+    isFree: p.isFree,
+    language: p.language,
+    platform: p.platform,
+    views: p.views,
+    clicks: p.clicks,
+    createdAt: p.createdAt.toISOString(),
+    creatorName: p.creator.user.name,
+    creatorSlug: p.creator.slug,
+    creatorVerified: p.creator.verified,
+  }));
+}
+
+export default async function CataloguePage() {
+  const products = await getProducts();
   return (
     <Suspense fallback={<CatalogFallback />}>
-      <CatalogView />
+      <CatalogView products={products} />
     </Suspense>
   );
 }
@@ -43,10 +75,7 @@ function CatalogFallback() {
       <div className="h-9 w-40 rounded-lg bg-surface-2" />
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="aspect-4/5 rounded-2xl border border-border bg-surface"
-          />
+          <div key={i} className="aspect-4/5 rounded-2xl border border-border bg-surface" />
         ))}
       </div>
     </div>

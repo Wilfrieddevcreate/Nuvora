@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductBySlug } from "@/data/products";
+import { verifySession } from "@/lib/dal";
+import { db } from "@/lib/db";
 import { EditProductForm } from "./form";
 
 export const metadata: Metadata = {
@@ -14,7 +15,15 @@ export default async function EditProduitPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const session = await verifySession();
+
+  const product = await db.product.findFirst({
+    where: {
+      slug,
+      creator: { userId: session.userId },
+    },
+  });
+
   if (!product) notFound();
 
   return (
@@ -22,10 +31,24 @@ export default async function EditProduitPage({
       <div>
         <h1 className="text-2xl font-extrabold">Modifier le produit</h1>
         <p className="mt-1 text-sm text-muted">
-          Les modifications seront soumises pour validation avant d&apos;être publiées.
+          Les modifications repasseront en validation avant d&apos;être publiées.
         </p>
       </div>
-      <EditProductForm product={product} />
+      <EditProductForm
+        productId={product.id}
+        initialSlug={product.slug}
+        initialTitle={product.title}
+        initialDescription={product.description}
+        initialCategory={product.category}
+        initialSubCategory={product.subCategory ?? ""}
+        initialTags={JSON.parse(product.tags ?? "[]")}
+        initialPrice={product.price}
+        initialIsFree={product.isFree}
+        initialLanguage={product.language}
+        initialCountry={product.country ?? ""}
+        initialPlatform={product.platform}
+        initialPurchaseUrl={product.purchaseUrl}
+      />
     </div>
   );
 }

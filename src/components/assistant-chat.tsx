@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { SparkleIcon, SearchIcon, ArrowUpRight } from "@/components/icons";
-import { PRODUCTS } from "@/data/products";
-import type { Product } from "@/data/products";
+import type { DbProduct } from "@/components/product-card";
 
 const SUGGESTIONS = [
   "Quel est le meilleur ebook business ?",
@@ -13,7 +12,7 @@ const SUGGESTIONS = [
   "Un template Notion pour créateurs",
 ];
 
-const COVER_GRADIENT: Record<Product["category"], string> = {
+const COVER_GRADIENT: Record<DbProduct["category"], string> = {
   Formation: "from-indigo-100 to-violet-50 dark:from-indigo-500/20 dark:to-violet-500/10",
   Ebook: "from-sky-100 to-cyan-50 dark:from-sky-500/20 dark:to-cyan-500/10",
   Template: "from-amber-100 to-orange-50 dark:from-amber-500/20 dark:to-orange-500/10",
@@ -39,7 +38,7 @@ function parseSlugs(raw: string): { text: string; slugs: string[] } {
   return { text, slugs };
 }
 
-function ProductPick({ product, rank }: { product: Product; rank: number }) {
+function ProductPick({ product, rank }: { product: DbProduct; rank: number }) {
   return (
     <Link
       href={`/produit/${product.slug}`}
@@ -70,20 +69,20 @@ function ProductPick({ product, rank }: { product: Product; rank: number }) {
             <ArrowUpRight className="size-3.5 shrink-0 text-muted transition-colors group-hover:text-accent" />
           </div>
           <div className="mt-0.5 text-[12px] text-muted">
-            par {product.creator}
+            par {product.creatorName}
           </div>
         </div>
 
         <div className="mt-2 flex items-center gap-2">
           <span className="text-sm font-extrabold text-fg">
-            {product.price === 0 ? "Gratuit" : `${product.price} €`}
+            {(product.isFree ?? false) || product.price === 0 ? "Gratuit" : `${product.price} €`}
           </span>
-          {product.verified && (
+          {product.creatorVerified && (
             <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">
               ✓ Vérifié
             </span>
           )}
-          {product.isNew && (
+          {product.createdAt && (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000 && (
             <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-medium text-muted">
               Nouveau
             </span>
@@ -94,7 +93,7 @@ function ProductPick({ product, rank }: { product: Product; rank: number }) {
   );
 }
 
-export function AssistantChat() {
+export function AssistantChat({ products }: { products: DbProduct[] }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
@@ -247,7 +246,7 @@ export function AssistantChat() {
                     {msg.slugs.length > 0 && (
                       <div className="mt-3 space-y-2.5">
                         {msg.slugs.map((slug, i) => {
-                          const product = PRODUCTS.find((p) => p.slug === slug);
+                          const product = products.find((p) => p.slug === slug);
                           if (!product) return null;
                           return (
                             <ProductPick

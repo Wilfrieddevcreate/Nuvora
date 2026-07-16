@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import { ProductCard } from "@/components/product-card";
 import { SearchIcon } from "@/components/icons";
-import { recommendProducts, CATEGORIES, type Category } from "@/data/products";
+import { recommendProducts, CATEGORIES, toDbProduct, type Category } from "@/data/products";
 
 export function SearchResults({ initialQuery }: { initialQuery: string }) {
   const router = useRouter();
@@ -30,7 +30,7 @@ export function SearchResults({ initialQuery }: { initialQuery: string }) {
   // calcul des résultats
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    const recommended = recommendProducts(query, 20).map((r) => r.product);
+    const recommended = recommendProducts(query, 20).map((r) => toDbProduct(r.product));
     if (activeCategory) return recommended.filter((p) => p.category === activeCategory);
     return recommended;
   }, [query, activeCategory]);

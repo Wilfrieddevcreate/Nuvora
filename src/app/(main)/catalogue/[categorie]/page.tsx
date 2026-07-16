@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
-import { filterProducts, CATEGORIES, type Category } from "@/data/products";
+import { filterProducts, CATEGORIES, toDbProduct, type Category } from "@/data/products";
 
 // Map URL slug → Category label
 const SLUG_TO_CATEGORY: Record<string, Category> = {
@@ -80,7 +80,7 @@ export default async function CategoryPage({
     languages: [],
     platforms: [],
     sort: "populaires",
-  });
+  }).map(toDbProduct);
   const meta = CATEGORY_META[category];
 
   return (

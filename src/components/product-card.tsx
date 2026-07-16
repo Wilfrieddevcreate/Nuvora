@@ -1,23 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import type { Product } from "@/data/products";
 import { useFavorites } from "@/contexts/favorites";
 import { useToast } from "@/contexts/toast";
 
-function formatPrice(price: number): string {
-  return price === 0 ? "Gratuit" : `${price} €`;
+export type DbProduct = {
+  id?: string;
+  slug: string;
+  title: string;
+  category: "Formation" | "Ebook" | "Template" | "Logiciel";
+  subCategory: string;
+  tags?: string[];
+  price: number;
+  isFree?: boolean;
+  language?: string;
+  platform: string;
+  views?: number;
+  clicks?: number;
+  createdAt?: string;
+  creatorName: string;
+  creatorSlug: string;
+  creatorVerified?: boolean;
+};
+
+function formatPrice(price: number, isFree?: boolean): string {
+  return (isFree ?? false) || price === 0 ? "Gratuit" : `${price} €`;
 }
 
-// Dégradés doux par catégorie pour la couverture (pas d'image externe).
-const COVER_GRADIENT: Record<Product["category"], string> = {
+const COVER_GRADIENT: Record<DbProduct["category"], string> = {
   Formation: "from-indigo-100 to-violet-50",
   Ebook: "from-sky-100 to-cyan-50",
   Template: "from-amber-100 to-orange-50",
   Logiciel: "from-emerald-100 to-teal-50",
 };
 
-const COVER_GRADIENT_DARK: Record<Product["category"], string> = {
+const COVER_GRADIENT_DARK: Record<DbProduct["category"], string> = {
   Formation: "dark:from-indigo-500/20 dark:to-violet-500/10",
   Ebook: "dark:from-sky-500/20 dark:to-cyan-500/10",
   Template: "dark:from-amber-500/20 dark:to-orange-500/10",
@@ -50,26 +67,27 @@ function FavButton({ slug }: { slug: string }) {
   );
 }
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: DbProduct }) {
+  const isNew = product.createdAt
+    ? (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000
+    : false;
+  const gradient = COVER_GRADIENT[product.category] ?? "from-surface-2 to-surface";
+  const gradientDark = COVER_GRADIENT_DARK[product.category] ?? "";
+
   return (
     <Link
       href={`/produit/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
     >
-      {/* Couverture — dégradé doux + initiale du produit */}
-      <div
-        className={`relative flex aspect-16/10 items-center justify-center bg-linear-to-br ${COVER_GRADIENT[product.category]} ${COVER_GRADIENT_DARK[product.category]}`}
-      >
-        <span className="text-4xl font-extrabold text-fg/15">
-          {product.title.charAt(0)}
-        </span>
+      <div className={`relative flex aspect-16/10 items-center justify-center bg-linear-to-br ${gradient} ${gradientDark}`}>
+        <span className="text-4xl font-extrabold text-fg/15">{product.title.charAt(0)}</span>
         <div className="absolute left-3 top-3 flex gap-1.5">
-          {product.isNew && (
+          {isNew && (
             <span className="rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-fg">
               Nouveau
             </span>
           )}
-          {product.verified && (
+          {product.creatorVerified && (
             <span className="rounded-full bg-surface/90 px-2.5 py-1 text-[11px] font-semibold text-fg-2 backdrop-blur">
               ✓ Vérifié
             </span>
@@ -78,19 +96,18 @@ export function ProductCard({ product }: { product: Product }) {
         <FavButton slug={product.slug} />
       </div>
 
-      {/* Corps */}
       <div className="flex flex-1 flex-col p-4">
         <div className="text-xs font-medium text-muted">
-          {product.category} · {product.subCategory}
+          {product.category}{product.subCategory ? ` · ${product.subCategory}` : ""}
         </div>
         <h3 className="mt-1.5 line-clamp-2 text-[15px] font-bold leading-snug text-fg group-hover:text-accent">
           {product.title}
         </h3>
-        <div className="mt-1 text-[13px] text-muted">par {product.creator}</div>
+        <div className="mt-1 text-[13px] text-muted">par {product.creatorName}</div>
 
         <div className="mt-auto flex items-center justify-between pt-4">
           <span className="text-lg font-extrabold">
-            {formatPrice(product.price)}
+            {formatPrice(product.price, product.isFree)}
           </span>
           <span className="rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-medium text-muted">
             {product.platform}

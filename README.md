@@ -1,6 +1,6 @@
 # Nuvora — Marketplace de produits digitaux
 
-Nuvora est une marketplace de référencement de produits numériques (formations, ebooks, templates, logiciels). Les créateurs listent leurs produits, les acheteurs les découvrent via la recherche, les filtres ou l'assistant IA.
+Nuvora est une marketplace de référencement de produits numériques (formations, ebooks, templates, logiciels). Les créateurs listent leurs produits, les acheteurs les découvrent via la recherche, les filtres ou l'assistant IA. Nuvora ne traite aucun paiement — elle redirige vers la plateforme du créateur.
 
 ---
 
@@ -8,33 +8,54 @@ Nuvora est une marketplace de référencement de produits numériques (formation
 
 | Couche | Technologie |
 | --- | --- |
-| Framework | Next.js 16 (App Router) |
+| Framework | Next.js 16 (App Router, Server Components, Server Actions) |
 | UI | React 19 |
-| Style | Tailwind CSS v4 (design system maison, zero dependance UI) |
+| Style | Tailwind CSS v4 (design system maison) |
+| Base de données | SQLite via Prisma 7 + `@prisma/adapter-libsql` |
+| Auth | Sessions JWT (jose, HS256) + Google OAuth (arctic v3, PKCE) |
 | LLM | Groq SDK — `llama-3.1-8b-instant` |
+| Rich text | Tiptap (StarterKit + Link) + sanitize-html côté serveur |
 | Langage | TypeScript |
 
 ---
 
-## Demarrage
+## Démarrage
 
 ```bash
 npm install
 ```
 
-Cree un fichier `.env.local` a la racine :
+Créer un fichier `.env` à la racine :
 
 ```env
-GROQ_API_KEY=gsk_...
+DATABASE_URL="file:./prisma/dev.db"
+SESSION_SECRET="une-chaine-aleatoire-de-32-caracteres-minimum"
+
+# Google OAuth (console.cloud.google.com)
+GOOGLE_CLIENT_ID="..."
+GOOGLE_CLIENT_SECRET="..."
+GOOGLE_REDIRECT_URI="http://localhost:3000/api/auth/google/callback"
+
+# Groq (console.groq.com — gratuit)
+GROQ_API_KEY="gsk_..."
 ```
 
-Cle gratuite sur [console.groq.com](https://console.groq.com) (sans carte bancaire).
+Appliquer les migrations et peupler la base :
+
+```bash
+npx prisma migrate deploy
+npm run seed
+```
+
+Lancer le serveur :
 
 ```bash
 npm run dev
 ```
 
 L'app tourne sur [http://localhost:3000](http://localhost:3000).
+
+**Compte admin seed :** `admin@nuvora.app` / `admin1234`
 
 ---
 
@@ -44,41 +65,55 @@ L'app tourne sur [http://localhost:3000](http://localhost:3000).
 
 | URL | Description |
 | --- | --- |
-| `/` | Accueil (hero, nouveautes, populaires, teaser assistant) |
-| `/catalogue` | Catalogue filtrable (categorie, prix, langue, plateforme) |
-| `/produit/[slug]` | Fiche produit detaillee |
+| `/` | Accueil (hero, nouveautés, populaires, teaser assistant) |
+| `/catalogue` | Catalogue filtrable (catégorie, prix, langue, plateforme) |
+| `/catalogue/[categorie]` | Vue par catégorie |
+| `/produit/[slug]` | Fiche produit détaillée + avis + produits similaires |
 | `/createur` | Page marketing "Vendre sur Nuvora" |
-| `/createur/[slug]` | Profil public d'un createur |
-| `/assistant` | Assistant IA (chat en langage naturel) |
-| `/recherche` | Resultats de recherche (`?q=`) |
-| `/compte` | Favoris, historique, parametres du compte |
-| `/cgu` · `/confidentialite` · `/mentions-legales` | Pages legales |
+| `/createur/[slug]` | Profil public d'un créateur + ses produits |
+| `/assistant` | Assistant IA — recommandation en langage naturel |
+| `/recherche` | Résultats de recherche (`?q=`) |
+| `/compte` | Favoris, historique, paramètres (utilisateur connecté) |
+| `/cgu` · `/confidentialite` · `/mentions-legales` | Pages légales |
 
-### Auth `(auth)` — layout plein ecran sans navigation
-
-| URL | Description |
-| --- | --- |
-| `/connexion` | Formulaire de connexion |
-| `/inscription` | Formulaire d'inscription |
-| `/confirmation` | Confirmation du compte (OTP) |
-| `/mot-de-passe-oublie` | Reinitialisation du mot de passe |
-
-### Dashboard `(dashboard)` — espace createur
+### Auth `(auth)` — layout plein écran
 
 | URL | Description |
 | --- | --- |
-| `/dashboard` | Vue d'ensemble |
-| `/dashboard/produits` | Liste des produits du createur |
-| `/dashboard/produits/nouveau` | Ajouter un produit |
-| `/dashboard/produits/[slug]` | Modifier un produit |
-| `/dashboard/statistiques` | Statistiques detaillees |
-| `/dashboard/profil` | Edition du profil createur |
+| `/connexion` | Connexion email/mot de passe ou Google |
+| `/inscription` | Création de compte |
+| `/onboarding` | Étapes post-inscription (displayName, plateforme, spécialité) |
+| `/api/auth/google` | Initiation OAuth Google (PKCE) |
+| `/api/auth/google/callback` | Callback OAuth — crée ou lie le compte |
+
+### Dashboard `(dashboard)` — espace créateur (rôle `creator`)
+
+| URL | Description |
+| --- | --- |
+| `/dashboard` | Vue d'ensemble (stats réelles depuis la DB) |
+| `/dashboard/produits` | Liste des produits du créateur |
+| `/dashboard/produits/nouveau` | Soumettre un nouveau produit (wizard 3 étapes) |
+| `/dashboard/produits/[slug]` | Modifier un produit (repassé en validation) |
+| `/dashboard/statistiques` | Statistiques détaillées |
+| `/dashboard/profil` | Édition du profil (nom, bio rich text, spécialité, accroche) |
+
+### Admin `(admin)` — backoffice (rôle `admin`)
+
+| URL | Description |
+| --- | --- |
+| `/admin` | Vue d'ensemble : KPIs, produits en attente, activité récente |
+| `/admin/produits` | Valider / rejeter les soumissions |
+| `/admin/createurs` | Liste des créateurs, vérification en un clic |
+| `/admin/avis` | Modération des avis |
+| `/admin/parametres` | Paramètres de la plateforme |
 
 ### API
 
-| Methode | URL | Description |
+| Méthode | URL | Description |
 | --- | --- | --- |
-| `POST` | `/api/assistant` | Streaming plain text — appel Groq avec historique |
+| `POST` | `/api/assistant` | Streaming LLM — catalogue DB injecté dans le prompt, réponse token par token |
+| `GET` | `/api/auth/google` | Initiation OAuth |
+| `GET` | `/api/auth/google/callback` | Callback OAuth |
 
 ---
 
@@ -87,82 +122,92 @@ L'app tourne sur [http://localhost:3000](http://localhost:3000).
 ```text
 src/
 ├── app/
-│   ├── (auth)/          # Pages d'authentification
-│   ├── (main)/          # Pages publiques
-│   ├── (dashboard)/     # Espace createur
-│   └── api/assistant/   # Route API streaming
+│   ├── (auth)/           # Connexion, inscription, onboarding, OAuth
+│   ├── (main)/           # Pages publiques
+│   ├── (dashboard)/      # Espace créateur (role: creator)
+│   ├── (admin)/          # Backoffice (role: admin)
+│   ├── actions/          # Server Actions (auth, products, creator, admin, onboarding)
+│   └── api/              # Routes API (assistant streaming, OAuth)
 ├── components/
-│   ├── ui/              # Button, Select — composants de base
-│   └── *.tsx            # ProductCard, AssistantChat, TopBar…
+│   ├── ui/               # Button, Select — composants de base
+│   └── *.tsx             # ProductCard, CatalogView, AssistantChat, RichTextEditor…
 ├── contexts/
-│   ├── auth.tsx         # AuthProvider + useAuth
-│   ├── favorites.tsx    # FavoritesProvider + useFavorites (localStorage)
-│   └── toast.tsx        # ToastProvider + useToast
-└── data/
-    └── products.ts      # Donnees mockees + helpers (PRODUCTS, CREATORS, filterProducts…)
+│   ├── auth.tsx          # AuthProvider + useAuth (session côté client)
+│   ├── favorites.tsx     # FavoritesProvider + useFavorites (localStorage)
+│   └── toast.tsx         # ToastProvider + useToast
+├── lib/
+│   ├── dal.ts            # verifySession, getCurrentUser (React.cache)
+│   ├── db.ts             # Singleton Prisma (libsql adapter)
+│   ├── session.ts        # createSession, deleteSession (JWT + cookie httpOnly)
+│   └── google-oauth.ts   # Singleton arctic Google
+├── data/
+│   └── products.ts       # Constantes statiques (CATEGORIES, PLATFORMS, SORTS…) + helpers mock homepage
+└── proxy.ts              # Middleware edge — protection des routes + headers sécurité
+prisma/
+├── schema.prisma         # Modèles User, Creator, Product, Review
+├── seed.ts               # Seed : 1 admin, 8 créateurs, 25 produits actifs
+└── migrations/           # Migrations Prisma
 ```
 
 ---
 
-## Design system
+## Authentification
 
-Tokens definis dans `src/app/globals.css`, exposes comme classes Tailwind via `@theme inline`.
+- **Email/mot de passe** : bcrypt cost 12, hash constant-time, DUMMY_HASH anti-timing
+- **Google OAuth** : arctic v3 PKCE — state + codeVerifier en cookies httpOnly (10 min), fusion de compte par email si déjà existant
+- **Session** : JWT HS256 signé avec `SESSION_SECRET`, stocké en cookie httpOnly SameSite=Lax, 30 jours
+- **DAL** : `verifySession()` et `getCurrentUser()` mémoïsés par `React.cache()` — un seul aller DB par requête
+- **Middleware** (`proxy.ts`) : protection edge des routes par rôle (`buyer` → onboarding, `creator` → dashboard, `admin` → admin), headers CSP/HSTS
 
-### Couleurs principales
+---
 
-| Token | Role |
-| --- | --- |
-| `bg` / `surface` / `surface-2` | Fonds de page et de cartes |
-| `fg` / `fg-2` / `muted` | Hierarchie de texte |
-| `border` / `border-2` | Bordures |
-| `accent` / `accent-hover` / `accent-soft` | Indigo — action primaire |
-| `success` / `warning` / `danger` | Etats semantiques |
+## Modèle de données
 
-Le theme sombre est active via la classe `.dark` sur `<html>` (bouton `ThemeToggle` dans la TopBar).
+```text
+User          → Creator (1:1, optionnel)
+Creator       → Product[] (1:N)
+User          → Review[] (1:N)
+Product       → Review[] (1:N)
+```
 
-### Typographie
+**Statuts produit :** `pending` (soumis, en attente) → `active` (validé, visible) ou `rejected`
 
-- **Sans-serif** : Plus Jakarta Sans (Google Fonts)
-- **Mono** : JetBrains Mono (Google Fonts)
+**Rôles utilisateur :** `buyer` (défaut) → `creator` (après onboarding) ou `admin`
 
 ---
 
 ## Assistant IA
 
-L'assistant est le point de differenciation de Nuvora. Il comprend les questions en langage naturel et recommande jusqu'a 3 produits du catalogue avec une justification.
-
-**Fonctionnement :**
-
-1. Le client envoie `POST /api/assistant` avec la question et l'historique de conversation.
-2. La route injecte le catalogue complet dans le system prompt et appelle Groq en streaming.
-3. Le modele repond en texte libre et termine avec `SLUGS:[slug1,slug2]`.
-4. Le client lit le stream token par token, parse la ligne `SLUGS:` a la fin et affiche les cartes produits correspondantes.
-
-**Conversation multi-tours :** l'historique complet est renvoye a chaque requete — le modele se souvient du contexte ("montre-moi quelque chose de moins cher" fonctionne).
-
-**Migration vers abonnements :** remplacer Groq par Claude Haiku/Sonnet cote route API, ajouter un middleware qui verifie l'abonnement avant de laisser passer l'appel.
+1. La page `/assistant` charge les produits `active` depuis la DB (Server Component) et les passe au composant client.
+2. À chaque question, `POST /api/assistant` recharge le catalogue DB à jour et l'injecte dans le system prompt Groq.
+3. Le modèle répond en texte libre et termine avec `SLUGS:[slug1,slug2]`.
+4. Le client lit le stream token par token, parse la ligne `SLUGS:` et affiche les cartes produits correspondantes.
+5. L'historique complet est renvoyé à chaque requête — la conversation multi-tours fonctionne.
 
 ---
 
-## Etat actuel des donnees
+## Design system
 
-Tout est mocke en dur dans `src/data/products.ts` — aucune base de donnees, aucune API externe (sauf Groq).
+Tokens définis dans `src/app/globals.css`, exposés comme classes Tailwind via `@theme inline`.
 
-| Donnee | Quantite |
+| Token | Rôle |
 | --- | --- |
-| Produits | 9 |
-| Createurs | 7 |
-| Categories | Formation · Ebook · Template · Logiciel |
+| `bg` / `surface` / `surface-2` | Fonds de page et de cartes |
+| `fg` / `fg-2` / `muted` | Hiérarchie de texte |
+| `border` / `border-2` | Bordures |
+| `accent` / `accent-hover` / `accent-soft` | Indigo — action primaire |
+| `success` / `warning` / `danger` | États sémantiques |
 
-L'auth est simulee (un utilisateur mocke est connecte par defaut pour faciliter les tests UI). Le dashboard est cable sur le createur `studio-lumen` en dur.
+Le thème sombre est activé via la classe `.dark` sur `<html>` (bouton `ThemeToggle` dans la TopBar).
 
 ---
 
 ## Scripts
 
 ```bash
-npm run dev      # Serveur de developpement
+npm run dev      # Serveur de développement
 npm run build    # Build de production
 npm run start    # Serveur de production
 npm run lint     # ESLint
+npm run seed     # Seed la base de données (wipe + recréation)
 ```

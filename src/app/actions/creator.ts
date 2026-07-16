@@ -1,8 +1,20 @@
 "use server";
 
+import sanitizeHtml from "sanitize-html";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { verifySession } from "@/lib/dal";
+
+const ALLOWED_BIO_TAGS = ["p", "strong", "em", "h2", "h3", "ul", "ol", "li", "a", "br"];
+const ALLOWED_BIO_ATTRS = { a: ["href"] };
+
+function sanitizeBio(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: ALLOWED_BIO_TAGS,
+    allowedAttributes: ALLOWED_BIO_ATTRS,
+    allowedSchemes: ["https", "http", "mailto"],
+  });
+}
 
 export type CreatorProfileState = {
   error?: string;
@@ -42,7 +54,7 @@ export async function updateCreatorProfile(
       data: {
         specialty: data.specialty.trim() || null,
         tagline: data.tagline.trim() || null,
-        bio: data.bio.trim() || null,
+        bio: data.bio ? sanitizeBio(data.bio) || null : null,
       },
     }),
   ]);

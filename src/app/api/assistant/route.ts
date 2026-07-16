@@ -1,18 +1,14 @@
 import Groq from "groq-sdk";
-import { PRODUCTS } from "@/data/products";
+import { db } from "@/lib/db";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const CATALOGUE = PRODUCTS.map(
-  (p) =>
-    `- slug:"${p.slug}" | "${p.title}" | ${p.category} ${p.subCategory} | ${p.price === 0 ? "gratuit" : `${p.price}€`} | tags: ${p.tags.join(", ")}`,
-).join("\n");
-
-const SYSTEM_PROMPT = `Tu es l'assistant de Nuvora, une marketplace de produits numériques (formations, ebooks, templates).
+function buildSystemPrompt(catalogue: string): string {
+  return `Tu es l'assistant de Nuvora, une marketplace de produits numériques (formations, ebooks, templates).
 Ton rôle : comprendre le besoin de l'utilisateur en langage naturel et recommander les produits les plus adaptés du catalogue.
 
 CATALOGUE NUVORA :
-${CATALOGUE}
+${catalogue}
 
 RÈGLES :
 1. Réponds toujours en français, avec un ton expert mais chaleureux.
@@ -22,9 +18,34 @@ RÈGLES :
 5. À la toute fin de ta réponse, sur une ligne seule, OBLIGATOIRE, écris exactement ce format sans variation : SLUGS:[slug1,slug2] — remplace slug1/slug2 par les vrais slugs. Exemple : SLUGS:[lancer-son-offre-30-jours,os-createur-notion]. Jamais d'espace, jamais de guillemets, toujours les crochets.
 6. Si aucun produit ne correspond vraiment, dis-le honnêtement et suggère les plus populaires en l'indiquant.
 7. Ne mentionne jamais de produits extérieurs au catalogue.`;
+}
 
 export async function POST(req: Request) {
   const { messages, query } = await req.json();
+
+  const products = await db.product.findMany({
+    where: { status: "active" },
+    select: {
+      slug: true,
+      title: true,
+      category: true,
+      subCategory: true,
+      price: true,
+      isFree: true,
+      tags: true,
+      language: true,
+      creator: { select: { user: { select: { name: true } } } },
+    },
+    orderBy: { views: "desc" },
+  });
+
+  const catalogue = products
+    .map((p) => {
+      const tags = JSON.parse(p.tags ?? "[]") as string[];
+      const prix = p.isFree || p.price === 0 ? "gratuit" : `${p.price}€`;
+      return `- slug:"${p.slug}" | "${p.title}" | ${p.category}${p.subCategory ? ` ${p.subCategory}` : ""} | ${prix} | par ${p.creator.user.name} | langue: ${p.language} | tags: ${tags.join(", ")}`;
+    })
+    .join("\n");
 
   const history = (messages ?? []).map(
     (m: { role: string; text: string }) => ({
@@ -37,7 +58,7 @@ export async function POST(req: Request) {
     model: "llama-3.1-8b-instant",
     stream: true,
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: buildSystemPrompt(catalogue) },
       ...history,
       { role: "user", content: query },
     ],

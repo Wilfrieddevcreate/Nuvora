@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Le thème est piloté par la classe .dark sur <html> (voir ThemeToggle) */
 @custom-variant dark (&:where(.dark, .dark *));

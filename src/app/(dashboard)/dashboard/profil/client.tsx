@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useToast } from "@/contexts/toast";
 import { updateCreatorProfile } from "@/app/actions/creator";
+import { RichTextEditor } from "@/components/rich-text-editor";
 
 type Props = {
   initialName: string;
@@ -133,15 +134,14 @@ export default function ProfilClient({
             />
           </label>
 
-          <label className="block">
+          <div>
             <span className="mb-1.5 block text-sm font-semibold text-fg">Bio</span>
-            <textarea
-              rows={4}
+            <RichTextEditor
               value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              className="w-full resize-none rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+              onChange={setBio}
+              placeholder="Décrivez votre activité, vos produits, votre expertise…"
             />
-          </label>
+          </div>
 
           <label className="block">
             <span className="mb-1.5 block text-sm font-semibold text-fg">Adresse e-mail</span>

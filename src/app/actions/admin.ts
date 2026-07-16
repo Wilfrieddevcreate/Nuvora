@@ -27,3 +27,12 @@ export async function rejectProduct(productId: string): Promise<void> {
   });
   revalidatePath("/admin/produits");
 }
+
+export async function verifyCreator(creatorId: string): Promise<void> {
+  await requireAdmin();
+  await db.creator.update({
+    where: { id: creatorId },
+    data: { verified: true },
+  });
+  revalidatePath("/admin/createurs");
+}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/contexts/favorites";
 import { useAuth } from "@/contexts/auth";
-import { getProductBySlug, PRODUCTS } from "@/data/products";
+import { getProductBySlug, PRODUCTS, toDbProduct } from "@/data/products";
 import { ProductCard } from "@/components/product-card";
 import { Modal, ModalActions } from "@/components/modal";
 
@@ -38,7 +38,10 @@ export default function CompteClient() {
   const { favorites } = useFavorites();
   const { user, logout } = useAuth();
   const [confirmLogout, setConfirmLogout] = useState(false);
-  const favProducts = favorites.map((slug) => getProductBySlug(slug)).filter(Boolean);
+  const favProducts = favorites
+    .map((slug) => getProductBySlug(slug))
+    .filter((p): p is NonNullable<typeof p> => p != null)
+    .map(toDbProduct);
 
   return (
     <>
@@ -93,7 +96,7 @@ export default function CompteClient() {
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {favProducts.map((p) => p && <ProductCard key={p.slug} product={p} />)}
+              {favProducts.map((p) => <ProductCard key={p.slug} product={p} />)}
             </div>
           )}
         </div>
