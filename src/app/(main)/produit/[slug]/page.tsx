@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { db } from "@/lib/db";
 import { ProductCard, type DbProduct } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
-import { ArrowUpRight } from "@/components/icons";
+import { BuyButton } from "@/components/buy-button";
 
 const CATEGORY_SLUG: Record<string, string> = {
   Formation: "formation",
@@ -73,6 +74,14 @@ export default async function ProductPage({
     },
   });
   if (!product) notFound();
+
+  // Incrémente views après le rendu, sans bloquer la réponse
+  after(async () => {
+    await db.product.update({
+      where: { id: product.id },
+      data: { views: { increment: 1 } },
+    });
+  });
 
   const tags = JSON.parse(product.tags ?? "[]") as string[];
   const isNew = (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000;
@@ -190,15 +199,10 @@ export default async function ProductPage({
               <span className="text-4xl font-extrabold">{formatPrice(product.price, product.isFree)}</span>
             </div>
 
-            <a
-              href={product.purchaseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
-            >
-              Acheter maintenant
-              <ArrowUpRight className="size-4" />
-            </a>
+            <BuyButton
+              productId={product.id}
+              purchaseUrl={product.purchaseUrl}
+            />
             <p className="mt-3 text-center text-xs text-muted">
               Vous serez redirigé vers <span className="font-semibold text-fg-2">{product.platform}</span> pour finaliser l&apos;achat.
             </p>
@@ -234,7 +238,7 @@ export default async function ProductPage({
         </section>
       )}
 
-      <ProductReviews slug={product.slug} />
+      <ProductReviews productId={product.id} />
     </div>
   );
 }

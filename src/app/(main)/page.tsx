@@ -2,12 +2,22 @@ import type { Metadata } from "next";
 import { SearchTabs } from "@/components/search-tabs";
 import { HeroPreview } from "@/components/hero-preview";
 import { CategoryTiles } from "@/components/category-tiles";
-import { ProductCard } from "@/components/product-card";
+import { ProductCard, type DbProduct } from "@/components/product-card";
 import { Testimonials } from "@/components/testimonials";
 import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
-import { getNewProducts, getPopularProducts, CREATORS, toDbProduct } from "@/data/products";
+import { db } from "@/lib/db";
+
+const AVATAR_COLORS = [
+  "bg-indigo-500", "bg-violet-500", "bg-rose-500", "bg-amber-500",
+  "bg-emerald-500", "bg-sky-500", "bg-pink-500", "bg-teal-500",
+];
+function avatarColor(name: string): string {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % AVATAR_COLORS.length;
+  return AVATAR_COLORS[h];
+}
 
 export const metadata: Metadata = {
   title: "Trouvez les meilleurs produits digitaux",
@@ -77,9 +87,51 @@ const STEPS = [
   },
 ];
 
-export default function Home() {
-  const nouveautes = getNewProducts(4).map(toDbProduct);
-  const populaires = getPopularProducts(4).map(toDbProduct);
+export default async function Home() {
+  const [newProducts, popularProducts, verifiedCreators] = await Promise.all([
+    db.product.findMany({
+      where: { status: "active" },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+      include: { creator: { include: { user: { select: { name: true } } } } },
+    }),
+    db.product.findMany({
+      where: { status: "active" },
+      orderBy: { views: "desc" },
+      take: 4,
+      include: { creator: { include: { user: { select: { name: true } } } } },
+    }),
+    db.creator.findMany({
+      where: { verified: true },
+      take: 4,
+      include: { user: { select: { name: true } } },
+    }),
+  ]);
+
+  function mapProduct(p: (typeof newProducts)[0]): DbProduct {
+    const tags = (() => { try { return JSON.parse(p.tags) as string[]; } catch { return []; } })();
+    return {
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      category: p.category as DbProduct["category"],
+      subCategory: p.subCategory ?? "",
+      tags,
+      price: p.price,
+      isFree: p.price === 0,
+      language: p.language ?? undefined,
+      platform: p.platform,
+      views: p.views,
+      clicks: p.clicks,
+      createdAt: p.createdAt.toISOString(),
+      creatorName: p.creator.user.name,
+      creatorSlug: p.creator.slug,
+      creatorVerified: p.creator.verified,
+    };
+  }
+
+  const nouveautes = newProducts.map(mapProduct);
+  const populaires = popularProducts.map(mapProduct);
 
   return (
     <>
@@ -271,25 +323,23 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
-          {CREATORS.filter((c) => c.verified).slice(0, 4).map((c) => (
+          {verifiedCreators.map((c) => (
             <a
               key={c.slug}
               href={`/createur/${c.slug}`}
               className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-5 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
             >
-              <span className={`grid size-12 shrink-0 place-items-center rounded-xl ${c.color} text-lg font-extrabold text-white`}>
-                {c.name.charAt(0)}
+              <span className={`grid size-12 shrink-0 place-items-center rounded-xl ${avatarColor(c.user.name)} text-lg font-extrabold text-white`}>
+                {c.user.name.charAt(0)}
               </span>
               <div className="min-w-0 w-full">
-                <p className="truncate font-bold text-sm group-hover:text-accent">{c.name}</p>
-                <p className="mt-0.5 text-xs text-muted line-clamp-2 leading-relaxed">{c.specialty}</p>
+                <p className="truncate font-bold text-sm group-hover:text-accent">{c.user.name}</p>
+                <p className="mt-0.5 text-xs text-muted line-clamp-2 leading-relaxed">{c.specialty ?? c.tagline ?? ""}</p>
               </div>
-              {c.verified && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
-                  <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
-                  Vérifié
-                </span>
-              )}
+              <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
+                <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                Vérifié
+              </span>
             </a>
           ))}
         </div>
