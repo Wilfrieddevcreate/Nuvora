@@ -65,6 +65,8 @@ export function ForgotPasswordForm() {
       }}
     >
       <FormField
+        id="forgot-email"
+        name="email"
         label="Adresse e-mail"
         type="email"
         placeholder="vous@exemple.com"

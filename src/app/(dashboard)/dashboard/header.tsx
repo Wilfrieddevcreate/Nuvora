@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoBadge } from "@/components/logo";
+import { useAuth } from "@/contexts/auth";
 
 const NOTIFICATIONS = [
   {
@@ -91,6 +92,7 @@ export function DashboardHeader({
 }) {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
+  const { user } = useAuth();
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const unreadCount = notifications.filter((n) => n.unread).length;
@@ -212,7 +214,7 @@ export function DashboardHeader({
           aria-label="Mon profil"
           className="grid size-9 place-items-center rounded-full bg-indigo-500 text-sm font-bold text-white transition-opacity hover:opacity-85"
         >
-          S
+          {user?.initial ?? "?"}
         </Link>
       </div>
     </header>

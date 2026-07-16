@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCreatorProducts } from "@/contexts/creator-products";
+
+type Product = {
+  id: string;
+  slug: string;
+  title: string;
+  views: number;
+  clicks: number;
+};
 
 const WEEKLY = [
   { day: "Lun", views: 120, clicks: 14 },
@@ -15,8 +22,7 @@ const WEEKLY = [
 
 const MAX_VIEWS = Math.max(...WEEKLY.map((d) => d.views));
 
-export default function StatistiquesClient() {
-  const { products } = useCreatorProducts();
+export default function StatistiquesClient({ products }: { products: Product[] }) {
   const totalViews = products.reduce((s, p) => s + p.views, 0);
   const totalClicks = products.reduce((s, p) => s + p.clicks, 0);
   const ctr = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : "0";
@@ -63,7 +69,7 @@ export default function StatistiquesClient() {
             ))}
           </div>
 
-          {/* Graphique en barres — vues sur 7 jours */}
+          {/* Graphique en barres — vues sur 7 jours (données statiques en attendant) */}
           <div className="rounded-2xl border border-border bg-surface p-5 shadow-soft sm:p-6">
             <h2 className="mb-5 font-bold">Vues des 7 derniers jours</h2>
             <div className="flex h-36 items-end gap-2 sm:gap-3">
@@ -99,7 +105,7 @@ export default function StatistiquesClient() {
                 const pCtr = p.views > 0 ? ((p.clicks / p.views) * 100).toFixed(1) : "0";
                 const pct = totalViews > 0 ? Math.round((p.views / totalViews) * 100) : 0;
                 return (
-                  <li key={p.slug} className="px-5 py-4">
+                  <li key={p.id} className="px-5 py-4">
                     <div className="flex items-center justify-between gap-4">
                       <p className="min-w-0 truncate text-sm font-semibold text-fg">{p.title}</p>
                       <div className="flex shrink-0 items-center gap-4 text-sm">
@@ -109,10 +115,7 @@ export default function StatistiquesClient() {
                       </div>
                     </div>
                     <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
-                      <div
-                        className="h-full rounded-full bg-accent transition-all"
-                        style={{ width: `${pct}%` }}
-                      />
+                      <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${pct}%` }} />
                     </div>
                   </li>
                 );

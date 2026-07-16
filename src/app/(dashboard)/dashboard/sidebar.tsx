@@ -156,7 +156,7 @@ export function MobileSidebar({
 }
 
 function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
   const [confirmLogout, setConfirmLogout] = useState(false);
 
@@ -206,11 +206,11 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
       <div className="mt-auto pt-4 border-t border-border">
         <div className="flex items-center gap-3 rounded-xl px-3 py-2.5">
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-indigo-500 text-sm font-bold text-white">
-            S
+            {user?.initial ?? "?"}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-fg">Studio Lumen</p>
-            <p className="truncate text-xs text-muted">studio@lumen.co</p>
+            <p className="truncate text-sm font-semibold text-fg">{user?.name ?? "—"}</p>
+            <p className="truncate text-xs text-muted">{user?.email ?? ""}</p>
           </div>
         </div>
         <button

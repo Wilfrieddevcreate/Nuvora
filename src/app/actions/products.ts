@@ -1,0 +1,81 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { verifySession } from "@/lib/dal";
+
+export type ProductState = {
+  error?: string;
+};
+
+type ProductInput = {
+  title: string;
+  description: string;
+  category: string;
+  subCategory: string;
+  tags: string[];
+  price: number;
+  isFree: boolean;
+  language: string;
+  country: string;
+  platform: string;
+  purchaseUrl: string;
+};
+
+function makeSlug(title: string, id: string): string {
+  const base = title
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 60);
+  return `${base}-${id.slice(-6)}`;
+}
+
+export async function submitProduct(input: ProductInput): Promise<ProductState> {
+  const session = await verifySession();
+
+  const creator = await db.creator.findUnique({ where: { userId: session.userId } });
+  if (!creator) return { error: "Profil créateur introuvable." };
+
+  const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  const slug = makeSlug(input.title, id);
+
+  await db.product.create({
+    data: {
+      id,
+      slug,
+      title: input.title,
+      description: input.description,
+      category: input.category,
+      subCategory: input.subCategory,
+      tags: JSON.stringify(input.tags),
+      price: input.isFree ? 0 : input.price,
+      isFree: input.isFree,
+      language: input.language,
+      country: input.country || null,
+      platform: input.platform,
+      purchaseUrl: input.purchaseUrl,
+      creatorId: creator.id,
+    },
+  });
+
+  redirect("/dashboard/produits");
+}
+
+export async function deleteProduct(productId: string): Promise<ProductState> {
+  const session = await verifySession();
+
+  const product = await db.product.findUnique({
+    where: { id: productId },
+    include: { creator: { select: { userId: true } } },
+  });
+
+  if (!product || product.creator.userId !== session.userId) {
+    return { error: "Produit introuvable ou accès refusé." };
+  }
+
+  await db.product.delete({ where: { id: productId } });
+  redirect("/dashboard/produits");
+}

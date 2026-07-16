@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, PLATFORMS } from "@/data/products";
-import { useCreatorProducts } from "@/contexts/creator-products";
 import { useToast } from "@/contexts/toast";
+import { submitProduct } from "@/app/actions/products";
 
 const SUB_CATEGORIES: Record<string, string[]> = {
   Formation: ["IA", "Dev", "Design", "Marketing", "Business", "Finance", "Autre"],
@@ -133,10 +133,11 @@ function Stepper({ current }: { current: number }) {
 
 export function NewProductForm() {
   const router = useRouter();
-  const { addProduct } = useCreatorProducts();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -199,11 +200,21 @@ export function NewProductForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (validateStep(3)) {
-      addProduct({ title, description, category, subCategory, tags, price: isFree ? 0 : parseFloat(price) || 0, isFree, language, country, platform, purchaseUrl });
-      toast("Produit soumis, en attente de validation", "success");
-      setSubmitted(true);
-    }
+    if (!validateStep(3)) return;
+    setSubmitError(null);
+    startTransition(async () => {
+      const result = await submitProduct({
+        title, description, category, subCategory, tags,
+        price: parseFloat(price) || 0,
+        isFree, language, country, platform, purchaseUrl,
+      });
+      if (result?.error) {
+        setSubmitError(result.error);
+      } else {
+        toast("Produit soumis, en attente de validation", "success");
+        setSubmitted(true);
+      }
+    });
   }
 
   function resetForm() {
@@ -494,13 +505,25 @@ export function NewProductForm() {
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
           </button>
         ) : (
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
-          >
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
-            Soumettre pour validation
-          </button>
+          <div className="flex flex-col items-end gap-2">
+            {submitError && (
+              <p className="text-sm text-danger">{submitError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={pending}
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
+            >
+              {pending ? (
+                "Envoi en cours…"
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  Soumettre pour validation
+                </>
+              )}
+            </button>
+          </div>
         )}
       </div>
         </div>{/* fin colonne gauche */}

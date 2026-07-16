@@ -1,41 +1,44 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useTransition } from "react";
+import { logout as logoutAction } from "@/app/actions/auth";
 
 export type AuthUser = {
+  id: string;
   name: string;
   email: string;
   initial: string;
+  role: string;
   isCreator: boolean;
-  slug: string;
+  slug?: string;
 };
 
 interface AuthCtx {
   user: AuthUser | null;
-  login: (user: AuthUser) => void;
   logout: () => void;
 }
 
-const Ctx = createContext<AuthCtx>({
-  user: null,
-  login: () => {},
-  logout: () => {},
-});
+const Ctx = createContext<AuthCtx>({ user: null, logout: () => {} });
 
-// Utilisateur mocké — simule une session active
-const MOCK_USER: AuthUser = {
-  name: "Wilfried H.",
-  email: "wilfried@example.com",
-  initial: "W",
-  isCreator: false,
-  slug: "wilfried-h",
-};
+export function AuthProvider({
+  user,
+  children,
+}: {
+  user: AuthUser | null;
+  children: React.ReactNode;
+}) {
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(user);
+  const [, startTransition] = useTransition();
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Commence connecté avec le mock pour pouvoir tester l'UI
-  const [user, setUser] = useState<AuthUser | null>(MOCK_USER);
+  function logout() {
+    setCurrentUser(null);
+    startTransition(() => {
+      logoutAction();
+    });
+  }
+
   return (
-    <Ctx.Provider value={{ user, login: setUser, logout: () => setUser(null) }}>
+    <Ctx.Provider value={{ user: currentUser, logout }}>
       {children}
     </Ctx.Provider>
   );

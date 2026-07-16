@@ -1,28 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useToast } from "@/contexts/toast";
-import { getCreatorBySlug, getProductsByCreator } from "@/data/products";
+import { updateCreatorProfile } from "@/app/actions/creator";
 
-const MOCK_CREATOR_SLUG = "studio-lumen";
+type Props = {
+  initialName: string;
+  initialEmail: string;
+  initialSpecialty: string;
+  initialTagline: string;
+  initialBio: string;
+  creatorSlug: string;
+  verified: boolean;
+  platform: string;
+  productCount: number;
+  joinedYear: string;
+};
 
-export default function ProfilClient() {
-  const creator = getCreatorBySlug(MOCK_CREATOR_SLUG);
-  const products = getProductsByCreator(MOCK_CREATOR_SLUG);
+export default function ProfilClient({
+  initialName,
+  initialEmail,
+  initialSpecialty,
+  initialTagline,
+  initialBio,
+  creatorSlug,
+  verified,
+  platform,
+  productCount,
+  joinedYear,
+}: Props) {
   const { toast } = useToast();
+  const [pending, startTransition] = useTransition();
 
-  const [name, setName] = useState(creator?.name ?? "");
-  const [specialty, setSpecialty] = useState(creator?.specialty ?? "");
-  const [tagline, setTagline] = useState(creator?.tagline ?? "");
-  const [bio, setBio] = useState(creator?.bio ?? "");
-  const [email, setEmail] = useState("studio@lumen.co");
+  const [name, setName] = useState(initialName);
+  const [specialty, setSpecialty] = useState(initialSpecialty);
+  const [tagline, setTagline] = useState(initialTagline);
+  const [bio, setBio] = useState(initialBio);
+  const [email, setEmail] = useState(initialEmail);
 
-  if (!creator) return null;
+  const initial = name.charAt(0).toUpperCase();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    toast("Profil mis à jour", "success");
+    startTransition(async () => {
+      const result = await updateCreatorProfile({ name, specialty, tagline, bio, email });
+      if (result.error) {
+        toast(result.error, "error");
+      } else {
+        toast("Profil mis à jour", "success");
+      }
+    });
   }
 
   return (
@@ -30,7 +58,7 @@ export default function ProfilClient() {
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-extrabold">Mon profil</h1>
         <Link
-          href={`/createur/${creator.slug}`}
+          href={`/createur/${creatorSlug}`}
           className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
         >
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
@@ -40,14 +68,14 @@ export default function ProfilClient() {
 
       {/* Carte identité */}
       <div className="max-w-2xl overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-        <div className={`h-20 ${creator.color} opacity-20`} />
+        <div className="h-20 bg-accent opacity-20" />
         <div className="px-6 pb-6">
           <div className="-mt-7 flex items-end gap-4">
-            <span className={`grid size-14 place-items-center rounded-xl ${creator.color} text-xl font-extrabold text-white ring-4 ring-surface`}>
-              {creator.name.charAt(0)}
+            <span className="grid size-14 place-items-center rounded-xl bg-indigo-500 text-xl font-extrabold text-white ring-4 ring-surface">
+              {initial}
             </span>
             <div className="mb-1">
-              {creator.verified && (
+              {verified && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
                   <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
                   Vérifié
@@ -55,14 +83,14 @@ export default function ProfilClient() {
               )}
             </div>
           </div>
-          <h2 className="mt-3 text-lg font-extrabold">{creator.name}</h2>
-          <p className="text-sm text-accent">{creator.tagline}</p>
-          <p className="mt-3 text-sm leading-relaxed text-fg-2">{creator.bio}</p>
+          <h2 className="mt-3 text-lg font-extrabold">{name}</h2>
+          {tagline && <p className="text-sm text-accent">{tagline}</p>}
+          {bio && <p className="mt-3 text-sm leading-relaxed text-fg-2">{bio}</p>}
           <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted">
-            <span className="rounded-full border border-border px-3 py-1">{creator.specialty}</span>
-            <span className="rounded-full border border-border px-3 py-1">{creator.platform}</span>
-            <span className="rounded-full border border-border px-3 py-1">Depuis {creator.joinedYear}</span>
-            <span className="rounded-full border border-border px-3 py-1">{products.length} produit{products.length > 1 ? "s" : ""}</span>
+            {specialty && <span className="rounded-full border border-border px-3 py-1">{specialty}</span>}
+            {platform && <span className="rounded-full border border-border px-3 py-1">{platform}</span>}
+            <span className="rounded-full border border-border px-3 py-1">Depuis {joinedYear}</span>
+            <span className="rounded-full border border-border px-3 py-1">{productCount} produit{productCount > 1 ? "s" : ""}</span>
           </div>
         </div>
       </div>
@@ -128,9 +156,10 @@ export default function ProfilClient() {
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
+              disabled={pending}
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
             >
-              Enregistrer les modifications
+              {pending ? "Enregistrement…" : "Enregistrer les modifications"}
             </button>
           </div>
         </form>

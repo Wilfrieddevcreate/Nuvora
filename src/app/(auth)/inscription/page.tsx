@@ -10,7 +10,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://nuvora.app/inscription" },
 };
 
-export default function InscriptionPage() {
+const OAUTH_ERRORS: Record<string, string> = {
+  oauth_invalid: "Le flux OAuth est invalide ou a expiré. Réessayez.",
+  oauth_failed: "Impossible de contacter Google. Réessayez.",
+  oauth_no_email: "Google n'a pas partagé votre adresse e-mail.",
+};
+
+export default async function InscriptionPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const oauthError = params.error ? (OAUTH_ERRORS[params.error] ?? undefined) : undefined;
+
   return (
     <AuthScreen
       title="Créer un compte."
@@ -25,7 +38,7 @@ export default function InscriptionPage() {
         "Référencez vos propres produits",
       ]}
     >
-      <SignupForm />
+      <SignupForm oauthError={oauthError} />
     </AuthScreen>
   );
 }

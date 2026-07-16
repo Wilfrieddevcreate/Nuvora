@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useFavorites } from "@/contexts/favorites";
 import { useAuth } from "@/contexts/auth";
 import { getProductBySlug, PRODUCTS } from "@/data/products";
@@ -37,8 +36,7 @@ function EmptyState({ icon, title, desc, cta }: { icon: React.ReactNode; title: 
 export default function CompteClient() {
   const [tab, setTab] = useState<Tab>("favoris");
   const { favorites } = useFavorites();
-  const { logout } = useAuth();
-  const router = useRouter();
+  const { user, logout } = useAuth();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const favProducts = favorites.map((slug) => getProductBySlug(slug)).filter(Boolean);
 
@@ -48,11 +46,11 @@ export default function CompteClient() {
       {/* En-tête profil */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
         <div className="grid size-16 place-items-center rounded-full bg-indigo-500 text-2xl font-extrabold text-white">
-          W
+          {user?.initial ?? "?"}
         </div>
         <div>
-          <h1 className="text-2xl font-extrabold">Wilfried H.</h1>
-          <p className="mt-0.5 text-sm text-muted">wilfried@example.com · Membre depuis 2024</p>
+          <h1 className="text-2xl font-extrabold">{user?.name ?? ""}</h1>
+          <p className="mt-0.5 text-sm text-muted">{user?.email ?? ""}</p>
         </div>
       </div>
 
@@ -135,16 +133,15 @@ export default function CompteClient() {
               <h2 className="font-bold text-fg">Informations personnelles</h2>
               <div className="space-y-4">
                 {[
-                  { label: "Prénom", id: "input-prenom", placeholder: "Wilfried", type: "text" },
-                  { label: "Nom", id: "input-nom", placeholder: "Heloussato", type: "text" },
-                  { label: "Email", id: "input-email", placeholder: "wilfried@example.com", type: "email" },
-                ].map(({ label, id, placeholder, type }) => (
+                  { label: "Nom complet", id: "input-nom", value: user?.name ?? "", type: "text" },
+                  { label: "Email", id: "input-email", value: user?.email ?? "", type: "email" },
+                ].map(({ label, id, value, type }) => (
                   <div key={label}>
                     <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-fg">{label}</label>
                     <input
                       id={id}
                       type={type}
-                      defaultValue={placeholder}
+                      defaultValue={value}
                       className="w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
                     />
                   </div>
@@ -203,7 +200,7 @@ export default function CompteClient() {
         </button>
         <button
           type="button"
-          onClick={() => { logout(); router.push("/"); }}
+          onClick={() => { logout(); }}
           className="flex-1 rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-opacity hover:opacity-85"
         >
           Se déconnecter

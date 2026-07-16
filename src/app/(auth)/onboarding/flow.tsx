@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { LogoBadge } from "@/components/logo";
+import { completeOnboarding } from "@/app/actions/onboarding";
 
 const STEPS = [
   { num: 1, label: "Votre profil" },
@@ -11,7 +11,7 @@ const STEPS = [
   { num: 3, label: "Prêt !" },
 ];
 
-const PLATFORMS = ["Gumroad", "Systeme.io", "Podia", "Chariow"];
+const PLATFORMS = ["Chariow", "Gumroad", "Systeme.io", "Podia"];
 
 const CATEGORIES: { value: string; icon: React.ReactNode; desc: string }[] = [
   {
@@ -103,8 +103,9 @@ function Stepper({ current }: { current: number }) {
 }
 
 export function OnboardingFlow() {
-  const router = useRouter();
   const [step, setStep] = useState(1);
+  const [pending, startTransition] = useTransition();
+  const [serverError, setServerError] = useState<string | null>(null);
 
   // Étape 1
   const [displayName, setDisplayName] = useState("");
@@ -117,9 +118,21 @@ export function OnboardingFlow() {
   function next() { setStep((s) => s + 1); }
   function back() { setStep((s) => s - 1); }
 
+  function finish() {
+    setServerError(null);
+    startTransition(async () => {
+      const result = await completeOnboarding({
+        displayName,
+        tagline,
+        platform,
+        specialty: category,
+      });
+      if (result?.error) setServerError(result.error);
+    });
+  }
+
   return (
     <div className="min-h-dvh bg-bg">
-      {/* Header minimal */}
       <header className="flex h-16 items-center justify-between px-6 border-b border-border">
         <Link href="/" className="flex items-center gap-2 font-extrabold">
           <LogoBadge className="size-7" />
@@ -128,7 +141,6 @@ export function OnboardingFlow() {
         <span className="text-sm text-muted">Étape {step} sur {STEPS.length}</span>
       </header>
 
-      {/* Contenu centré */}
       <main className="mx-auto max-w-lg px-5 py-12 space-y-8">
         <Stepper current={step} />
 
@@ -193,7 +205,8 @@ export function OnboardingFlow() {
               <button
                 type="button"
                 onClick={next}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
+                disabled={!displayName.trim()}
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continuer
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -274,7 +287,6 @@ export function OnboardingFlow() {
         {step === 3 && (
           <div className="space-y-8">
             <div className="flex flex-col items-center gap-5 rounded-2xl border border-border bg-surface px-8 py-12 text-center shadow-soft">
-              {/* Illustration */}
               <div className="grid size-20 place-items-center rounded-2xl bg-accent-soft text-accent">
                 <svg viewBox="0 0 24 24" className="size-10" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M12 3l7 4v5c0 4-3 7-7 8-4-1-7-4-7-8V7z" />
@@ -283,30 +295,32 @@ export function OnboardingFlow() {
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-2xl font-extrabold text-fg">Votre compte est prêt 🎉</h1>
+                <h1 className="text-2xl font-extrabold text-fg">Votre compte est prêt !</h1>
                 <p className="text-[15px] leading-relaxed text-fg-2">
                   Vous pouvez maintenant référencer vos premiers produits.
-                  Notre équipe validera chaque fiche sous 24 à 72 h.
+                  Notre équipe validera chaque fiche sous 8 à 12 h.
                 </p>
               </div>
 
-              <div className="flex w-full flex-col gap-3 pt-2 sm:flex-row sm:justify-center">
-                <Link
-                  href="/dashboard/produits/nouveau"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
-                >
-                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M12 5v14M5 12h14" />
+              {serverError && (
+                <p role="alert" className="w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {serverError}
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={finish}
+                disabled={pending}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60 w-full sm:w-auto"
+              >
+                {pending ? "Création en cours…" : "Accéder à mon espace créateur"}
+                {!pending && (
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="m9 18 6-6-6-6" />
                   </svg>
-                  Référencer mon premier produit
-                </Link>
-                <Link
-                  href="/dashboard/profil"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
-                >
-                  Voir mon profil public
-                </Link>
-              </div>
+                )}
+              </button>
             </div>
 
             <button

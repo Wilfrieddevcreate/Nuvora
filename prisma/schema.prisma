@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String?
+  name         String
+  role         String   @default("buyer") // "buyer" | "creator" | "admin"
+  googleId     String?  @unique
+  avatar       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  creator Creator?
+  reviews Review[]
+}
+
+model Creator {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug      String   @unique
+  bio       String?
+  tagline   String?
+  specialty String?
+  platform  String?
+  avatar    String?
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  category    String
+  subCategory String?
+  // JSON array stored as string, e.g. '["ebook","notion"]'
+  tags        String   @default("[]")
+  price       Float
+  isFree      Boolean  @default(false)
+  language    String   @default("fr")
+  country     String?
+  platform    String
+  purchaseUrl String
+  coverImage  String?
+  // "pending" | "active" | "rejected"
+  status      String   @default("pending")
+  views       Int      @default(0)
+  clicks      Int      @default(0)
+  creatorId   String
+  creator     Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reviews Review[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5
+  comment   String?
+  // "pending" | "approved" | "rejected"
+  status    String   @default("pending")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}

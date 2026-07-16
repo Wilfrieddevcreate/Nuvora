@@ -3,14 +3,16 @@ import { SiteFooter } from "@/components/site-footer";
 import { FavoritesProvider } from "@/contexts/favorites";
 import { AuthProvider } from "@/contexts/auth";
 import { ToastProvider } from "@/contexts/toast";
+import { getCurrentUser } from "@/lib/dal";
 
-// Layout des pages publiques : header + footer.
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const user = await getCurrentUser();
+
   return (
     <ToastProvider>
-      <AuthProvider>
+      <AuthProvider user={user}>
         <FavoritesProvider>
           <div className="flex min-h-dvh flex-col">
             <a
