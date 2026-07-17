@@ -34,6 +34,12 @@ export const metadata: Metadata = {
 
 const PLATFORMS = [
   {
+    name: "Chariow",
+    desc: "Marketplace francophone",
+    color: "#ca8a04",
+    letter: "C",
+  },
+  {
     name: "Gumroad",
     desc: "Vente directe, simple et rapide",
     color: "#ff90e8",
@@ -50,12 +56,6 @@ const PLATFORMS = [
     desc: "Cours en ligne & memberships",
     color: "#f97316",
     letter: "P",
-  },
-  {
-    name: "Chariow",
-    desc: "Marketplace francophone",
-    color: "#0ea5e9",
-    letter: "C",
   },
   {
     name: "Lemon Squeezy",
@@ -147,7 +147,7 @@ const FAQS = [
   },
   {
     q: "Combien de temps pour être référencé ?",
-    a: "Généralement 24 à 72 h après soumission. Nous vérifions chaque fiche manuellement pour garantir la qualité du catalogue.",
+    a: "Généralement 8 à 12 h après soumission. Nous vérifions chaque fiche manuellement pour garantir la qualité du catalogue.",
   },
 ];
 

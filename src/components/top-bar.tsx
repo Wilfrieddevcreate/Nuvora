@@ -206,7 +206,7 @@ export function TopBar() {
                 </Link>
               )}
               <Link
-                href="/compte"
+                href={user.role === "admin" ? "/admin" : user.role === "creator" ? "/dashboard" : "/compte"}
                 aria-label="Mon compte"
                 className="grid size-9 place-items-center rounded-full bg-indigo-500 text-sm font-bold text-white transition-opacity hover:opacity-85"
               >

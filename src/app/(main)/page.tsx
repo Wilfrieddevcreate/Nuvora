@@ -55,7 +55,7 @@ const FAQS = [
   },
   {
     q: "Je suis créateur, comment référencer mes produits ?",
-    a: "Créez un compte, soumettez vos produits avec les informations demandées et notre équipe valide sous 24 à 72 h. Le référencement est gratuit et Nuvora ne prend aucune commission.",
+    a: "Créez un compte, soumettez vos produits avec les informations demandées et notre équipe valide sous 8 à 12 h. Le référencement est gratuit et Nuvora ne prend aucune commission.",
   },
 ];
 

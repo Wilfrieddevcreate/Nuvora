@@ -1,27 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
+import { getSession } from "@/lib/auth";
 import { db } from "@/lib/db";
-
-const JWT_SECRET = new TextEncoder().encode(process.env.SESSION_SECRET || "dev-secret-key-do-not-use-in-production");
-
-type SessionData = {
-  userId: string;
-  role: "user" | "creator" | "admin";
-};
-
-async function getSession(): Promise<SessionData | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("session")?.value;
-  if (!token) return null;
-  try {
-    const verified = await jwtVerify(token, JWT_SECRET);
-    return verified.payload as SessionData;
-  } catch {
-    return null;
-  }
-}
 
 export async function getNotifications() {
   const session = await getSession();
@@ -175,4 +155,18 @@ export async function notifyAdminCreatorVerificationRequest(creatorSlug: string,
       },
     });
   }
+}
+
+export async function notifyCreatorVerified(creatorId: string, creatorName: string) {
+  const creator = await db.creator.findUnique({ where: { id: creatorId }, select: { userId: true } });
+  if (!creator) return;
+
+  await db.notification.create({
+    data: {
+      userId: creator.userId,
+      type: "creator_verified",
+      title: "🎉 Tu es créateur vérifié!",
+      message: `Félicitations ${creatorName}! Tu as été certifié comme créateur. Le badge "Créateur vérifié" apparaît maintenant sur tous tes produits.`,
+    },
+  });
 }

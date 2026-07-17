@@ -41,6 +41,13 @@ async function getProducts(): Promise<DbProduct[]> {
       },
     },
   });
+  // Trier par créateur vérifié en premier, puis par vues
+  rows.sort((a, b) => {
+    if (a.creator.verified !== b.creator.verified) {
+      return b.creator.verified ? -1 : 1;
+    }
+    return 0;
+  });
   return rows.map(mapDbProduct);
 }
 

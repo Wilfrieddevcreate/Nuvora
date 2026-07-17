@@ -80,30 +80,26 @@ export function NotificationsBell() {
   };
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="relative inline-flex items-center justify-center size-10 rounded-lg text-muted hover:bg-surface-2 hover:text-fg transition-colors"
-        aria-label="Notifications"
-      >
-        <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-        </svg>
-        {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 inline-flex items-center justify-center size-5 rounded-full bg-danger text-white text-xs font-bold">
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </span>
-        )}
-      </button>
+    <>
+      <div className="relative">
+        <button
+          onClick={() => setOpen(!open)}
+          className="relative inline-flex items-center justify-center size-10 rounded-lg text-muted hover:bg-surface-2 hover:text-fg transition-colors"
+          aria-label="Notifications"
+        >
+          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-1 inline-flex items-center justify-center size-5 rounded-full bg-danger text-white text-xs font-bold">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </button>
 
-      {open && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-          />
-          <div className="absolute top-12 right-0 z-50 w-96 max-h-96 rounded-2xl border border-border bg-surface shadow-soft-lg overflow-hidden flex flex-col">
+        {open && (
+          <div className="fixed top-12 right-4 z-50 w-96 max-h-96 rounded-2xl border border-border bg-surface shadow-soft-lg overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <h3 className="text-sm font-semibold">Notifications</h3>
               {unreadCount > 0 && (
@@ -164,9 +160,16 @@ export function NotificationsBell() {
               )}
             </div>
           </div>
-        </>
+        )}
+      </div>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setOpen(false)}
+        />
       )}
-    </div>
+    </>
   );
 }
 

@@ -50,6 +50,7 @@ model Product {
   // JSON array stored as string, e.g. '["ebook","notion"]'
   tags        String   @default("[]")
   price       Float
+  currency    String   @default("EUR")
   isFree      Boolean  @default(false)
   language    String   @default("fr")
   country     String?

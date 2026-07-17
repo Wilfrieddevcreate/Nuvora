@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, PLATFORMS } from "@/data/products";
+import { RichTextEditor } from "@/components/rich-text-editor";
 import { useToast } from "@/contexts/toast";
 import { submitProduct } from "@/app/actions/products";
 import { scrapeProduct } from "@/app/actions/scrape";
@@ -14,18 +15,20 @@ const SUB_CATEGORIES: Record<string, string[]> = {
   Logiciel: ["SaaS", "Plugin", "Extension", "Autre"],
 };
 
-const PLATFORM_DOMAINS: Record<string, string> = {
-  "chariow.com": "Chariow",
-  "gumroad.com": "Gumroad",
-  "systeme.io": "Systeme.io",
-  "podia.com": "Podia",
+const PLATFORM_KEYWORDS: Record<string, string> = {
+  "chariow": "Chariow",
+  "gumroad": "Gumroad",
+  "systeme": "Systeme.io",
+  "podia": "Podia",
+  "lemonsqueezy": "Lemon Squeezy",
+  "payhip": "Payhip",
 };
 
 function detectPlatform(url: string): string {
   try {
-    const host = new URL(url).hostname.replace(/^www\./, "");
-    for (const [domain, name] of Object.entries(PLATFORM_DOMAINS)) {
-      if (host === domain || host.endsWith("." + domain)) return name;
+    const urlLower = url.toLowerCase();
+    for (const [keyword, name] of Object.entries(PLATFORM_KEYWORDS)) {
+      if (urlLower.includes(keyword)) return name;
     }
   } catch {
     // URL invalide
@@ -178,6 +181,7 @@ export function NewProductForm() {
 
   const [isFree, setIsFree] = useState(false);
   const [price, setPrice] = useState("");
+  const [currency, setCurrency] = useState("EUR");
   const [language, setLanguage] = useState("");
   const [country, setCountry] = useState("");
 
@@ -295,6 +299,7 @@ export function NewProductForm() {
       const result = await submitProduct({
         title, description, category, subCategory, tags,
         price: parseFloat(price) || 0,
+        currency,
         isFree, language, country, platform, purchaseUrl,
         coverImage: uploadedImagePath,
       });
@@ -329,7 +334,7 @@ export function NewProductForm() {
         </div>
         <h2 className="text-xl font-extrabold">Produit soumis avec succès !</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-fg-2">
-          Notre équipe va examiner votre fiche dans les prochaines 24 à 72 h.{" "}
+          Notre équipe va examiner votre fiche dans les prochaines 8 à 12 h.{" "}
           Vous recevrez une notification dès qu&apos;elle sera en ligne.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -441,13 +446,10 @@ export function NewProductForm() {
 
           <div>
             <Label label="Description" required hint="Pour qui c'est conçu et ce que l'utilisateur en retirera." />
-            <textarea
+            <RichTextEditor
               value={description}
-              onChange={(e) => { setDescription(e.target.value); clearErr("description"); }}
-              rows={4}
-              maxLength={600}
+              onChange={(value) => { setDescription(value); clearErr("description"); }}
               placeholder="ex. Une formation complète pour concevoir des agents IA fiables avec Claude…"
-              className={`${ic("description")} resize-none`}
             />
             <FieldError msg={errors.description} />
           </div>
@@ -581,9 +583,50 @@ export function NewProductForm() {
           </label>
 
           {!isFree && (
-            <div>
+            <div className="space-y-3">
               <Label label="Prix" required />
-              <div className="relative">
+              <div className="grid gap-2 sm:grid-cols-3">
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="rounded-xl border border-border bg-bg px-3 py-2 text-sm font-medium text-fg focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                >
+                  <optgroup label="Europe">
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="CHF">CHF (CHF)</option>
+                  </optgroup>
+                  <optgroup label="Amérique">
+                    <option value="USD">USD ($)</option>
+                    <option value="CAD">CAD ($)</option>
+                    <option value="MXN">MXN ($)</option>
+                    <option value="BRL">BRL (R$)</option>
+                  </optgroup>
+                  <optgroup label="Asie-Pacifique">
+                    <option value="AUD">AUD (A$)</option>
+                    <option value="JPY">JPY (¥)</option>
+                    <option value="CNY">CNY (¥)</option>
+                    <option value="INR">INR (₹)</option>
+                    <option value="SGD">SGD ($)</option>
+                    <option value="THB">THB (฿)</option>
+                    <option value="MYR">MYR (RM)</option>
+                    <option value="PHP">PHP (₱)</option>
+                    <option value="IDR">IDR (Rp)</option>
+                    <option value="VND">VND (₫)</option>
+                    <option value="KRW">KRW (₩)</option>
+                    <option value="TWD">TWD (NT$)</option>
+                    <option value="HKD">HKD (HK$)</option>
+                  </optgroup>
+                  <optgroup label="Afrique">
+                    <option value="ZAR">ZAR (R)</option>
+                    <option value="EGP">EGP (£)</option>
+                    <option value="NGN">NGN (₦)</option>
+                    <option value="KES">KES (Sh)</option>
+                    <option value="GHS">GHS (₵)</option>
+                    <option value="XOF">XOF (CFA Ouest)</option>
+                    <option value="XAF">XAF (CFA Centre)</option>
+                  </optgroup>
+                </select>
                 <input
                   type="number"
                   min={1}
@@ -591,10 +634,12 @@ export function NewProductForm() {
                   value={price}
                   onChange={(e) => { setPrice(e.target.value); clearErr("price"); }}
                   placeholder="29"
-                  className={`${ic("price")} pr-14`}
+                  className={`${ic("price")} sm:col-span-2`}
                 />
-                <span className="absolute inset-y-0 right-4 flex items-center text-sm font-semibold text-muted">EUR</span>
               </div>
+              <p className="text-xs text-muted">
+                {price && currency ? `${price} ${currency}` : "Entrez un prix"}
+              </p>
               <FieldError msg={errors.price} />
             </div>
           )}

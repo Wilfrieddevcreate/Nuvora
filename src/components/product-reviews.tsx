@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useTransition } from "react";
+import { submitReview } from "@/app/actions/admin";
 
 interface Review {
   id: number;
@@ -44,9 +46,28 @@ export function ProductReviews({ slug }: { slug: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [hovered, setHovered] = useState(0);
   const [selected, setSelected] = useState(0);
+  const [comment, setComment] = useState("");
+  const [, startTransition] = useTransition();
 
   const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
   const dist = [5, 4, 3, 2, 1].map((n) => ({ n, count: reviews.filter((r) => r.rating === n).length }));
+
+  async function handleSubmit() {
+    if (!selected || !comment.trim()) return;
+
+    startTransition(async () => {
+      try {
+        await submitReview(slug, selected, comment.trim());
+        setSubmitted(true);
+        setShowForm(false);
+        setSelected(0);
+        setComment("");
+        setTimeout(() => setSubmitted(false), 4000);
+      } catch (error) {
+        console.error("Erreur lors de la soumission de l'avis:", error);
+      }
+    });
+  }
 
   if (reviews.length === 0 && !showForm) {
     return (
@@ -118,13 +139,13 @@ export function ProductReviews({ slug }: { slug: string }) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-semibold text-fg">Commentaire</label>
-              <textarea rows={4} placeholder="Partagez votre expérience avec ce produit…" className="w-full resize-none rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft" />
+              <textarea rows={4} placeholder="Partagez votre expérience avec ce produit…" value={comment} onChange={(e) => setComment(e.target.value)} className="w-full resize-none rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft" />
             </div>
             <div className="flex gap-3">
-              <button type="button" onClick={() => setSubmitted(true)} className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover">
+              <button type="button" onClick={handleSubmit} disabled={!selected || !comment.trim()} className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-40">
                 Publier l'avis
               </button>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
+              <button type="button" onClick={() => { setShowForm(false); setSelected(0); setComment(""); }} className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
                 Annuler
               </button>
             </div>

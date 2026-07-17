@@ -102,3 +102,50 @@ export async function sendNewReviewSubmittedEmail(adminEmail: string, productTit
     `,
   });
 }
+
+export const sendCreatorVerifiedEmail = async (email: string, creatorName: string): Promise<void> => {
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: email,
+    subject: "🎉 Tu es créateur vérifié sur Nuvora!",
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1a1a1a; margin-bottom: 20px;">🎉 Félicitations!</h1>
+        
+        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+          Bonjour ${creatorName},
+        </p>
+        
+        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+          Tu as été certifié comme <strong>créateur vérifié</strong> sur Nuvora! 
+          Le badge "Créateur vérifié" apparaît maintenant sur tous tes produits.
+        </p>
+        
+        <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+          <strong>Avantages de la certification:</strong>
+        </p>
+        
+        <ul style="color: #666; line-height: 1.8; margin-bottom: 20px;">
+          <li>✓ Badge "Créateur vérifié" visible sur tous tes produits</li>
+          <li>✓ Meilleure visibilité dans le catalogue</li>
+          <li>✓ Confiance accrue auprès des acheteurs</li>
+          <li>✓ Priorité dans les résultats de l'assistant IA</li>
+        </ul>
+        
+        <p style="color: #666; line-height: 1.6; margin-bottom: 30px;">
+          Accède à ton dashboard pour voir tes produits avec le nouveau badge:
+        </p>
+        
+        <a href="https://nuvora.app/dashboard" style="display: inline-block; background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+          Voir mon dashboard
+        </a>
+        
+        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+        
+        <p style="color: #999; font-size: 14px;">
+          L'équipe Nuvora
+        </p>
+      </div>
+    `,
+  });
+};

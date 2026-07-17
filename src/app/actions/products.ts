@@ -23,6 +23,7 @@ type ProductInput = {
   platform: string;
   purchaseUrl: string;
   coverImage?: string;
+  currency?: string;
 };
 
 function makeSlug(title: string, id: string): string {
@@ -58,6 +59,7 @@ export async function submitProduct(input: ProductInput): Promise<ProductState> 
       subCategory: input.subCategory,
       tags: JSON.stringify(input.tags),
       price: input.isFree ? 0 : input.price,
+      currency: input.currency || "EUR",
       isFree: input.isFree,
       language: input.language,
       country: input.country || null,
@@ -103,6 +105,7 @@ export async function updateProduct(
       subCategory: input.subCategory,
       tags: JSON.stringify(input.tags),
       price: input.isFree ? 0 : input.price,
+      currency: input.currency || "EUR",
       isFree: input.isFree,
       language: input.language,
       country: input.country || null,
@@ -129,4 +132,26 @@ export async function deleteProduct(productId: string): Promise<ProductState> {
 
   await db.product.delete({ where: { id: productId } });
   redirect("/dashboard/produits");
+}
+
+export async function trackProductView(productId: string): Promise<void> {
+  try {
+    await db.product.update({
+      where: { id: productId },
+      data: { views: { increment: 1 } },
+    });
+  } catch {
+    // Silently fail - tracking is not critical
+  }
+}
+
+export async function trackProductClick(productId: string): Promise<void> {
+  try {
+    await db.product.update({
+      where: { id: productId },
+      data: { clicks: { increment: 1 } },
+    });
+  } catch {
+    // Silently fail - tracking is not critical
+  }
 }

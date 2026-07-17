@@ -39,6 +39,14 @@ export default async function AssistantPage() {
     },
   });
 
+  // Trier par créateur vérifié en premier
+  rows.sort((a, b) => {
+    if (a.creator.verified !== b.creator.verified) {
+      return b.creator.verified ? -1 : 1;
+    }
+    return 0;
+  });
+
   const products: DbProduct[] = rows.map(mapDbProduct);
 
   return <AssistantChat products={products} />;

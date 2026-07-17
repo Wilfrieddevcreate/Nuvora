@@ -125,3 +125,44 @@ export async function verifyCreator(creatorId: string): Promise<void> {
   });
   revalidatePath("/admin/createurs");
 }
+
+export async function submitReview(
+  productSlug: string,
+  rating: number,
+  comment: string,
+): Promise<void> {
+  const session = await verifySession();
+  if (!session) throw new Error("Non authentifié");
+
+  const product = await db.product.findUnique({ where: { slug: productSlug } });
+  if (!product) throw new Error("Produit introuvable");
+
+  const review = await db.review.create({
+    data: {
+      userId: session.userId,
+      productId: product.id,
+      rating,
+      comment,
+      status: "pending",
+    },
+    include: {
+      product: { select: { title: true, creatorId: true } },
+      user: { select: { name: true } },
+    },
+  });
+
+  await notifyAdminNewReview(
+    review.product.title,
+    review.user.name,
+    product.id,
+  );
+  await notifyCreatorNewReview(
+    review.product.creatorId,
+    review.product.title,
+    review.user.name,
+    rating,
+    product.id,
+  );
+
+  revalidatePath(`/produit/${productSlug}`);
+}

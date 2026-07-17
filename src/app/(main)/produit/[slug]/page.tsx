@@ -6,6 +6,8 @@ import { mapDbProduct } from "@/lib/product-mapper";
 import { ProductCard, type DbProduct } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
 import { ArrowUpRight } from "@/components/icons";
+import { trackProductView } from "@/app/actions/products";
+import { ProductPurchaseButton } from "@/components/product-purchase-button";
 
 const CATEGORY_SLUG: Record<string, string> = {
   Formation: "formation",
@@ -75,6 +77,9 @@ export default async function ProductPage({
   });
   if (!product) notFound();
 
+  // Track view asynchronously (non-blocking)
+  trackProductView(product.id).catch(() => {});
+
   const tags = JSON.parse(product.tags ?? "[]") as string[];
   const isNew = (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000;
 
@@ -136,7 +141,10 @@ export default async function ProductPage({
 
           <div className="mt-8">
             <h2 className="text-lg font-bold">Description</h2>
-            <p className="mt-3 leading-relaxed text-fg-2">{product.description}</p>
+            <div
+              className="mt-3 leading-relaxed text-fg-2 prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           </div>
 
           {tags.length > 0 && (
@@ -174,15 +182,7 @@ export default async function ProductPage({
               <span className="text-4xl font-extrabold">{formatPrice(product.price, product.isFree)}</span>
             </div>
 
-            <a
-              href={product.purchaseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
-            >
-              Acheter maintenant
-              <ArrowUpRight className="size-4" />
-            </a>
+            <ProductPurchaseButton productId={product.id} purchaseUrl={product.purchaseUrl} />
             <p className="mt-3 text-center text-xs text-muted">
               Vous serez redirigé vers <span className="font-semibold text-fg-2">{product.platform}</span> pour finaliser l&apos;achat.
             </p>

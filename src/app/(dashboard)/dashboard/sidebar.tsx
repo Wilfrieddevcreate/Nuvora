@@ -6,7 +6,6 @@ import Link from "next/link";
 import { LogoBadge } from "@/components/logo";
 import { useAuth } from "@/contexts/auth";
 import { Modal, ModalActions } from "@/components/modal";
-import { NotificationsBell } from "@/components/notifications-panel";
 
 type NavItem = {
   href: string;
@@ -220,10 +219,9 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-fg">{user?.name ?? "—"}</p>
-              <p className="truncate text-xs text-muted">{user?.email ?? ""}</p>
+              <p className="truncate whitespace-nowrap text-xs text-muted">{user?.email ?? ""}</p>
             </div>
           </div>
-          <NotificationsBell />
         </div>
         <button
           type="button"

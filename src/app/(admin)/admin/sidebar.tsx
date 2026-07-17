@@ -6,7 +6,6 @@ import Link from "next/link";
 import { LogoBadge } from "@/components/logo";
 import { useAuth } from "@/contexts/auth";
 import { Modal, ModalActions } from "@/components/modal";
-import { NotificationsBell } from "@/components/notifications-panel";
 
 type NavItem = {
   href: string;
@@ -49,21 +48,30 @@ const NAV: NavItem[] = [
     ),
   },
   {
-    href: "/admin/avis",
-    label: "Avis",
-    icon: (
-      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-    ),
-  },
-  {
     href: "/admin/notifications",
     label: "Notifications",
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
         <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/verification",
+    label: "Certification",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M9 12l2 2 4-4M7 12a5 5 0 1 0 10 0A5 5 0 0 0 7 12Z" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/avis",
+    label: "Avis",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </svg>
     ),
   },
@@ -231,10 +239,9 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-fg">Admin Nuvora</p>
-              <p className="truncate text-xs text-muted">admin@nuvora.app</p>
+              <p className="truncate whitespace-nowrap text-xs text-muted">admin@nuvora.app</p>
             </div>
           </div>
-          <NotificationsBell />
         </div>
         <button
           type="button"

@@ -2,191 +2,163 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import { useCallback } from "react";
 
-type Props = {
+interface RichTextEditorProps {
   value: string;
-  onChange: (html: string) => void;
+  onChange: (value: string) => void;
   placeholder?: string;
-};
-
-function ToolbarButton({
-  onClick,
-  active,
-  title,
-  children,
-}: {
-  onClick: () => void;
-  active?: boolean;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onMouseDown={(e) => { e.preventDefault(); onClick(); }}
-      title={title}
-      aria-label={title}
-      aria-pressed={active}
-      className={`grid size-7 place-items-center rounded-lg text-sm transition-colors ${
-        active
-          ? "bg-accent text-accent-fg"
-          : "text-fg-2 hover:bg-surface-2 hover:text-fg"
-      }`}
-    >
-      {children}
-    </button>
-  );
 }
 
-export function RichTextEditor({ value, onChange, placeholder }: Props) {
+export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: { levels: [2, 3] },
-        codeBlock: false,
-        horizontalRule: false,
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: { class: "text-accent underline" },
+      StarterKit,
+      Image.configure({
+        allowBase64: true,
       }),
     ],
-    content: value || "",
-    onUpdate({ editor }) {
-      const html = editor.isEmpty ? "" : editor.getHTML();
-      onChange(html);
-    },
-    editorProps: {
-      attributes: {
-        class: "outline-none min-h-[120px] prose prose-sm max-w-none text-fg",
-        ...(placeholder ? { "data-placeholder": placeholder } : {}),
-      },
+    content: value,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
     },
   });
+
+  const addImage = useCallback(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file || !editor) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        editor.chain().focus().setImage({ src: base64 }).run();
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  }, [editor]);
 
   if (!editor) return null;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-surface-2 transition-colors focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft">
+    <div className="rounded-lg border border-border bg-surface overflow-hidden">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b border-border px-2 py-1.5">
-        <ToolbarButton
+      <div className="flex flex-wrap gap-1 border-b border-border bg-surface-2 p-2">
+        <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          active={editor.isActive("bold")}
-          title="Gras"
+          disabled={!editor.can().chain().focus().toggleBold().run()}
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("bold")
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
         >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="currentColor" aria-hidden="true">
-            <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" opacity=".9" />
-            <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" opacity=".9" />
-          </svg>
-        </ToolbarButton>
+          <strong>B</strong>
+        </button>
 
-        <ToolbarButton
+        <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          active={editor.isActive("italic")}
-          title="Italique"
+          disabled={!editor.can().chain().focus().toggleItalic().run()}
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("italic")
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
         >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true">
-            <line x1="19" y1="4" x2="10" y2="4" />
-            <line x1="14" y1="20" x2="5" y2="20" />
-            <line x1="15" y1="4" x2="9" y2="20" />
-          </svg>
-        </ToolbarButton>
+          <em>I</em>
+        </button>
 
-        <ToolbarButton
+        <button
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          disabled={!editor.can().chain().focus().toggleStrike().run()}
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("strike")
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
+        >
+          <s>S</s>
+        </button>
+
+        <div className="w-px bg-border" />
+
+        <button
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("heading", { level: 1 })
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
+        >
+          H1
+        </button>
+
+        <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          active={editor.isActive("heading", { level: 2 })}
-          title="Titre"
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("heading", { level: 2 })
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
         >
-          <span className="text-[11px] font-bold">H2</span>
-        </ToolbarButton>
+          H2
+        </button>
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          active={editor.isActive("heading", { level: 3 })}
-          title="Sous-titre"
-        >
-          <span className="text-[11px] font-bold">H3</span>
-        </ToolbarButton>
-
-        <div className="mx-1 h-4 w-px bg-border" />
-
-        <ToolbarButton
+        <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          active={editor.isActive("bulletList")}
-          title="Liste à puces"
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("bulletList")
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
         >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
-            <line x1="9" y1="6" x2="20" y2="6" />
-            <line x1="9" y1="12" x2="20" y2="12" />
-            <line x1="9" y1="18" x2="20" y2="18" />
-            <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
-            <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
-            <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
-          </svg>
-        </ToolbarButton>
+          • List
+        </button>
 
-        <ToolbarButton
+        <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          active={editor.isActive("orderedList")}
-          title="Liste numérotée"
+          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+            editor.isActive("orderedList")
+              ? "bg-accent text-accent-fg"
+              : "hover:bg-surface text-fg-2 hover:text-fg"
+          }`}
         >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
-            <line x1="10" y1="6" x2="21" y2="6" />
-            <line x1="10" y1="12" x2="21" y2="12" />
-            <line x1="10" y1="18" x2="21" y2="18" />
-            <path d="M4 6h1v4" />
-            <path d="M4 10h2" />
-            <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1.5" />
-          </svg>
-        </ToolbarButton>
+          1. List
+        </button>
 
-        <div className="mx-1 h-4 w-px bg-border" />
+        <div className="w-px bg-border" />
 
-        <ToolbarButton
-          onClick={() => {
-            if (editor.isActive("link")) {
-              editor.chain().focus().unsetLink().run();
-            } else {
-              const url = window.prompt("URL du lien :");
-              if (url) editor.chain().focus().setLink({ href: url }).run();
-            }
-          }}
-          active={editor.isActive("link")}
-          title="Lien"
+        <button
+          onClick={addImage}
+          className="px-2 py-1 rounded text-sm font-medium hover:bg-surface text-fg-2 hover:text-fg transition-colors"
+          title="Ajouter une image"
         >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-          </svg>
-        </ToolbarButton>
+          🖼️ Image
+        </button>
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().undo().run()}
-          active={false}
-          title="Annuler"
+        <button
+          onClick={() => editor.chain().focus().clearNodes().run()}
+          className="px-2 py-1 rounded text-sm font-medium hover:bg-surface text-fg-2 hover:text-fg transition-colors ml-auto"
         >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M3 7v6h6" />
-            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-          </svg>
-        </ToolbarButton>
-
-        <ToolbarButton
-          onClick={() => editor.chain().focus().redo().run()}
-          active={false}
-          title="Rétablir"
-        >
-          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M21 7v6h-6" />
-            <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13" />
-          </svg>
-        </ToolbarButton>
+          Clear
+        </button>
       </div>
 
-      {/* Zone de texte */}
-      <EditorContent editor={editor} className="px-4 py-3 text-[15px]" />
+      {/* Editor */}
+      <EditorContent
+        editor={editor}
+        className="prose prose-invert max-w-none p-4 min-h-64 focus:outline-none [&_.ProseMirror]:focus:outline-none"
+      />
+
+      {/* Info */}
+      <div className="border-t border-border bg-surface-2 px-4 py-2 text-xs text-muted">
+        Formatage supporté : gras, italique, titres, listes, images en base64
+      </div>
     </div>
   );
 }

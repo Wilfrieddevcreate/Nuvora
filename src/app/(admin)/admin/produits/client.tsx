@@ -170,7 +170,15 @@ function ProductRow({ p }: { p: Product }) {
   );
 }
 
-export function AdminProduitsClient({ products }: { products: Product[] }) {
+export function AdminProduitsClient({ 
+  products, 
+  stats, 
+  platformStats 
+}: { 
+  products: Product[]
+  stats?: { total: number; active: number; pending: number; rejected: number; revenue: number }
+  platformStats?: Record<string, number>
+}) {
   const [filter, setFilter] = useState<Filter>("tous");
 
   const counts = {
@@ -189,6 +197,43 @@ export function AdminProduitsClient({ products }: { products: Product[] }) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
+      {/* Stats Cards */}
+      {stats && (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="rounded-xl border border-border bg-surface-2 p-4">
+            <p className="text-xs font-medium text-muted uppercase">Total</p>
+            <p className="mt-2 text-2xl font-bold text-fg">{stats.total}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface-2 p-4">
+            <p className="text-xs font-medium text-muted uppercase">Actifs</p>
+            <p className="mt-2 text-2xl font-bold text-emerald-500">{stats.active}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface-2 p-4">
+            <p className="text-xs font-medium text-muted uppercase">En attente</p>
+            <p className="mt-2 text-2xl font-bold text-amber-500">{stats.pending}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface-2 p-4">
+            <p className="text-xs font-medium text-muted uppercase">Rejetés</p>
+            <p className="mt-2 text-2xl font-bold text-rose-500">{stats.rejected}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Platform Stats */}
+      {platformStats && Object.keys(platformStats).length > 0 && (
+        <div className="rounded-xl border border-border bg-surface-2 p-4">
+          <h3 className="text-sm font-semibold text-fg">Produits par plateforme</h3>
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {Object.entries(platformStats).map(([platform, count]) => (
+              <div key={platform} className="flex items-center justify-between rounded-lg bg-surface px-3 py-2">
+                <span className="text-sm font-medium text-fg-2">{platform}</span>
+                <span className="text-sm font-bold text-accent">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
