@@ -18,6 +18,7 @@ export type DbProduct = {
   views?: number;
   clicks?: number;
   createdAt?: string;
+  coverImage?: string;
   creatorName: string;
   creatorSlug: string;
   creatorVerified?: boolean;
@@ -79,8 +80,12 @@ export function ProductCard({ product }: { product: DbProduct }) {
       href={`/produit/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
     >
-      <div className={`relative flex aspect-16/10 items-center justify-center bg-linear-to-br ${gradient} ${gradientDark}`}>
-        <span className="text-4xl font-extrabold text-fg/15">{product.title.charAt(0)}</span>
+      <div className={`relative flex aspect-16/10 items-center justify-center bg-linear-to-br ${gradient} ${gradientDark} overflow-hidden`}>
+        {product.coverImage ? (
+          <img src={product.coverImage} alt={product.title} className="size-full object-cover" />
+        ) : (
+          <span className="text-4xl font-extrabold text-fg/15">{product.title.charAt(0)}</span>
+        )}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {isNew && (
             <span className="rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-fg">

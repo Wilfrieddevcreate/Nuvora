@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { verifySession } from "@/lib/dal";
+import { notifyAdminNewProduct } from "./notifications";
 
 export type ProductState = {
   error?: string;
@@ -20,6 +21,7 @@ type ProductInput = {
   country: string;
   platform: string;
   purchaseUrl: string;
+  coverImage?: string;
 };
 
 function makeSlug(title: string, id: string): string {
@@ -36,13 +38,16 @@ function makeSlug(title: string, id: string): string {
 export async function submitProduct(input: ProductInput): Promise<ProductState> {
   const session = await verifySession();
 
-  const creator = await db.creator.findUnique({ where: { userId: session.userId } });
+  const creator = await db.creator.findUnique({
+    where: { userId: session.userId },
+    select: { id: true, user: { select: { name: true } } },
+  });
   if (!creator) return { error: "Profil créateur introuvable." };
 
   const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
   const slug = makeSlug(input.title, id);
 
-  await db.product.create({
+  const product = await db.product.create({
     data: {
       id,
       slug,
@@ -57,9 +62,12 @@ export async function submitProduct(input: ProductInput): Promise<ProductState> 
       country: input.country || null,
       platform: input.platform,
       purchaseUrl: input.purchaseUrl,
+      coverImage: input.coverImage || null,
       creatorId: creator.id,
     },
   });
+
+  await notifyAdminNewProduct(input.title, creator.user.name, product.id);
 
   redirect("/dashboard/produits");
 }

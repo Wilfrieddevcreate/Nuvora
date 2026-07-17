@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { db } from "@/lib/db";
+import { mapDbProduct } from "@/lib/product-mapper";
 import { CatalogView } from "@/components/catalog-view";
 import type { DbProduct } from "@/components/product-card";
 
@@ -40,24 +41,7 @@ async function getProducts(): Promise<DbProduct[]> {
       },
     },
   });
-  return rows.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    category: p.category as DbProduct["category"],
-    subCategory: p.subCategory ?? "",
-    tags: JSON.parse(p.tags ?? "[]") as string[],
-    price: p.price,
-    isFree: p.isFree,
-    language: p.language,
-    platform: p.platform,
-    views: p.views,
-    clicks: p.clicks,
-    createdAt: p.createdAt.toISOString(),
-    creatorName: p.creator.user.name,
-    creatorSlug: p.creator.slug,
-    creatorVerified: p.creator.verified,
-  }));
+  return rows.map(mapDbProduct);
 }
 
 export default async function CataloguePage() {

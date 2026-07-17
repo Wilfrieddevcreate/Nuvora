@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { mapDbProduct } from "@/lib/product-mapper";
 import { ProductCard, type DbProduct } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
 import { ArrowUpRight } from "@/components/icons";
@@ -88,24 +89,7 @@ export default async function ProductPage({
     take: 3,
   });
 
-  const related: DbProduct[] = relatedRaw.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    category: p.category as DbProduct["category"],
-    subCategory: p.subCategory ?? "",
-    tags: JSON.parse(p.tags ?? "[]") as string[],
-    price: p.price,
-    isFree: p.isFree,
-    language: p.language,
-    platform: p.platform,
-    views: p.views,
-    clicks: p.clicks,
-    createdAt: p.createdAt.toISOString(),
-    creatorName: p.creator.user.name,
-    creatorSlug: p.creator.slug,
-    creatorVerified: p.creator.verified,
-  }));
+  const related: DbProduct[] = relatedRaw.map(mapDbProduct);
 
   const cover = COVER[product.category] ?? "from-surface-2 to-surface";
 

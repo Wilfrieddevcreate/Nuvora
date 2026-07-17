@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
+import { mapDbProduct } from "@/lib/product-mapper";
 import { AssistantChat } from "@/components/assistant-chat";
 import type { DbProduct } from "@/components/product-card";
 
@@ -38,24 +39,7 @@ export default async function AssistantPage() {
     },
   });
 
-  const products: DbProduct[] = rows.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    category: p.category as DbProduct["category"],
-    subCategory: p.subCategory ?? "",
-    tags: JSON.parse(p.tags ?? "[]") as string[],
-    price: p.price,
-    isFree: p.isFree,
-    language: p.language,
-    platform: p.platform,
-    views: p.views,
-    clicks: p.clicks,
-    createdAt: p.createdAt.toISOString(),
-    creatorName: p.creator.user.name,
-    creatorSlug: p.creator.slug,
-    creatorVerified: p.creator.verified,
-  }));
+  const products: DbProduct[] = rows.map(mapDbProduct);
 
   return <AssistantChat products={products} />;
 }

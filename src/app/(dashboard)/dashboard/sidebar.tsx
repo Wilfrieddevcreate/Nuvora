@@ -6,6 +6,7 @@ import Link from "next/link";
 import { LogoBadge } from "@/components/logo";
 import { useAuth } from "@/contexts/auth";
 import { Modal, ModalActions } from "@/components/modal";
+import { NotificationsBell } from "@/components/notifications-panel";
 
 type NavItem = {
   href: string;
@@ -33,6 +34,16 @@ const NAV: NavItem[] = [
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M4 7h16M4 12h16M4 17h10" />
+      </svg>
+    ),
+  },
+  {
+    href: "/dashboard/notifications",
+    label: "Notifications",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
       </svg>
     ),
   },
@@ -157,13 +168,11 @@ export function MobileSidebar({
 
 function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const { user, logout } = useAuth();
-  const router = useRouter();
   const [confirmLogout, setConfirmLogout] = useState(false);
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
     if (onNavClick) onNavClick();
-    router.push("/");
+    logout();
   }
 
   return (
@@ -203,20 +212,23 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
       </nav>
 
       {/* Pied de sidebar — profil utilisateur */}
-      <div className="mt-auto pt-4 border-t border-border">
-        <div className="flex items-center gap-3 rounded-xl px-3 py-2.5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-indigo-500 text-sm font-bold text-white">
-            {user?.initial ?? "?"}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-fg">{user?.name ?? "—"}</p>
-            <p className="truncate text-xs text-muted">{user?.email ?? ""}</p>
+      <div className="mt-auto pt-4 border-t border-border space-y-2">
+        <div className="flex items-center justify-between px-3">
+          <div className="flex items-center gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-indigo-500 text-sm font-bold text-white">
+              {user?.initial ?? "?"}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-fg">{user?.name ?? "—"}</p>
+              <p className="truncate text-xs text-muted">{user?.email ?? ""}</p>
+            </div>
           </div>
+          <NotificationsBell />
         </div>
         <button
           type="button"
           onClick={() => setConfirmLogout(true)}
-          className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
