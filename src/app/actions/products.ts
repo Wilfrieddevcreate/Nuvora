@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { verifySession } from "@/lib/dal";
 import { notifyAdminNewProduct } from "./notifications";
+import { sendNewProductSubmittedEmail } from "@/lib/email";
 
 export type ProductState = {
   error?: string;
@@ -68,6 +69,12 @@ export async function submitProduct(input: ProductInput): Promise<ProductState> 
   });
 
   await notifyAdminNewProduct(input.title, creator.user.name, product.id);
+
+  // Send email to admins (non-blocking)
+  const admins = await db.user.findMany({ where: { role: "admin" } });
+  admins.forEach((admin) => {
+    sendNewProductSubmittedEmail(admin.email, input.title, creator.user.name).catch(console.error);
+  });
 
   redirect("/dashboard/produits");
 }

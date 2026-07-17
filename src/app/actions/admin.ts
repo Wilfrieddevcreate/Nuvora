@@ -10,6 +10,12 @@ import {
   notifyAdminNewReview,
   notifyCreatorNewReview,
 } from "./notifications";
+import {
+  sendProductApprovedEmail,
+  sendProductRejectedEmail,
+  sendNewReviewEmail,
+  sendNewReviewSubmittedEmail,
+} from "@/lib/email";
 
 async function requireAdmin() {
   const session = await verifySession();
@@ -21,7 +27,7 @@ export async function approveProduct(productId: string): Promise<void> {
   await requireAdmin();
   const product = await db.product.findUnique({
     where: { id: productId },
-    select: { id: true, title: true, creatorId: true },
+    include: { creator: { select: { user: { select: { email: true } } } } },
   });
   if (!product) throw new Error("Produit introuvable");
 
@@ -31,6 +37,10 @@ export async function approveProduct(productId: string): Promise<void> {
   });
 
   await notifyCreatorProductApproved(product.creatorId, product.id, product.title);
+
+  // Send email (non-blocking)
+  sendProductApprovedEmail(product.creator.user.email, product.title).catch(console.error);
+
   revalidatePath("/admin/produits");
 }
 
@@ -38,7 +48,7 @@ export async function rejectProduct(productId: string): Promise<void> {
   await requireAdmin();
   const product = await db.product.findUnique({
     where: { id: productId },
-    select: { id: true, title: true, creatorId: true },
+    include: { creator: { select: { user: { select: { email: true } } } } },
   });
   if (!product) throw new Error("Produit introuvable");
 
@@ -48,6 +58,10 @@ export async function rejectProduct(productId: string): Promise<void> {
   });
 
   await notifyCreatorProductRejected(product.creatorId, product.id, product.title);
+
+  // Send email (non-blocking)
+  sendProductRejectedEmail(product.creator.user.email, product.title).catch(console.error);
+
   revalidatePath("/admin/produits");
 }
 
@@ -57,7 +71,14 @@ export async function approveReview(reviewId: string): Promise<void> {
     where: { id: reviewId },
     include: {
       user: { select: { name: true } },
-      product: { select: { slug: true, title: true, creatorId: true } },
+      product: {
+        select: {
+          slug: true,
+          title: true,
+          creatorId: true,
+          creator: { select: { user: { select: { email: true } } } },
+        },
+      },
     },
   });
   if (!review) throw new Error("Avis introuvable");
@@ -74,6 +95,15 @@ export async function approveReview(reviewId: string): Promise<void> {
     review.rating,
     review.product.slug,
   );
+
+  // Send email (non-blocking)
+  sendNewReviewEmail(
+    review.product.creator.user.email,
+    review.product.title,
+    review.user.name,
+    review.rating,
+  ).catch(console.error);
+
   revalidatePath("/admin/avis");
   revalidatePath(`/produit/${review.product.slug}`);
 }
