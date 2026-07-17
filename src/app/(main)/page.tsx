@@ -7,7 +7,7 @@ import { Testimonials } from "@/components/testimonials";
 import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
-import { getNewProducts, getPopularProducts, CREATORS, toDbProduct } from "@/data/products";
+import { db } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Trouvez les meilleurs produits digitaux",
@@ -77,9 +77,43 @@ const STEPS = [
   },
 ];
 
-export default function Home() {
-  const nouveautes = getNewProducts(4).map(toDbProduct);
-  const populaires = getPopularProducts(4).map(toDbProduct);
+export default async function Home() {
+  // Fetch real data from DB
+  const [products, creators, totalProducts, verifiedCreators] = await Promise.all([
+    db.product.findMany({
+      where: { status: { in: ["active", "pending"] } },
+      include: { creator: { select: { id: true, slug: true, verified: true, user: { select: { name: true } } } } },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    }),
+    db.creator.findMany({
+      where: { verified: true },
+      include: { user: { select: { name: true } } },
+      take: 100,
+    }),
+    db.product.count({ where: { status: { in: ["active", "pending"] } } }),
+    db.creator.count({ where: { verified: true } }),
+  ]);
+
+  // Transform products for ProductCard component
+  const transformProduct = (p: typeof products[0]) => ({
+    slug: p.slug,
+    title: p.title,
+    category: p.category as "Formation" | "Ebook" | "Template" | "Logiciel",
+    subCategory: p.subCategory || "",
+    price: p.price,
+    isFree: p.isFree,
+    platform: p.platform,
+    coverImage: p.coverImage || undefined,
+    createdAt: p.createdAt.toISOString(),
+    creatorName: p.creator.user.name,
+    creatorSlug: p.creator.slug,
+    creatorVerified: p.creator.verified,
+  });
+
+  // Get new and popular products
+  const nouveautes = products.slice(0, 4).map(transformProduct);
+  const populaires = products.sort((a, b) => b.views - a.views).slice(0, 4).map(transformProduct);
 
   return (
     <>
@@ -117,14 +151,14 @@ export default function Home() {
             <dl className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               {[
                 {
-                  value: "200+",
+                  value: totalProducts > 0 ? `${totalProducts}${totalProducts >= 100 ? "+" : ""}` : "0",
                   label: "produits référencés",
                   icon: (
                     <path d="M4 7h16M4 12h16M4 17h10" />
                   ),
                 },
                 {
-                  value: "37",
+                  value: `${verifiedCreators}`,
                   label: "créateurs vérifiés",
                   icon: (
                     <>
@@ -271,27 +305,29 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
-          {CREATORS.filter((c) => c.verified).slice(0, 4).map((c) => (
-            <a
-              key={c.slug}
-              href={`/createur/${c.slug}`}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-5 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
-            >
-              <span className={`grid size-12 shrink-0 place-items-center rounded-xl ${c.color} text-lg font-extrabold text-white`}>
-                {c.name.charAt(0)}
-              </span>
-              <div className="min-w-0 w-full">
-                <p className="truncate font-bold text-sm group-hover:text-accent">{c.name}</p>
-                <p className="mt-0.5 text-xs text-muted line-clamp-2 leading-relaxed">{c.specialty}</p>
-              </div>
-              {c.verified && (
+          {creators.slice(0, 4).map((c) => {
+            const colors = ["bg-indigo-500", "bg-violet-500", "bg-amber-500", "bg-sky-500", "bg-emerald-500", "bg-orange-500", "bg-pink-500", "bg-cyan-500"];
+            const color = colors[Math.abs(c.id.charCodeAt(0)) % colors.length];
+            return (
+              <a
+                key={c.id}
+                href={`/createur/${c.slug}`}
+                className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-5 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
+              >
+                <span className={`grid size-12 shrink-0 place-items-center rounded-xl ${color} text-lg font-extrabold text-white`}>
+                  {c.user.name.charAt(0)}
+                </span>
+                <div className="min-w-0 w-full">
+                  <p className="truncate font-bold text-sm group-hover:text-accent">{c.user.name}</p>
+                  <p className="mt-0.5 text-xs text-muted line-clamp-2 leading-relaxed">{c.specialty || "Créateur"}</p>
+                </div>
                 <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
                   <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
                   Vérifié
                 </span>
-              )}
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </section>
 
