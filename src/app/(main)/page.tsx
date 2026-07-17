@@ -298,7 +298,7 @@ export default async function Home() {
             <h2 className="text-2xl font-extrabold">Créateurs vérifiés</h2>
             <p className="mt-1 text-fg-2">Des experts indépendants, chacun dans son domaine.</p>
           </div>
-          <ButtonLink href="/catalogue" variant="ghost" size="sm">
+          <ButtonLink href="/createurs-verifies" variant="ghost" size="sm">
             Voir tout
             <ArrowRight className="size-4" />
           </ButtonLink>
