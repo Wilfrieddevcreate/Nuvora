@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTransition } from "react";
 import {
   getNotifications,
@@ -25,6 +25,7 @@ export function NotificationsBell() {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isPending, startTransition] = useTransition();
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadUnreadCount = async () => {
@@ -54,6 +55,19 @@ export function NotificationsBell() {
     loadNotifications();
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
   const handleMarkAsRead = (id: string) => {
     startTransition(async () => {
       await markNotificationAsRead(id);
@@ -81,7 +95,7 @@ export function NotificationsBell() {
 
   return (
     <>
-      <div className="relative">
+      <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen(!open)}
           className="relative inline-flex items-center justify-center size-10 rounded-lg text-muted hover:bg-surface-2 hover:text-fg transition-colors"
