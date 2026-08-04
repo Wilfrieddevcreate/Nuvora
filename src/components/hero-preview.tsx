@@ -41,9 +41,13 @@ export async function HeroPreview() {
         <div
           className={`flex aspect-16/11 items-center justify-center bg-linear-to-br ${COVER[featured.category]}`}
         >
-          <span className="text-5xl font-extrabold text-fg/15">
-            {featured.title.charAt(0)}
-          </span>
+          {featured.coverImage ? (
+            <img src={featured.coverImage} alt={featured.title} className="size-full object-cover" />
+          ) : (
+            <span className="text-5xl font-extrabold text-fg/15">
+              {featured.title.charAt(0)}
+            </span>
+          )}
         </div>
         <div className="p-5">
           <div className="flex items-center gap-2 text-xs font-medium text-muted">
