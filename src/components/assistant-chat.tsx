@@ -22,23 +22,87 @@ const COVER_GRADIENT: Record<DbProduct["category"], string> = {
 
 type Message =
   | { id: number; role: "user"; text: string }
-  | { id: number; role: "assistant"; text: string; slugs: string[] };
+  | {
+      id: number;
+      role: "assistant";
+      text: string;
+      reflection: string;
+      discovery: string;
+      recommendation: string;
+      slugs: string[];
+      scores: Record<string, number>;
+      confidence: "high" | "medium" | "low";
+      done: boolean;
+    };
 
 let counter = 0;
 const nextId = () => ++counter;
 
-function parseSlugs(raw: string): { text: string; slugs: string[] } {
-  const match = raw.match(/SLUGS:\s*\[?([a-z0-9,\- ]+)\]?/i);
-  if (!match) return { text: raw.trim(), slugs: [] };
-  const slugs = match[1]
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-  const text = raw.replace(/SLUGS:\s*\[?[a-z0-9,\- ]+\]?/i, "").trim();
-  return { text, slugs };
+function parseResponse(raw: string): {
+  text: string;
+  reflection: string;
+  discovery: string;
+  recommendation: string;
+  slugs: string[];
+  scores: Record<string, number>;
+  confidence: "high" | "medium" | "low";
+} {
+  const confidenceMatch = raw.match(/CONFIDENCE:\[(high|medium|low)\]/i);
+  const scoresMatch = raw.match(/SCORES:\[([^\]]+)\]/i);
+  const slugsMatch = raw.match(/SLUGS:\s*\[?([a-z0-9,\- ]+)\]?/i);
+
+  const confidence = (confidenceMatch?.[1]?.toLowerCase() as "high" | "medium" | "low") || "low";
+
+  const scores: Record<string, number> = {};
+  if (scoresMatch) {
+    const pairs = scoresMatch[1].split(",").map((p) => p.trim());
+    pairs.forEach((pair) => {
+      const [slug, score] = pair.split(":").map((s) => s.trim());
+      if (slug && score) {
+        scores[slug] = parseFloat(score);
+      }
+    });
+  }
+
+  const slugs = [];
+  if (slugsMatch) {
+    const rawSlugs = slugsMatch[1]
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    slugs.push(...rawSlugs);
+  }
+
+  // Extraire les sections
+  const reflectionMatch = raw.match(/##\s*💭\s*Réflexion\n([\s\S]*?)(?=##|CONFIDENCE|\s*$)/i);
+  const discoveryMatch = raw.match(/##\s*🔍\s*Découverte\n([\s\S]*?)(?=##|CONFIDENCE|\s*$)/i);
+  const recommendationMatch = raw.match(/##\s*💬\s*Recommandation\n([\s\S]*?)(?=##|CONFIDENCE|\s*$)/i);
+
+  const reflection = reflectionMatch?.[1]?.trim() || "";
+  const discovery = discoveryMatch?.[1]?.trim() || "";
+  const recommendation = recommendationMatch?.[1]?.trim() || "";
+
+  const text = raw
+    .replace(/##\s*💭\s*Réflexion[\s\S]*?(?=##|CONFIDENCE|\s*$)/i, "")
+    .replace(/##\s*🔍\s*Découverte[\s\S]*?(?=##|CONFIDENCE|\s*$)/i, "")
+    .replace(/##\s*💬\s*Recommandation[\s\S]*?(?=##|CONFIDENCE|\s*$)/i, "")
+    .replace(/CONFIDENCE:\[(high|medium|low)\]/i, "")
+    .replace(/SCORES:\[[^\]]+\]/i, "")
+    .replace(/SLUGS:\s*\[?[a-z0-9,\- ]+\]?/i, "")
+    .trim();
+
+  return { text, reflection, discovery, recommendation, slugs, scores, confidence };
 }
 
-function ProductPick({ product, rank }: { product: DbProduct; rank: number }) {
+function ProductPick({
+  product,
+  rank,
+  score,
+}: {
+  product: DbProduct;
+  rank: number;
+  score?: number;
+}) {
   return (
     <Link
       href={`/produit/${product.slug}`}
@@ -73,20 +137,37 @@ function ProductPick({ product, rank }: { product: DbProduct; rank: number }) {
           </div>
         </div>
 
-        <div className="mt-2 flex items-center gap-2">
-          <span className="text-sm font-extrabold text-fg">
-            {(product.isFree ?? false) || product.price === 0 ? "Gratuit" : `${product.price} €`}
-          </span>
-          {product.creatorVerified && (
-            <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">
-              ✓ Vérifié
-            </span>
+        <div className="mt-2 space-y-1.5">
+          {score !== undefined && (
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      score >= 8 ? "bg-emerald-500" : score >= 7 ? "bg-amber-500" : "bg-rose-500"
+                    }`}
+                    style={{ width: `${Math.min(score * 10, 100)}%` }}
+                  />
+                </div>
+              </div>
+              <span className="text-[11px] font-bold text-fg">{score.toFixed(1)}/10</span>
+            </div>
           )}
-          {product.createdAt && (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000 && (
-            <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-medium text-muted">
-              Nouveau
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-extrabold text-fg">
+              {(product.isFree ?? false) || product.price === 0 ? "Gratuit" : `${product.price} €`}
             </span>
-          )}
+            {product.creatorVerified && (
+              <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">
+                ✓ Vérifié
+              </span>
+            )}
+            {product.createdAt && (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000 && (
+              <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-medium text-muted">
+                Nouveau
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </Link>
@@ -127,7 +208,7 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
 
     setMessages((m) => [
       ...m,
-      { id: assistantId, role: "assistant", text: "", slugs: [] },
+      { id: assistantId, role: "assistant", text: "", reflection: "", discovery: "", recommendation: "", slugs: [], scores: {}, confidence: "low", done: false },
     ]);
 
     try {
@@ -139,6 +220,9 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
 
       if (!res.ok || !res.body) throw new Error("Erreur API");
 
+      // Délai de 2-3 secondes avant de commencer à afficher
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulated = "";
@@ -147,21 +231,21 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
         const { done, value } = await reader.read();
         if (done) break;
         accumulated += decoder.decode(value, { stream: true });
-        const { text, slugs } = parseSlugs(accumulated);
+        const { text, reflection, discovery, recommendation, slugs, scores, confidence } = parseResponse(accumulated);
         setMessages((m) =>
           m.map((msg) =>
             msg.id === assistantId && msg.role === "assistant"
-              ? { ...msg, text, slugs }
+              ? { ...msg, text, reflection, discovery, recommendation, slugs, scores, confidence }
               : msg,
           ),
         );
       }
 
-      const { text, slugs } = parseSlugs(accumulated);
+      const { text, slugs, scores, confidence } = parseResponse(accumulated);
       setMessages((m) =>
         m.map((msg) =>
           msg.id === assistantId && msg.role === "assistant"
-            ? { ...msg, text, slugs }
+            ? { ...msg, text, slugs, scores, confidence, done: true }
             : msg,
         ),
       );
@@ -172,7 +256,13 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
             ? {
                 ...msg,
                 text: "Une erreur est survenue. Vérifiez votre connexion et réessayez.",
+                reflection: "",
+                discovery: "",
+                recommendation: "",
                 slugs: [],
+                scores: {},
+                confidence: "low",
+                done: true,
               }
             : msg,
         ),
@@ -237,25 +327,101 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
                   <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
                     <SparkleIcon className="size-4" />
                   </span>
-                  <div className="min-w-0 flex-1">
-                    {msg.text && (
+                  <div className="min-w-0 flex-1 space-y-3">
+                    {/* Réflexion */}
+                    {msg.reflection && (
+                      <div className="rounded-lg border border-border/50 bg-surface-2/50 p-3">
+                        <p className="text-[13px] leading-relaxed text-fg-2">
+                          <span className="text-[12px] font-medium text-muted">💭 Réflexion — </span>
+                          {msg.reflection}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Découverte */}
+                    {msg.discovery && (
+                      <div className="rounded-lg border border-border/50 bg-surface-2/50 p-3">
+                        <p className="text-[13px] leading-relaxed text-fg-2">
+                          <span className="text-[12px] font-medium text-muted">🔍 Découverte — </span>
+                          {msg.discovery}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Recommandation */}
+                    {msg.recommendation && (
                       <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-fg-2">
-                        {msg.text}
+                        {msg.recommendation}
                       </p>
                     )}
+
+                    {/* Bandeau d'avertissement pour confiance medium */}
+                    {msg.confidence === "medium" && msg.slugs.length > 0 && (
+                      <div className="mt-3 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="size-4 shrink-0 text-amber-600 dark:text-amber-400"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path d="M12 2v20m10-10H2" />
+                        </svg>
+                        <p className="text-[13px] font-medium text-amber-700 dark:text-amber-300">
+                          Meilleure correspondance disponible, mais votre besoin est assez spécifique.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Cartes produits (confiance high ou medium) */}
                     {msg.slugs.length > 0 && (
                       <div className="mt-3 space-y-2.5">
                         {msg.slugs.map((slug, i) => {
                           const product = products.find((p) => p.slug === slug);
                           if (!product) return null;
+                          const score = msg.scores[slug];
                           return (
                             <ProductPick
-                              key={slug}
+                              key={`recommended-${slug}`}
                               product={product}
                               rank={i + 1}
+                              score={score}
                             />
                           );
                         })}
+                      </div>
+                    )}
+
+                    {/* Fallback pour confiance low - produits populaires */}
+                    {msg.done && msg.confidence === "low" && msg.slugs.length === 0 && (
+                      <div className="mt-3 space-y-3">
+                        <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 dark:border-rose-500/30 dark:bg-rose-500/10">
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="size-4 shrink-0 text-rose-600 dark:text-rose-400"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 8v4m0 4h.01" />
+                          </svg>
+                          <p className="text-[13px] font-medium text-rose-700 dark:text-rose-300">
+                            Aucun produit ne correspond parfaitement. Voici nos produits populaires :
+                          </p>
+                        </div>
+                        <div className="space-y-2.5">
+                          {products
+                            .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
+                            .slice(0, 3)
+                            .map((product, i) => (
+                              <ProductPick
+                                key={`popular-${product.slug}`}
+                                product={product}
+                                rank={i + 1}
+                              />
+                            ))}
+                        </div>
                       </div>
                     )}
                   </div>
