@@ -12,6 +12,7 @@ type NavItem = {
   label: string;
   icon: React.ReactNode;
   badge?: string;
+  external?: boolean;
 };
 
 const NAV: NavItem[] = [
@@ -91,6 +92,7 @@ const SECONDARY: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard créateur",
+    external: true,
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -102,6 +104,7 @@ const SECONDARY: NavItem[] = [
   {
     href: "/catalogue",
     label: "Voir le catalogue",
+    external: true,
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -119,6 +122,8 @@ function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
     <Link
       href={item.href}
       onClick={onClick}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
       className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
         active
           ? "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
