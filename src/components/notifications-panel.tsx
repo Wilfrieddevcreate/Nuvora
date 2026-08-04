@@ -129,8 +129,13 @@ export function NotificationsBell() {
 
             <div className="overflow-y-auto flex-1">
               {notifications.length === 0 ? (
-                <div className="px-4 py-8 text-center text-muted text-sm">
-                  Aucune notification
+                <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
+                  <svg viewBox="0 0 24 24" className="size-12 text-muted/40 mb-3" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                  <p className="text-sm font-medium text-fg">Aucune notification</p>
+                  <p className="text-xs text-muted mt-1">Vous recevrez une notification dès qu'il y a des mises à jour.</p>
                 </div>
               ) : (
                 notifications.map((notif) => (
