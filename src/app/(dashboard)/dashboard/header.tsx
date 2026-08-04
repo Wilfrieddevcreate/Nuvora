@@ -12,6 +12,7 @@ const BREADCRUMBS: Record<string, string> = {
   "/dashboard": "Vue d'ensemble",
   "/dashboard/produits": "Mes produits",
   "/dashboard/produits/nouveau": "Nouveau produit",
+  "/dashboard/notifications": "Notifications",
   "/dashboard/statistiques": "Statistiques",
   "/dashboard/profil": "Mon profil",
 };
