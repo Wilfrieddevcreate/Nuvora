@@ -287,7 +287,7 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
   return (
     <div className="mx-auto flex h-[calc(100vh-4rem)] max-w-3xl flex-col px-5 sm:px-8">
       {/* Zone messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto py-8">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-hide py-8">
         {isEmpty ? (
           <div className="flex h-full flex-col items-center justify-center text-center">
             <span className="grid size-14 place-items-center rounded-2xl bg-accent-soft text-accent">
