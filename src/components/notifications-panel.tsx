@@ -98,7 +98,7 @@ export function NotificationsBell() {
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen(!open)}
-          className="relative inline-flex items-center justify-center size-10 rounded-lg text-muted hover:bg-surface-2 hover:text-fg transition-colors"
+          className="relative inline-flex items-center justify-center size-10 rounded-lg text-muted hover:bg-surface-2 hover:text-fg transition-smooth active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           aria-label="Notifications"
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -120,7 +120,7 @@ export function NotificationsBell() {
                 <button
                   onClick={handleMarkAllAsRead}
                   disabled={isPending}
-                  className="text-xs font-medium text-accent hover:opacity-80 disabled:opacity-50"
+                  className="text-xs font-medium text-accent hover:opacity-80 active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
                   Marquer tout comme lu
                 </button>
@@ -141,7 +141,7 @@ export function NotificationsBell() {
                 notifications.map((notif) => (
                   <div
                     key={notif.id}
-                    className={`border-b border-border px-4 py-3 hover:bg-surface-2 transition-colors ${
+                    className={`border-b border-border px-4 py-3 hover:bg-surface-2 transition-smooth cursor-pointer ${
                       !notif.read ? "bg-accent-soft/30" : ""
                     }`}
                   >
@@ -152,7 +152,7 @@ export function NotificationsBell() {
                           <button
                             onClick={() => handleDelete(notif.id)}
                             disabled={isPending}
-                            className="text-muted hover:text-fg text-xs disabled:opacity-50"
+                            className="text-muted hover:text-fg text-xs transition-smooth active:scale-75 disabled:opacity-40 disabled:cursor-not-allowed"
                             aria-label="Supprimer"
                           >
                             ✕

@@ -60,7 +60,7 @@ export default function ProfilClient({
         <h1 className="text-2xl font-extrabold">Mon profil</h1>
         <Link
           href={`/createur/${creatorSlug}`}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2"
         >
           <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
           Voir mon profil public
@@ -110,7 +110,7 @@ export default function ProfilClient({
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+                className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft"
               />
             </label>
             <label className="block">
@@ -119,7 +119,7 @@ export default function ProfilClient({
                 type="text"
                 value={specialty}
                 onChange={(e) => setSpecialty(e.target.value)}
-                className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+                className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft"
               />
             </label>
           </div>
@@ -130,7 +130,7 @@ export default function ProfilClient({
               type="text"
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+              className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft"
             />
           </label>
 
@@ -149,7 +149,7 @@ export default function ProfilClient({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+              className="w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft"
             />
           </label>
 
@@ -157,7 +157,7 @@ export default function ProfilClient({
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {pending ? "Enregistrement…" : "Enregistrer les modifications"}
             </button>
@@ -173,7 +173,7 @@ export default function ProfilClient({
         </p>
         <button
           type="button"
-          className="mt-4 rounded-xl border border-danger/40 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10"
+          className="mt-4 rounded-xl border border-danger/40 px-4 py-2 text-sm font-semibold text-danger transition-smooth hover:bg-danger/10"
         >
           Supprimer mon compte
         </button>

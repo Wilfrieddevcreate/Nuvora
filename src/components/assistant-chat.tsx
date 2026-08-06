@@ -130,7 +130,7 @@ function ProductPick({
             <span className="truncate text-sm font-bold leading-snug text-fg group-hover:text-accent">
               {product.title}
             </span>
-            <ArrowUpRight className="size-3.5 shrink-0 text-muted transition-colors group-hover:text-accent" />
+            <ArrowUpRight className="size-3.5 shrink-0 text-muted transition-smooth group-hover:text-accent" />
           </div>
           <div className="mt-0.5 text-[12px] text-muted">
             par {product.creatorName}
@@ -306,7 +306,7 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
                   key={s}
                   type="button"
                   onClick={() => ask(s)}
-                  className="rounded-xl border border-border bg-surface px-4 py-3 text-left text-sm font-medium text-fg-2 transition-colors hover:border-accent hover:text-fg"
+                  className="rounded-xl border border-border bg-surface px-4 py-3 text-left text-sm font-medium text-fg-2 transition-smooth hover:border-accent hover:text-fg"
                 >
                   {s}
                 </button>
@@ -437,7 +437,7 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
                     key={s}
                     type="button"
                     onClick={() => ask(s)}
-                    className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-[13px] font-medium text-fg-2 transition-colors hover:border-accent hover:text-fg"
+                    className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-[13px] font-medium text-fg-2 transition-smooth hover:border-accent hover:text-fg"
                   >
                     {s}
                   </button>
@@ -476,13 +476,13 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Posez votre question…"
             aria-label="Poser une question à l'assistant"
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+            className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2"
           />
           {!isEmpty && (
             <button
               type="button"
               onClick={reset}
-              className="shrink-0 rounded-xl px-3 py-2.5 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+              className="shrink-0 rounded-xl px-3 py-2.5 text-sm font-medium text-muted transition-smooth hover:bg-surface-2 hover:text-fg"
             >
               Nouvelle conv.
             </button>
@@ -490,7 +490,7 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
           <button
             type="submit"
             disabled={!input.trim() || thinking}
-            className="shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-40"
+            className="shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover disabled:opacity-40"
           >
             Envoyer
           </button>

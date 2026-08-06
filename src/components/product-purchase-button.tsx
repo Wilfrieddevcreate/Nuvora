@@ -24,7 +24,7 @@ export function ProductPurchaseButton({ productId, purchaseUrl }: ProductPurchas
     <button
       onClick={handleClick}
       disabled={isPending}
-      className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-50"
+      className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       Acheter maintenant
       <ArrowUpRight className="size-4" />

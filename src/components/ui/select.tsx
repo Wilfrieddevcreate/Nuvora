@@ -107,7 +107,7 @@ export function Select<T extends string>({
         aria-label={ariaLabel}
         onClick={() => setOpen((o) => !o)}
         onKeyDown={onKeyDown}
-        className="flex w-full items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm transition-colors hover:border-border-2 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent-soft"
+        className="flex w-full items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm transition-smooth hover:border-border-2 active:scale-95 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent-soft"
       >
         {label && <span className="text-muted">{label}</span>}
         <span className="flex-1 truncate text-left font-medium text-fg">
@@ -134,8 +134,8 @@ export function Select<T extends string>({
                 onMouseEnter={() => setActiveIndex(i)}
                 onClick={() => choose(i)}
                 className={
-                  "flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm " +
-                  (isActive ? "bg-accent-soft text-accent" : "text-fg-2")
+                  "flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition-smooth " +
+                  (isActive ? "bg-accent-soft text-accent" : "text-fg-2 hover:bg-surface-2")
                 }
               >
                 <span className="truncate">{opt.label}</span>

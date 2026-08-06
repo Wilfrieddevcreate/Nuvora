@@ -76,7 +76,7 @@ function ResourcesMenu() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition-colors lg:px-3.5 ${
+        className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition-smooth lg:px-3.5 ${
           isActive ? "bg-surface-2 text-fg" : "text-fg-2 hover:bg-surface-2 hover:text-fg"
         }`}
       >
@@ -103,7 +103,7 @@ function ResourcesMenu() {
                 <Link
                   href={r.href}
                   onClick={() => setOpen(false)}
-                  className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface-2"
+                  className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-smooth hover:bg-surface-2"
                 >
                   <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
                     {r.icon}
@@ -185,7 +185,7 @@ export function TopBar() {
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg lg:px-3.5"
+              className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-fg-2 transition-smooth hover:bg-surface-2 hover:text-fg lg:px-3.5"
             >
               {item.label}
             </Link>
@@ -200,7 +200,7 @@ export function TopBar() {
               {user.isCreator && (
                 <Link
                   href="/dashboard"
-                  className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
+                  className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-smooth hover:text-fg md:inline-flex"
                 >
                   Dashboard
                 </Link>
@@ -217,7 +217,7 @@ export function TopBar() {
             <>
               <Link
                 href="/connexion"
-                className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-colors hover:text-fg md:inline-flex"
+                className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-fg-2 transition-smooth hover:text-fg md:inline-flex"
               >
                 Connexion
               </Link>
@@ -235,7 +235,7 @@ export function TopBar() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
-            className="grid size-10 place-items-center rounded-full border border-border-2 text-fg transition-colors hover:bg-surface-2 md:hidden"
+            className="grid size-10 place-items-center rounded-full border border-border-2 text-fg transition-smooth hover:bg-surface-2 md:hidden"
           >
             <svg
               viewBox="0 0 24 24"
@@ -279,7 +279,7 @@ export function TopBar() {
                   <Link
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
+                    className="flex items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-smooth hover:bg-surface-2"
                   >
                     {item.label}
                     <svg viewBox="0 0 24 24" className="size-4 text-muted" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
@@ -294,7 +294,7 @@ export function TopBar() {
                   onClick={() => setResourcesOpen((o) => !o)}
                   aria-expanded={resourcesOpen}
                   aria-controls="mobile-resources-submenu"
-                  className="flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
+                  className="flex w-full items-center justify-between rounded-xl px-3 py-3.5 text-[15px] font-semibold text-fg transition-smooth hover:bg-surface-2"
                 >
                   Ressources
                   <svg
@@ -317,7 +317,7 @@ export function TopBar() {
                         <Link
                           href={r.href}
                           onClick={() => { setMenuOpen(false); setResourcesOpen(false); }}
-                          className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[14px] font-medium text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg"
+                          className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[14px] font-medium text-fg-2 transition-smooth hover:bg-surface-2 hover:text-fg"
                         >
                           <span className="grid size-6 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
                             {r.icon}
@@ -345,7 +345,7 @@ export function TopBar() {
                   <button
                     type="button"
                     onClick={() => { logout(); setMenuOpen(false); }}
-                    className="w-full rounded-xl border border-border px-4 py-3 text-[15px] font-semibold text-fg transition-colors hover:bg-surface-2"
+                    className="w-full rounded-xl border border-border px-4 py-3 text-[15px] font-semibold text-fg transition-smooth hover:bg-surface-2"
                   >
                     Se déconnecter
                   </button>

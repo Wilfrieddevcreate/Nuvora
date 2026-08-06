@@ -113,3 +113,23 @@ model DailyStats {
   @@index([productId])
   @@index([date])
 }
+
+model TrackingLog {
+  id            String   @id @default(cuid())
+  productId     String
+  userId        String?
+  ipAddress     String?
+  userAgent     String?
+  type          String   // "view" | "click"
+  isBot         Boolean  @default(false)
+  isRateLimited Boolean  @default(false)
+  isSuspicious  Boolean  @default(false)
+  timestamp     DateTime @default(now())
+
+  @@index([productId])
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([timestamp])
+  @@index([isBot])
+  @@index([isSuspicious])
+}

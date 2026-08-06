@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { verifySession } from "@/lib/dal";
 import { notifyAdminNewProduct } from "./notifications";
@@ -134,23 +135,95 @@ export async function deleteProduct(productId: string): Promise<ProductState> {
   redirect("/dashboard/produits");
 }
 
-export async function trackProductView(productId: string): Promise<void> {
+export async function trackProductView(
+  productId: string,
+  context?: { ipAddress?: string; userAgent?: string }
+): Promise<void> {
   try {
-    await db.product.update({
-      where: { id: productId },
-      data: { views: { increment: 1 } },
+    const { validateTrackingRequest, logTracking, detectBot, detectAnomaly } = await import("@/lib/fraud-detection");
+
+    const ipAddress = context?.ipAddress || "unknown";
+    const userAgent = context?.userAgent;
+
+    const trackingContext = {
+      productId,
+      ipAddress,
+      userAgent,
+      type: "view" as const,
+    };
+
+    // Validate request
+    const validation = await validateTrackingRequest(trackingContext);
+    const isBot = detectBot(userAgent);
+    const anomalyCheck = await detectAnomaly(trackingContext);
+
+    // Log the tracking attempt
+    await logTracking(trackingContext, {
+      isBot,
+      rateLimited: !validation.valid,
+      suspicious: anomalyCheck.suspicious,
     });
+
+    // Only increment if valid
+    if (validation.valid) {
+      await db.product.update({
+        where: { id: productId },
+        data: { views: { increment: 1 } },
+      });
+    }
   } catch {
     // Silently fail - tracking is not critical
   }
 }
 
-export async function trackProductClick(productId: string): Promise<void> {
+export async function trackProductClick(
+  productId: string,
+  context?: { ipAddress?: string; userAgent?: string }
+): Promise<void> {
   try {
-    await db.product.update({
-      where: { id: productId },
-      data: { clicks: { increment: 1 } },
+    const { validateTrackingRequest, logTracking, detectBot, detectAnomaly } = await import("@/lib/fraud-detection");
+
+    // Get IP and user-agent from headers if not provided
+    let ipAddress = context?.ipAddress;
+    let userAgent = context?.userAgent;
+
+    if (!ipAddress || !userAgent) {
+      try {
+        const headersList = await headers();
+        ipAddress = ipAddress || headersList.get("x-forwarded-for")?.split(",")[0] || headersList.get("x-real-ip") || "unknown";
+        userAgent = userAgent || headersList.get("user-agent") || undefined;
+      } catch {
+        // If headers() fails (not in a request context), use defaults
+        ipAddress = ipAddress || "unknown";
+      }
+    }
+
+    const trackingContext = {
+      productId,
+      ipAddress,
+      userAgent,
+      type: "click" as const,
+    };
+
+    // Validate request
+    const validation = await validateTrackingRequest(trackingContext);
+    const isBot = detectBot(userAgent);
+    const anomalyCheck = await detectAnomaly(trackingContext);
+
+    // Log the tracking attempt
+    await logTracking(trackingContext, {
+      isBot,
+      rateLimited: !validation.valid,
+      suspicious: anomalyCheck.suspicious,
     });
+
+    // Only increment if valid
+    if (validation.valid) {
+      await db.product.update({
+        where: { id: productId },
+        data: { clicks: { increment: 1 } },
+      });
+    }
   } catch {
     // Silently fail - tracking is not critical
   }

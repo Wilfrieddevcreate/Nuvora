@@ -70,13 +70,13 @@ const TIPS: Record<number, { title: string; items: string[] }> = {
 };
 
 const inputCls =
-  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft";
+  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft focus:bg-bg hover:border-border-2";
 const inputErrCls =
-  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-danger focus:ring-4 focus:ring-danger/20";
+  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-danger focus:ring-4 focus:ring-danger/20 hover:border-danger/50";
 const selectCls =
-  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent-soft";
+  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-accent focus:ring-4 focus:ring-accent-soft hover:border-border-2";
 const selectErrCls =
-  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-danger focus:ring-4 focus:ring-danger/20";
+  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-danger focus:ring-4 focus:ring-danger/20 hover:border-danger/50";
 
 function Label({ label, required, hint }: { label: string; required?: boolean; hint?: string }) {
   return (
@@ -341,14 +341,14 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={() => router.push("/dashboard/produits")}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Voir mes produits
           </button>
           <button
             type="button"
             onClick={resetForm}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2 hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Ajouter un autre produit
           </button>
@@ -382,13 +382,13 @@ export function NewProductForm() {
                 onChange={(e) => { setScrapeUrl(e.target.value); setScrapeError(null); setScraped(false); }}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleScrape())}
                 placeholder="https://gumroad.com/l/mon-produit"
-                className="min-w-0 flex-1 rounded-xl border border-border bg-bg px-4 py-2 text-[14px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-bg px-4 py-2 text-[14px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft hover:border-border-2"
               />
               <button
                 type="button"
                 onClick={handleScrape}
                 disabled={scraping || !scrapeUrl.trim()}
-                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {scraping ? (
                   <>
@@ -499,7 +499,7 @@ export function NewProductForm() {
                     type="button"
                     onClick={uploadImage}
                     disabled={uploadingImage}
-                    className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-60"
+                    className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {uploadingImage ? "Upload…" : "Valider"}
                   </button>
@@ -543,7 +543,7 @@ export function NewProductForm() {
               {tags.map((tag) => (
                 <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} aria-label={`Supprimer ${tag}`} className="hover:text-accent-hover">
+                  <button type="button" onClick={() => removeTag(tag)} aria-label={`Supprimer ${tag}`} className="transition-smooth hover:text-accent-hover active:scale-75">
                     <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
                   </button>
                 </span>
@@ -556,7 +556,7 @@ export function NewProductForm() {
                   onKeyDown={handleTagKey}
                   onBlur={() => tagInput && addTag(tagInput)}
                   placeholder={tags.length === 0 ? "ia, formation, débutant…" : ""}
-                  className="min-w-20 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+                  className="min-w-20 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2"
                 />
               )}
             </div>
@@ -572,7 +572,7 @@ export function NewProductForm() {
             <p className="mt-0.5 text-xs text-muted">Ces informations aident les visiteurs à filtrer.</p>
           </div>
 
-          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-bg px-4 py-3 select-none hover:bg-surface-2 transition-colors">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-bg px-4 py-3 select-none hover:bg-surface-2 hover:border-border-2 transition-smooth">
             <input
               type="checkbox"
               checked={isFree}
@@ -589,7 +589,7 @@ export function NewProductForm() {
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="rounded-xl border border-border bg-bg px-3 py-2 text-sm font-medium text-fg focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                  className="rounded-xl border border-border bg-bg px-3 py-2 text-sm font-medium text-fg transition-smooth hover:border-border-2 focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent-soft"
                 >
                   <optgroup label="Europe">
                     <option value="EUR">EUR (€)</option>
@@ -696,7 +696,7 @@ export function NewProductForm() {
                   <svg viewBox="0 0 24 24" className="size-4 text-accent" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
                   <span className="text-sm font-semibold text-accent">{platform} détecté</span>
                 </div>
-                <button type="button" onClick={() => setPlatform("")} className="text-xs text-muted hover:text-fg transition-colors">
+                <button type="button" onClick={() => setPlatform("")} className="text-xs text-muted hover:text-fg transition-smooth active:scale-90">
                   Changer
                 </button>
               </div>
@@ -723,7 +723,7 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={back}
-            className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface"
+            className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
             Précédent
@@ -732,7 +732,7 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface"
+            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Annuler
           </button>
@@ -742,7 +742,7 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={next}
-            className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
+            className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Continuer
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
@@ -755,7 +755,7 @@ export function NewProductForm() {
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               {pending ? (
                 "Envoi en cours…"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { mapDbProduct } from "@/lib/product-mapper";
 import { ProductCard, type DbProduct } from "@/components/product-card";
@@ -78,7 +79,10 @@ export default async function ProductPage({
   if (!product) notFound();
 
   // Track view asynchronously (non-blocking)
-  trackProductView(product.id).catch(() => {});
+  const headersList = await headers();
+  const ipAddress = headersList.get("x-forwarded-for")?.split(",")[0] || headersList.get("x-real-ip") || "unknown";
+  const userAgent = headersList.get("user-agent") || undefined;
+  trackProductView(product.id, { ipAddress, userAgent }).catch(() => {});
 
   const tags = JSON.parse(product.tags ?? "[]") as string[];
   const isNew = (Date.now() - new Date(product.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000;

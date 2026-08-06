@@ -52,7 +52,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("bold")
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -64,7 +64,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("italic")
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -76,7 +76,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("strike")
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -89,7 +89,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("heading", { level: 1 })
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -100,7 +100,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("heading", { level: 2 })
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -111,7 +111,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("bulletList")
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -122,7 +122,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
+          className={`px-2 py-1 rounded text-sm font-medium transition-smooth ${
             editor.isActive("orderedList")
               ? "bg-accent text-accent-fg"
               : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -135,7 +135,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <button
           onClick={addImage}
-          className="px-2 py-1 rounded text-sm font-medium hover:bg-surface text-fg-2 hover:text-fg transition-colors"
+          className="px-2 py-1 rounded text-sm font-medium hover:bg-surface text-fg-2 hover:text-fg transition-smooth"
           title="Ajouter une image"
         >
           🖼️ Image
@@ -143,7 +143,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <button
           onClick={() => editor.chain().focus().clearNodes().run()}
-          className="px-2 py-1 rounded text-sm font-medium hover:bg-surface text-fg-2 hover:text-fg transition-colors ml-auto"
+          className="px-2 py-1 rounded text-sm font-medium hover:bg-surface text-fg-2 hover:text-fg transition-smooth ml-auto"
         >
           Clear
         </button>

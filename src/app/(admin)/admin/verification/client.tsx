@@ -74,7 +74,7 @@ export function CreatorVerificationClient({ creators }: { creators: Creator[] })
               <button
                 key={creator.id}
                 onClick={() => handleSelectCreator(creator)}
-                className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-smooth ${
                   selectedCreator?.id === creator.id
                     ? "bg-accent text-accent-fg"
                     : "hover:bg-surface text-fg-2 hover:text-fg"
@@ -214,14 +214,14 @@ export function CreatorVerificationClient({ creators }: { creators: Creator[] })
               <button
                 onClick={() => setModal("verify")}
                 disabled={isPending}
-                className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 ✓ Certifier
               </button>
               <button
                 onClick={() => setModal("reject")}
                 disabled={isPending}
-                className="flex-1 rounded-lg border border-rose-500 px-4 py-2 text-sm font-semibold text-rose-500 transition-colors hover:bg-rose-50 dark:hover:bg-rose-500/10 disabled:opacity-50"
+                className="flex-1 rounded-lg border border-rose-500 px-4 py-2 text-sm font-semibold text-rose-500 transition-smooth hover:bg-rose-50 dark:hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 ✕ Refuser
               </button>
@@ -248,7 +248,7 @@ export function CreatorVerificationClient({ creators }: { creators: Creator[] })
           <button
             type="button"
             onClick={() => setModal(null)}
-            className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+            className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2"
           >
             Annuler
           </button>
@@ -256,7 +256,7 @@ export function CreatorVerificationClient({ creators }: { creators: Creator[] })
             type="button"
             onClick={handleVerify}
             disabled={isPending}
-            className="flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex-1 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Certifier
           </button>
@@ -292,7 +292,7 @@ export function CreatorVerificationClient({ creators }: { creators: Creator[] })
           <button
             type="button"
             onClick={() => setModal(null)}
-            className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+            className="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2"
           >
             Annuler
           </button>
@@ -300,7 +300,7 @@ export function CreatorVerificationClient({ creators }: { creators: Creator[] })
             type="button"
             onClick={handleReject}
             disabled={isPending || !reason}
-            className="flex-1 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex-1 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Refuser
           </button>

@@ -56,7 +56,7 @@ export function SiteFooter() {
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="text-sm text-muted transition-colors hover:text-fg"
+                      className="text-sm text-muted transition-smooth hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md"
                     >
                       {l.label}
                     </Link>
@@ -70,9 +70,9 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Nuvora. Tous droits réservés.</span>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/mentions-legales" className="transition-colors hover:text-fg">Mentions légales</Link>
-            <Link href="/cgu" className="transition-colors hover:text-fg">CGU</Link>
-            <Link href="/confidentialite" className="transition-colors hover:text-fg">Confidentialité</Link>
+            <Link href="/mentions-legales" className="transition-smooth hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md">Mentions légales</Link>
+            <Link href="/cgu" className="transition-smooth hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md">CGU</Link>
+            <Link href="/confidentialite" className="transition-smooth hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md">Confidentialité</Link>
           </div>
         </div>
       </div>

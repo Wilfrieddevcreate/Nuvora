@@ -145,7 +145,7 @@ export default function CompteClient() {
                       id={id}
                       type={type}
                       defaultValue={value}
-                      className="w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+                      className="w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft"
                     />
                   </div>
                 ))}

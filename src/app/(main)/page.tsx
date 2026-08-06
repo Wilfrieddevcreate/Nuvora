@@ -38,22 +38,27 @@ export const metadata: Metadata = {
 
 const FAQS = [
   {
+    icon: "M13 10V3L4 14h7v7l9-11h-7z",
     q: "Nuvora vend-il directement les produits ?",
     a: "Non. Nuvora est un moteur de découverte. On référence les produits et on vous redirige vers la boutique du créateur (Gumroad, Systeme.io, Podia…) pour finaliser l'achat. On ne traite aucun paiement.",
   },
   {
+    icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     q: "Les produits sont-ils vérifiés ?",
     a: "Chaque produit soumis est examiné manuellement par notre équipe avant publication. Les créateurs qui passent une vérification approfondie obtiennent le badge « Vérifié ».",
   },
   {
+    icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-5a4 4 0 100 8 4 4 0 000-8z",
     q: "Comment fonctionne l'assistant IA ?",
     a: "Décrivez votre besoin en langage naturel et l'assistant analyse le catalogue pour vous recommander les produits les plus adaptés, avec une explication personnalisée pour chacun.",
   },
   {
+    icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     q: "Est-ce gratuit pour les acheteurs ?",
     a: "Totalement. Parcourir Nuvora, utiliser l'assistant et être redirigé vers un produit est 100 % gratuit. Vous ne payez que le produit, directement chez le créateur.",
   },
   {
+    icon: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z",
     q: "Je suis créateur, comment référencer mes produits ?",
     a: "Créez un compte, soumettez vos produits avec les informations demandées et notre équipe valide sous 8 à 12 h. Le référencement est gratuit et Nuvora ne prend aucune commission.",
   },
@@ -267,7 +272,7 @@ export default async function Home() {
 
       {/* ---------------- COMMENT ÇA MARCHE ---------------- */}
       <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-        <div className="rounded-3xl border border-border bg-surface p-8 shadow-soft sm:p-12">
+        <div className="rounded-3xl border border-border bg-surface/60 p-8 shadow-soft sm:p-12">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-extrabold sm:text-3xl">
               Comment ça marche
@@ -277,14 +282,35 @@ export default async function Home() {
               oriente, l’achat se fait toujours chez le créateur.
             </p>
           </div>
-          <div className="mt-10 grid gap-8 md:grid-cols-3">
-            {STEPS.map((s) => (
-              <div key={s.n} className="flex flex-col items-start">
-                <span className="grid size-10 place-items-center rounded-full bg-accent-soft text-accent font-bold">
-                  {s.n}
-                </span>
-                <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
-                <p className="mt-1.5 text-[15px] text-fg-2">{s.desc}</p>
+          <div className="mt-12 grid gap-8 md:grid-cols-3 relative">
+            {/* SVG connector line (hidden on mobile) */}
+            <svg
+              className="hidden md:block absolute top-12 left-0 right-0 w-full h-0.5 pointer-events-none"
+              preserveAspectRatio="none"
+              viewBox="0 0 1000 2"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="var(--accent-soft)" />
+                  <stop offset="50%" stopColor="var(--accent)" />
+                  <stop offset="100%" stopColor="var(--accent-soft)" />
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="1" x2="1000" y2="1" stroke="url(#lineGradient)" strokeWidth="1.5" />
+            </svg>
+
+            {STEPS.map((s, idx) => (
+              <div key={s.n} className="flex flex-col items-start relative">
+                {/* Circular step number with visual enhancement */}
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-accent-soft/40 blur-md" />
+                  <span className="relative grid size-12 place-items-center rounded-full bg-accent-soft border-2 border-accent text-accent font-bold text-lg shadow-md">
+                    {s.n}
+                  </span>
+                </div>
+                <h3 className="mt-6 text-lg font-bold">{s.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-fg-2">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -332,8 +358,30 @@ export default async function Home() {
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="bg-surface-2/50">
-        <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
+      <section className="bg-surface-2/60 py-14">
+        <style>{`
+          details > summary {
+            outline: none;
+            user-select: none;
+          }
+          details > summary::-webkit-details-marker {
+            display: none;
+          }
+          details[open] > p {
+            animation: slideDown 300ms ease-out;
+          }
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-8px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
+        <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <div className="text-center">
             <h2 className="text-2xl font-extrabold sm:text-3xl">Questions fréquentes</h2>
             <p className="mt-2 text-fg-2">Tout ce qu&apos;il faut savoir avant de commencer.</p>
@@ -341,9 +389,28 @@ export default async function Home() {
 
           <div className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
             {FAQS.map((item) => (
-              <details key={item.q} className="group px-6 py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg">
-                  {item.q}
+              <details
+                key={item.q}
+                className="group px-6 py-5 transition-colors hover:bg-surface-2/30"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg group-hover:text-accent transition-colors">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <span className="shrink-0 text-accent">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="size-5"
+                        aria-hidden="true"
+                      >
+                        <path d={item.icon} />
+                      </svg>
+                    </span>
+                    <span className="flex-1">{item.q}</span>
+                  </div>
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -351,13 +418,13 @@ export default async function Home() {
                     strokeWidth={2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180"
+                    className="size-5 shrink-0 text-muted transition-transform duration-300 group-open:rotate-180"
                     aria-hidden="true"
                   >
                     <path d="m6 9 6 6 6-6" />
                   </svg>
                 </summary>
-                <p className="mt-3 text-[15px] leading-relaxed text-fg-2">{item.a}</p>
+                <p className="mt-3 ml-8 text-[15px] leading-relaxed text-fg-2">{item.a}</p>
               </details>
             ))}
           </div>

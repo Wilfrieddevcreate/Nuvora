@@ -51,14 +51,14 @@ function FavButton({ slug }: { slug: string }) {
       type="button"
       onClick={(e) => {
         e.preventDefault();
-        toast(active ? "Retiré des favoris" : "Ajouté aux favoris ♥", active ? "info" : "success");
+        toast(active ? "Retiré des favoris" : "Ajouté aux favoris", active ? "info" : "success");
         toggle(slug);
       }}
       aria-label={active ? "Retirer des favoris" : "Ajouter aux favoris"}
-      className={`absolute right-3 top-3 grid size-8 place-items-center rounded-full border backdrop-blur transition-colors ${
+      className={`absolute right-3 top-3 grid size-8 place-items-center rounded-full border backdrop-blur transition-all active:scale-90 ${
         active
-          ? "border-rose-200 bg-rose-50 text-rose-500 dark:border-rose-500/30 dark:bg-rose-500/20 dark:text-rose-400"
-          : "border-border bg-surface/80 text-muted hover:text-rose-500"
+          ? "border-rose-200 bg-rose-50 text-rose-500 dark:border-rose-500/30 dark:bg-rose-500/20 dark:text-rose-400 shadow-sm"
+          : "border-border bg-surface/80 text-muted hover:text-rose-500 hover:scale-105 hover:shadow-sm"
       }`}
     >
       <svg viewBox="0 0 24 24" className="size-4" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -78,7 +78,7 @@ export function ProductCard({ product }: { product: DbProduct }) {
   return (
     <Link
       href={`/produit/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-1.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:focus-visible:ring-offset-0"
     >
       <div className={`relative flex aspect-16/10 items-center justify-center bg-linear-to-br ${gradient} ${gradientDark} overflow-hidden`}>
         {product.coverImage ? (
@@ -88,13 +88,19 @@ export function ProductCard({ product }: { product: DbProduct }) {
         )}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {isNew && (
-            <span className="rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-fg">
+            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-fg shadow-sm">
+              <svg viewBox="0 0 16 16" className="size-3" fill="currentColor" aria-hidden="true">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+              </svg>
               Nouveau
             </span>
           )}
           {product.creatorVerified && (
-            <span className="rounded-full bg-surface/90 px-2.5 py-1 text-[11px] font-semibold text-fg-2 backdrop-blur">
-              ✓ Vérifié
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-500/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur shadow-sm">
+              <svg viewBox="0 0 16 16" className="size-3.5" fill="currentColor" aria-hidden="true">
+                <path d="M8.5 1a.5.5 0 0 0-.5.5v.793a.5.5 0 0 1-.854.354l-.561-.561a.5.5 0 0 0-.708.708l.561.56a.5.5 0 0 1 0 .708l-.561.561a.5.5 0 0 0 .708.708l.56-.561a.5.5 0 0 1 .854.354v.793a.5.5 0 0 0 1 0v-.793a.5.5 0 0 1 .854-.354l.561.561a.5.5 0 0 0 .708-.708l-.561-.56a.5.5 0 0 1 0-.708l.561-.561a.5.5 0 0 0-.708-.708l-.56.561a.5.5 0 0 1-.854-.354V1.5a.5.5 0 0 0-.5-.5z" />
+              </svg>
+              Vérifié
             </span>
           )}
         </div>
@@ -108,7 +114,14 @@ export function ProductCard({ product }: { product: DbProduct }) {
         <h3 className="mt-1.5 line-clamp-2 text-[15px] font-bold leading-snug text-fg group-hover:text-accent">
           {product.title}
         </h3>
-        <div className="mt-1 text-[13px] text-muted">par {product.creatorName}</div>
+        <div className="mt-2.5 flex items-center gap-1.5">
+          <span className="text-[13px] font-medium text-fg-2">{product.creatorName}</span>
+          {product.creatorVerified && (
+            <svg viewBox="0 0 16 16" className="size-3.5 text-blue-500 dark:text-blue-400" fill="currentColor" aria-label="Créateur vérifié" title="Créateur vérifié">
+              <path d="M8.5 1a.5.5 0 0 0-.5.5v.793a.5.5 0 0 1-.854.354l-.561-.561a.5.5 0 0 0-.708.708l.561.56a.5.5 0 0 1 0 .708l-.561.561a.5.5 0 0 0 .708.708l.56-.561a.5.5 0 0 1 .854.354v.793a.5.5 0 0 0 1 0v-.793a.5.5 0 0 1 .854-.354l.561.561a.5.5 0 0 0 .708-.708l-.561-.56a.5.5 0 0 1 0-.708l.561-.561a.5.5 0 0 0-.708-.708l-.56.561a.5.5 0 0 1-.854-.354V1.5a.5.5 0 0 0-.5-.5z" />
+            </svg>
+          )}
+        </div>
 
         <div className="mt-auto flex items-center justify-between pt-4">
           <span className="text-lg font-extrabold">

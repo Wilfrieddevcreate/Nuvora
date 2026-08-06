@@ -79,7 +79,7 @@ export function ProductReviews({ slug }: { slug: string }) {
           </div>
           <p className="font-semibold text-fg">Aucun avis pour l'instant</p>
           <p className="max-w-xs text-sm text-muted">Soyez le premier à donner votre avis sur ce produit.</p>
-          <button type="button" onClick={() => setShowForm(true)} className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover">
+          <button type="button" onClick={() => setShowForm(true)} className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover">
             Laisser un avis
           </button>
         </div>
@@ -92,7 +92,7 @@ export function ProductReviews({ slug }: { slug: string }) {
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-2xl font-extrabold">Avis ({reviews.length})</h2>
         {!showForm && !submitted && (
-          <button type="button" onClick={() => setShowForm(true)} className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
+          <button type="button" onClick={() => setShowForm(true)} className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2">
             Laisser un avis
           </button>
         )}
@@ -130,7 +130,7 @@ export function ProductReviews({ slug }: { slug: string }) {
               <div className="flex gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <button key={i} type="button" onMouseEnter={() => setHovered(i + 1)} onMouseLeave={() => setHovered(0)} onClick={() => setSelected(i + 1)} aria-label={`${i + 1} étoiles`}>
-                    <svg viewBox="0 0 24 24" className={`size-7 transition-colors ${(hovered || selected) > i ? "text-amber-400" : "text-border"}`} fill="currentColor" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" className={`size-7 transition-smooth ${(hovered || selected) > i ? "text-amber-400" : "text-border"}`} fill="currentColor" aria-hidden="true">
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
                   </button>
@@ -139,13 +139,13 @@ export function ProductReviews({ slug }: { slug: string }) {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-semibold text-fg">Commentaire</label>
-              <textarea rows={4} placeholder="Partagez votre expérience avec ce produit…" value={comment} onChange={(e) => setComment(e.target.value)} className="w-full resize-none rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft" />
+              <textarea rows={4} placeholder="Partagez votre expérience avec ce produit…" value={comment} onChange={(e) => setComment(e.target.value)} className="w-full resize-none rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft" />
             </div>
             <div className="flex gap-3">
-              <button type="button" onClick={handleSubmit} disabled={!selected || !comment.trim()} className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-40">
+              <button type="button" onClick={handleSubmit} disabled={!selected || !comment.trim()} className="rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 Publier l'avis
               </button>
-              <button type="button" onClick={() => { setShowForm(false); setSelected(0); setComment(""); }} className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
+              <button type="button" onClick={() => { setShowForm(false); setSelected(0); setComment(""); }} className="rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2">
                 Annuler
               </button>
             </div>

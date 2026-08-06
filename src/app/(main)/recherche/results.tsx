@@ -52,7 +52,7 @@ export function SearchResults({ initialQuery }: { initialQuery: string }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Rechercher un produit…"
             autoFocus
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+            className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2"
           />
           <button
             type="submit"
