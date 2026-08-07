@@ -8,6 +8,9 @@ import { AiTeaser } from "@/components/ai-teaser";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { db } from "@/lib/db";
+import FadeIn from "@/components/animations/FadeIn";
+import HowItsWork from "@/components/how-its-work";
+import Faqs from "@/components/faqs";
 
 export const metadata: Metadata = {
   title: "Trouvez les meilleurs produits digitaux",
@@ -64,23 +67,7 @@ const FAQS = [
   },
 ];
 
-const STEPS = [
-  {
-    n: "1",
-    title: "Découvrez",
-    desc: "Explorez le catalogue ou décrivez votre besoin à l’assistant IA. Nuvora sélectionne les meilleurs produits pour vous.",
-  },
-  {
-    n: "2",
-    title: "Comparez",
-    desc: "Consultez les fiches, les avis et les créateurs vérifiés pour choisir en confiance, sans vous perdre.",
-  },
-  {
-    n: "3",
-    title: "Achetez ailleurs",
-    desc: "On vous redirige vers la plateforme du créateur (Gumroad, Chariow, Systeme.io…) pour finaliser l’achat.",
-  },
-];
+
 
 export default async function Home() {
   // Fetch real data from DB
@@ -141,11 +128,12 @@ export default async function Home() {
               <span className="text-accent">trouvé pour vous.</span>
             </h1>
 
-            <p className="mt-5 max-w-lg text-lg text-fg-2">
-              Ebooks, formations, templates et logiciels,
-              réunis au même endroit. Nuvora vous aide à choisir, puis vous
-              redirige vers le créateur pour l’achat.
-            </p>
+            <FadeIn>
+              <p className="mt-5 max-w-lg text-lg text-fg-2">
+                Ebooks, formations, templates et logiciels, réunis au même endroit.
+                Nuvora vous aide à choisir, puis vous redirige vers le créateur pour l’achat.
+              </p>
+            </FadeIn>
 
             {/* Recherche à onglets (façon Rent/Buy/Sell) */}
             <div className="mt-8 max-w-lg">
@@ -271,51 +259,8 @@ export default async function Home() {
       <Testimonials />
 
       {/* ---------------- COMMENT ÇA MARCHE ---------------- */}
-      <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-        <div className="rounded-3xl border border-border bg-surface/60 p-8 shadow-soft sm:p-12">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-extrabold sm:text-3xl">
-              Comment ça marche
-            </h2>
-            <p className="mt-2 text-fg-2">
-              Nuvora est un moteur de découverte, pas une boutique. On vous
-              oriente, l’achat se fait toujours chez le créateur.
-            </p>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-3 relative">
-            {/* SVG connector line (hidden on mobile) */}
-            <svg
-              className="hidden md:block absolute top-12 left-0 right-0 w-full h-0.5 pointer-events-none"
-              preserveAspectRatio="none"
-              viewBox="0 0 1000 2"
-              aria-hidden="true"
-            >
-              <defs>
-                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="var(--accent-soft)" />
-                  <stop offset="50%" stopColor="var(--accent)" />
-                  <stop offset="100%" stopColor="var(--accent-soft)" />
-                </linearGradient>
-              </defs>
-              <line x1="0" y1="1" x2="1000" y2="1" stroke="url(#lineGradient)" strokeWidth="1.5" />
-            </svg>
-
-            {STEPS.map((s, idx) => (
-              <div key={s.n} className="flex flex-col items-start relative">
-                {/* Circular step number with visual enhancement */}
-                <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-accent-soft/40 blur-md" />
-                  <span className="relative grid size-12 place-items-center rounded-full bg-accent-soft border-2 border-accent text-accent font-bold text-lg shadow-md">
-                    {s.n}
-                  </span>
-                </div>
-                <h3 className="mt-6 text-lg font-bold">{s.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-fg-2">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+ 
+      <HowItsWork />
 
       {/* ---------------- CRÉATEURS VEDETTES ---------------- */}
       <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
@@ -358,79 +303,8 @@ export default async function Home() {
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="bg-surface-2/60 py-14">
-        <style>{`
-          details > summary {
-            outline: none;
-            user-select: none;
-          }
-          details > summary::-webkit-details-marker {
-            display: none;
-          }
-          details[open] > p {
-            animation: slideDown 300ms ease-out;
-          }
-          @keyframes slideDown {
-            from {
-              opacity: 0;
-              transform: translateY(-8px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}</style>
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-extrabold sm:text-3xl">Questions fréquentes</h2>
-            <p className="mt-2 text-fg-2">Tout ce qu&apos;il faut savoir avant de commencer.</p>
-          </div>
-
-          <div className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-            {FAQS.map((item) => (
-              <details
-                key={item.q}
-                className="group px-6 py-5 transition-colors hover:bg-surface-2/30"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg group-hover:text-accent transition-colors">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <span className="shrink-0 text-accent">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="size-5"
-                        aria-hidden="true"
-                      >
-                        <path d={item.icon} />
-                      </svg>
-                    </span>
-                    <span className="flex-1">{item.q}</span>
-                  </div>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5 shrink-0 text-muted transition-transform duration-300 group-open:rotate-180"
-                    aria-hidden="true"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </summary>
-                <p className="mt-3 ml-8 text-[15px] leading-relaxed text-fg-2">{item.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
+     <Faqs FAQS={FAQS} />
+     
       {/* ---------------- CTA CRÉATEUR ---------------- */}
       <section className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
         <div className="relative overflow-hidden rounded-3xl bg-accent px-8 py-12 text-center sm:px-12 sm:py-16">

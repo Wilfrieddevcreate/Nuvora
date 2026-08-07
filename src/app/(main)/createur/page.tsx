@@ -3,6 +3,12 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { NovaMark } from "@/components/logo";
+import Faqs from "@/components/faqs";
+import { CreatorHero } from "@/components/creator-hero";
+import { CreatorStats } from "@/components/creator-stats";
+import { CreatorBenefits } from "@/components/creator-benefits";
+import { CreatorHowItWorks } from "@/components/creator-how-its-work";
+import PlatformsMarquee from "@/components/platforms-marquee";
 
 export const metadata: Metadata = {
   title: "Référencez vos produits digitaux gratuitement",
@@ -155,216 +161,22 @@ export default function CreateurPage() {
   return (
     <>
       {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden border-b border-border bg-accent-soft/30">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(55%_100%_at_50%_0%,var(--accent-soft),transparent)]"
-        />
-        <div className="mx-auto max-w-4xl px-5 py-12 text-center sm:px-8 sm:py-16">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-fg-2 sm:text-[13px]">
-            <span className="size-1.5 rounded-full bg-accent" />
-            Pour les créateurs de produits digitaux
-          </div>
-
-          <h1 className="mt-6 text-[clamp(32px,5vw,56px)] font-extrabold leading-[1.06]">
-            Faites découvrir vos produits
-            <br />
-            <span className="text-accent">à ceux qui les cherchent.</span>
-          </h1>
-
-          <p className="mx-auto mt-5 max-w-xl text-lg text-fg-2">
-            Nuvora référence vos ebooks, formations et templates gratuitement.
-            Vous gardez 100&nbsp;% de vos revenus. On s&apos;occupe de la visibilité.
-          </p>
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <ButtonLink href="/inscription" size="lg">
-              Référencer mes produits
-              <ArrowUpRight className="size-4" />
-            </ButtonLink>
-            <ButtonLink href="/catalogue" variant="secondary" size="lg">
-              Voir le catalogue
-              <ArrowRight className="size-4" />
-            </ButtonLink>
-          </div>
-        </div>
-      </section>
+     <CreatorHero />
 
       {/* ─── STATS ─── */}
-      <section className="border-b border-border bg-surface">
-        <div className="mx-auto grid max-w-4xl grid-cols-2 divide-x divide-border px-5 sm:grid-cols-4 sm:px-8">
-          {[
-            { value: "200+", label: "produits référencés" },
-            { value: "37", label: "créateurs actifs" },
-            { value: "0 %", label: "de commission Nuvora" },
-            { value: "72 h", label: "délai max de validation" },
-          ].map((s) => (
-            <div key={s.label} className="py-8 text-center sm:py-10">
-              <p className="text-2xl font-extrabold text-accent sm:text-3xl">
-                {s.value}
-              </p>
-              <p className="mt-1 text-xs text-muted sm:text-sm">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <CreatorStats />
 
       {/* ─── AVANTAGES ─── */}
-      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-extrabold sm:text-3xl">
-            Pourquoi choisir Nuvora ?
-          </h2>
-          <p className="mt-2 text-fg-2">
-            Une vitrine de découverte pensée pour mettre vos produits devant les bonnes personnes.
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {BENEFITS.map((b) => (
-            <div
-              key={b.title}
-              className="flex gap-5 rounded-2xl border border-border bg-surface p-6 shadow-soft transition-shadow hover:shadow-soft-lg"
-            >
-              <span className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.75}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-5"
-                  aria-hidden="true"
-                >
-                  {b.icon}
-                </svg>
-              </span>
-              <div className="min-w-0">
-                <h3 className="font-bold">{b.title}</h3>
-                <p className="mt-1.5 text-[15px] leading-relaxed text-fg-2">
-                  {b.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <CreatorBenefits BENEFITS={BENEFITS} />
 
       {/* ─── COMMENT ÇA MARCHE ─── */}
-      <section className="bg-surface-2/60">
-        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-extrabold sm:text-3xl">
-              Référencez en 3 étapes
-            </h2>
-            <p className="mt-2 text-fg-2">
-              Pas de technicité requise. Si vous avez déjà un produit en vente quelque part, c&apos;est suffisant.
-            </p>
-          </div>
-
-          <div className="relative mt-12">
-            {/* Ligne de connexion — desktop uniquement */}
-            <div
-              aria-hidden
-              className="absolute left-1/2 top-5 hidden h-px w-2/3 -translate-x-1/2 bg-linear-to-r from-transparent via-border to-transparent md:block"
-            />
-
-            <div className="grid gap-8 md:grid-cols-3">
-              {HOW_IT_WORKS.map((step) => (
-                <div key={step.n} className="flex flex-col items-center text-center">
-                  <span className="relative z-10 grid size-11 place-items-center rounded-full bg-accent font-bold text-accent-fg shadow-soft">
-                    {step.n}
-                  </span>
-                  <h3 className="mt-5 text-lg font-bold">{step.title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-fg-2">
-                    {step.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-12 flex justify-center">
-            <ButtonLink href="/inscription" size="lg">
-              Commencer gratuitement
-              <ArrowUpRight className="size-4" />
-            </ButtonLink>
-          </div>
-        </div>
-      </section>
+     <CreatorHowItWorks HOW_IT_WORKS={HOW_IT_WORKS} />
 
       {/* ─── PLATEFORMES COMPATIBLES ─── */}
-      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-extrabold sm:text-3xl">
-            Compatible avec vos outils
-          </h2>
-          <p className="mt-2 text-fg-2">
-            Vous vendez déjà sur une de ces plateformes ? Il vous suffit de nous donner le lien.
-          </p>
-        </div>
-
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {PLATFORMS.map((p) => (
-            <div
-              key={p.name}
-              className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-5 text-center shadow-soft"
-            >
-              <span
-                className="grid size-12 place-items-center rounded-xl font-extrabold text-white text-lg"
-                style={{ backgroundColor: p.color }}
-              >
-                {p.letter}
-              </span>
-              <div>
-                <p className="text-sm font-bold">{p.name}</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-muted">
-                  {p.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-6 text-center text-sm text-muted">
-          Et toute autre plateforme avec un lien de vente public.
-        </p>
-      </section>
+      <PlatformsMarquee PLATFORMS={PLATFORMS} />
 
       {/* ─── FAQ ─── */}
-      <section className="bg-surface-2/60">
-        <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-20">
-          <h2 className="text-center text-2xl font-extrabold sm:text-3xl">
-            Questions fréquentes
-          </h2>
-
-          <div className="mt-10 divide-y divide-border rounded-2xl border border-border bg-surface shadow-soft overflow-hidden">
-            {FAQS.map((item) => (
-              <details key={item.q} className="group px-6 py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg">
-                  {item.q}
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180"
-                    aria-hidden="true"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </summary>
-                <p className="mt-3 text-[15px] leading-relaxed text-fg-2">
-                  {item.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Faqs FAQS={FAQS} />
 
       {/* ─── CTA FINAL ─── */}
       <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
