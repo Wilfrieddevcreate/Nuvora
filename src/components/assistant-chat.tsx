@@ -392,38 +392,6 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
                       </div>
                     )}
 
-                    {/* Fallback pour confiance low - produits populaires */}
-                    {msg.done && msg.confidence === "low" && msg.slugs.length === 0 && (
-                      <div className="mt-3 space-y-3">
-                        <div className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 dark:border-rose-500/30 dark:bg-rose-500/10">
-                          <svg
-                            viewBox="0 0 24 24"
-                            className="size-4 shrink-0 text-rose-600 dark:text-rose-400"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                          >
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 8v4m0 4h.01" />
-                          </svg>
-                          <p className="text-[13px] font-medium text-rose-700 dark:text-rose-300">
-                            Aucun produit ne correspond parfaitement. Voici nos produits populaires :
-                          </p>
-                        </div>
-                        <div className="space-y-2.5">
-                          {products
-                            .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
-                            .slice(0, 3)
-                            .map((product, i) => (
-                              <ProductPick
-                                key={`popular-${product.slug}`}
-                                product={product}
-                                rank={i + 1}
-                              />
-                            ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               ),
