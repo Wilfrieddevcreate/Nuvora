@@ -41,7 +41,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={isDark ? "Passer en thème clair" : "Passer en thème sombre"}
-      className="grid size-10 place-items-center rounded-full border border-border-2 text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg"
+      className="grid size-10 place-items-center rounded-full border border-border-2 text-fg-2 transition-smooth hover:bg-surface-2 hover:text-fg active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       <svg
         viewBox="0 0 24 24"

@@ -62,10 +62,10 @@ const TIPS: Record<number, { title: string; items: string[] }> = {
   },
 };
 
-const inputCls = "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft";
-const inputErrCls = "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-danger focus:ring-4 focus:ring-danger/20";
-const selectCls = "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent-soft";
-const selectErrCls = "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-danger focus:ring-4 focus:ring-danger/20";
+const inputCls = "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft focus:bg-bg hover:border-border-2";
+const inputErrCls = "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-danger focus:ring-4 focus:ring-danger/20 hover:border-danger/50";
+const selectCls = "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-accent focus:ring-4 focus:ring-accent-soft hover:border-border-2";
+const selectErrCls = "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-danger focus:ring-4 focus:ring-danger/20 hover:border-danger/50";
 
 function Label({ label, required, hint }: { label: string; required?: boolean; hint?: string }) {
   return (
@@ -244,10 +244,10 @@ export function EditProductForm({
           Notre équipe va examiner vos modifications sous 8 à 12 h.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <button type="button" onClick={() => router.push("/dashboard/produits")} className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover">
+          <button type="button" onClick={() => router.push("/dashboard/produits")} className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             Voir mes produits
           </button>
-          <button type="button" onClick={() => router.push(`/produit/${initialSlug}`)} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
+          <button type="button" onClick={() => router.push(`/produit/${initialSlug}`)} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2 hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
             Voir la fiche publique
           </button>
         </div>
@@ -308,13 +308,13 @@ export function EditProductForm({
                   {tags.map((tag) => (
                     <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
                       {tag}
-                      <button type="button" onClick={() => removeTag(tag)} aria-label={`Supprimer ${tag}`} className="hover:text-accent-hover">
+                      <button type="button" onClick={() => removeTag(tag)} aria-label={`Supprimer ${tag}`} className="transition-smooth hover:text-accent-hover active:scale-75">
                         <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
                       </button>
                     </span>
                   ))}
                   {tags.length < 6 && (
-                    <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagKey} onBlur={() => tagInput && addTag(tagInput)} placeholder={tags.length === 0 ? "ia, formation, débutant…" : ""} className="min-w-20 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted" />
+                    <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagKey} onBlur={() => tagInput && addTag(tagInput)} placeholder={tags.length === 0 ? "ia, formation, débutant…" : ""} className="min-w-20 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2" />
                   )}
                 </div>
               </div>
@@ -378,7 +378,7 @@ export function EditProductForm({
                       <svg viewBox="0 0 24 24" className="size-4 text-accent" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
                       <span className="text-sm font-semibold text-accent">{platform} détecté</span>
                     </div>
-                    <button type="button" onClick={() => setPlatform("")} className="text-xs text-muted hover:text-fg transition-colors">Changer</button>
+                    <button type="button" onClick={() => setPlatform("")} className="text-xs text-muted hover:text-fg transition-smooth active:scale-90">Changer</button>
                   </div>
                 ) : (
                   <>
@@ -395,22 +395,22 @@ export function EditProductForm({
 
           <div className="flex items-center justify-between gap-4 pt-1">
             {step > 1 ? (
-              <button type="button" onClick={back} className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface">
+              <button type="button" onClick={back} className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
                 Précédent
               </button>
             ) : (
-              <button type="button" onClick={() => router.push("/dashboard/produits")} className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface">
+              <button type="button" onClick={() => router.push("/dashboard/produits")} className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 Annuler
               </button>
             )}
             {step < STEPS.length ? (
-              <button type="button" onClick={next} className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover">
+              <button type="button" onClick={next} className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 Continuer
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
               </button>
             ) : (
-              <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60">
+              <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 {pending ? "Enregistrement…" : "Enregistrer les modifications"}
               </button>
             )}
@@ -442,17 +442,17 @@ export function EditProductForm({
             <div className="rounded-2xl border border-border bg-surface p-5 shadow-soft space-y-3">
               <p className="text-sm font-bold text-fg">Zone de danger</p>
               {!showDeleteConfirm ? (
-                <button type="button" onClick={() => setShowDeleteConfirm(true)} className="w-full rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/5">
+                <button type="button" onClick={() => setShowDeleteConfirm(true)} className="w-full rounded-xl border border-danger/30 px-4 py-2.5 text-sm font-semibold text-danger transition-smooth hover:bg-danger/5 hover:border-danger/50 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger">
                   Supprimer ce produit
                 </button>
               ) : (
                 <div className="space-y-2">
                   <p className="text-xs text-fg-2">Cette action est irréversible. Confirmer ?</p>
                   <div className="flex gap-2">
-                    <button type="button" onClick={handleDelete} disabled={pending} className="flex-1 rounded-xl bg-danger px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-danger/90 disabled:opacity-60">
+                    <button type="button" onClick={handleDelete} disabled={pending} className="flex-1 rounded-xl bg-danger px-3 py-2 text-xs font-semibold text-white transition-smooth hover:bg-danger/90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger">
                       {pending ? "…" : "Oui, supprimer"}
                     </button>
-                    <button type="button" onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-border px-3 py-2 text-xs font-semibold text-fg transition-colors hover:bg-surface-2">
+                    <button type="button" onClick={() => setShowDeleteConfirm(false)} className="flex-1 rounded-xl border border-border px-3 py-2 text-xs font-semibold text-fg transition-smooth hover:bg-surface-2 hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                       Annuler
                     </button>
                   </div>

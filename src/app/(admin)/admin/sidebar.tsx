@@ -12,6 +12,7 @@ type NavItem = {
   label: string;
   icon: React.ReactNode;
   badge?: string;
+  external?: boolean;
 };
 
 const NAV: NavItem[] = [
@@ -48,6 +49,25 @@ const NAV: NavItem[] = [
     ),
   },
   {
+    href: "/admin/notifications",
+    label: "Notifications",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    ),
+  },
+  {
+    href: "/admin/verification",
+    label: "Certification",
+    icon: (
+      <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M9 12l2 2 4-4M7 12a5 5 0 1 0 10 0A5 5 0 0 0 7 12Z" />
+      </svg>
+    ),
+  },
+  {
     href: "/admin/avis",
     label: "Avis",
     icon: (
@@ -72,6 +92,7 @@ const SECONDARY: NavItem[] = [
   {
     href: "/dashboard",
     label: "Dashboard créateur",
+    external: true,
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -83,6 +104,7 @@ const SECONDARY: NavItem[] = [
   {
     href: "/catalogue",
     label: "Voir le catalogue",
+    external: true,
     icon: (
       <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -100,6 +122,8 @@ function NavLink({ item, onClick }: { item: NavItem; onClick?: () => void }) {
     <Link
       href={item.href}
       onClick={onClick}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
       className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
         active
           ? "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
@@ -168,13 +192,11 @@ export function AdminMobileSidebar({
 
 function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const { logout } = useAuth();
-  const router = useRouter();
   const [confirmLogout, setConfirmLogout] = useState(false);
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
     if (onNavClick) onNavClick();
-    router.push("/");
+    logout();
   }
 
   return (
@@ -214,20 +236,22 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
       </nav>
 
       {/* Pied de sidebar — profil admin */}
-      <div className="mt-auto pt-4 border-t border-border">
-        <div className="flex items-center gap-3 rounded-xl px-3 py-2.5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-rose-500 text-sm font-bold text-white">
-            A
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-fg">Admin Nuvora</p>
-            <p className="truncate text-xs text-muted">admin@nuvora.app</p>
+      <div className="mt-auto pt-4 border-t border-border space-y-2">
+        <div className="flex items-center justify-between px-3">
+          <div className="flex items-center gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full bg-rose-500 text-sm font-bold text-white">
+              A
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-fg">Admin Nuvora</p>
+              <p className="truncate whitespace-nowrap text-xs text-muted">admin@nuvora.app</p>
+            </div>
           </div>
         </div>
         <button
           type="button"
           onClick={() => setConfirmLogout(true)}
-          className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10"
         >
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

@@ -18,9 +18,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  creator     Creator?
-  reviews     Review[]
-  recentViews RecentView[]
+  creator       Creator?
+  reviews       Review[]
+  recentViews   RecentView[]
+  notifications Notification[]
 }
 
 model Creator {
@@ -50,6 +51,7 @@ model Product {
   // JSON array stored as string, e.g. '["ebook","notion"]'
   tags        String   @default("[]")
   price       Float
+  currency    String   @default("EUR")
   isFree      Boolean  @default(false)
   language    String   @default("fr")
   country     String?
@@ -67,6 +69,7 @@ model Product {
 
   reviews     Review[]
   recentViews RecentView[]
+  dailyStats  DailyStats[]
 }
 
 model Review {
@@ -94,4 +97,53 @@ model RecentView {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "product_approved" | "product_rejected" | "review_pending" | "creator_verified" | etc.
+  title     String
+  message   String
+  productId String?  // lien optionnel vers le produit
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([read])
+}
+
+model DailyStats {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  date      String   // "2026-07-17"
+  views     Int      @default(0)
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([productId, date])
+  @@index([productId])
+  @@index([date])
+}
+
+model TrackingLog {
+  id            String   @id @default(cuid())
+  productId     String
+  userId        String?
+  ipAddress     String?
+  userAgent     String?
+  type          String   // "view" | "click"
+  isBot         Boolean  @default(false)
+  isRateLimited Boolean  @default(false)
+  isSuspicious  Boolean  @default(false)
+  timestamp     DateTime @default(now())
+
+  @@index([productId])
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([timestamp])
+  @@index([isBot])
+  @@index([isSuspicious])
 }

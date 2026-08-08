@@ -1,4 +1,4 @@
-import { getMostPopular } from "@/data/products";
+import { db } from "@/lib/db";
 
 const COVER: Record<string, string> = {
   Formation:
@@ -15,8 +15,14 @@ const COVER: Record<string, string> = {
  * avec une carte-témoignage flottante posée par-dessus (preuve sociale).
  * Statique et sobre.
  */
-export function HeroPreview() {
-  const [featured] = getMostPopular(1);
+export async function HeroPreview() {
+  const featured = await db.product.findFirst({
+    where: { status: "active" },
+    orderBy: { views: "desc" },
+    include: { creator: { include: { user: { select: { name: true } } } } },
+  });
+
+  if (!featured) return null;
 
   return (
     <div className="relative">
@@ -35,9 +41,13 @@ export function HeroPreview() {
         <div
           className={`flex aspect-16/11 items-center justify-center bg-linear-to-br ${COVER[featured.category]}`}
         >
-          <span className="text-5xl font-extrabold text-fg/15">
-            {featured.title.charAt(0)}
-          </span>
+          {featured.coverImage ? (
+            <img src={featured.coverImage} alt={featured.title} className="size-full object-cover" />
+          ) : (
+            <span className="text-5xl font-extrabold text-fg/15">
+              {featured.title.charAt(0)}
+            </span>
+          )}
         </div>
         <div className="p-5">
           <div className="flex items-center gap-2 text-xs font-medium text-muted">
@@ -48,9 +58,9 @@ export function HeroPreview() {
           <h3 className="mt-2 text-lg font-bold leading-snug">
             {featured.title}
           </h3>
-          <div className="mt-1 text-sm text-muted">par {featured.creator}</div>
+          <div className="mt-1 text-sm text-muted">par {featured.creator.user.name}</div>
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-xl font-extrabold">{featured.price} €</span>
+            <span className="text-xl font-extrabold">{featured.isFree ? "Gratuit" : `${featured.price} €`}</span>
             <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
               {featured.platform}
             </span>

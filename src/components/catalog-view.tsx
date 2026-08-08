@@ -75,7 +75,7 @@ function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: ()
   return (
     <label className="flex cursor-pointer items-center gap-2.5 py-1.5 text-sm text-fg-2 select-none">
       <input type="checkbox" checked={checked} onChange={onChange} className="peer sr-only" />
-      <span className="grid size-[18px] place-items-center rounded-md border-2 border-border-2 transition-colors peer-checked:border-accent peer-checked:bg-accent">
+      <span className="grid size-[18px] place-items-center rounded-md border-2 border-border-2 transition-smooth peer-checked:border-accent peer-checked:bg-accent">
         {checked && (
           <svg viewBox="0 0 24 24" className="size-3 text-accent-fg" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 12l5 5L20 7" />
@@ -197,7 +197,7 @@ export function CatalogView({ products }: { products: DbProduct[] }) {
             onChange={(e) => update({ query: e.target.value })}
             placeholder="Rechercher un produit…"
             aria-label="Rechercher un produit"
-            className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+            className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2"
           />
         </div>
 
@@ -256,12 +256,12 @@ export function CatalogView({ products }: { products: DbProduct[] }) {
           <div className="absolute inset-y-0 left-0 w-80 max-w-[85%] overflow-y-auto bg-bg p-6 shadow-soft-lg">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-extrabold">Filtres</h2>
-              <button type="button" onClick={() => setMobileOpen(false)} aria-label="Fermer" className="grid size-9 place-items-center rounded-full border border-border-2 text-fg-2 hover:bg-surface-2">
+              <button type="button" onClick={() => setMobileOpen(false)} aria-label="Fermer" className="grid size-9 place-items-center rounded-full border border-border-2 text-fg-2 hover:bg-surface-2 transition-smooth active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
                 ✕
               </button>
             </div>
             {filtersPanel}
-            <button type="button" onClick={() => setMobileOpen(false)} className="mt-8 w-full rounded-full bg-accent py-3 text-sm font-semibold text-accent-fg">
+            <button type="button" onClick={() => setMobileOpen(false)} className="mt-8 w-full rounded-full bg-accent py-3 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               Voir les {results.length} résultats
             </button>
           </div>

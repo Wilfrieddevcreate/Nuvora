@@ -82,7 +82,7 @@ export function AuthScreen({
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-fg"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-smooth hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-md"
           >
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
             Accueil
@@ -106,7 +106,7 @@ export function AuthScreen({
               {footerLabel}{" "}
               <Link
                 href={footerHref}
-                className="inline-flex items-center gap-0.5 font-semibold text-accent hover:text-accent-hover"
+                className="inline-flex items-center gap-0.5 font-semibold text-accent link-underline hover:text-accent-hover"
               >
                 {footerLink}
                 <ArrowRight className="size-3.5" />
@@ -154,7 +154,7 @@ export function FormField({
         aria-required={required ? true : undefined}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+        className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft focus:bg-surface"
       />
       {error && (
         <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-red-600">
@@ -171,7 +171,7 @@ export function AuthActionButton({ label, pending }: { label: string; pending?: 
       type="submit"
       disabled={pending}
       aria-disabled={pending}
-      className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
+      className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
     >
       {pending ? "Chargement…" : label}
       {!pending && <ArrowRight className="size-4" />}
@@ -183,7 +183,7 @@ export function GoogleButton() {
   return (
     <a
       href="/api/auth/google"
-      className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface px-5 py-2.5 text-[15px] font-medium text-fg shadow-xs transition-colors hover:bg-surface-hover"
+      className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface px-5 py-2.5 text-[15px] font-medium text-fg shadow-soft transition-smooth hover:bg-surface-2 hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       <svg viewBox="0 0 24 24" className="size-5 shrink-0" aria-hidden="true">
         <path

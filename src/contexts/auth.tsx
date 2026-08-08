@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { logout as logoutAction } from "@/app/actions/auth";
 
 export type AuthUser = {
@@ -29,11 +30,13 @@ export function AuthProvider({
 }) {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(user);
   const [, startTransition] = useTransition();
+  const router = useRouter();
 
   function logout() {
     setCurrentUser(null);
-    startTransition(() => {
-      logoutAction();
+    startTransition(async () => {
+      await logoutAction();
+      router.push("/");
     });
   }
 

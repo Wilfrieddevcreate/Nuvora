@@ -59,7 +59,7 @@ function SectionCard({
 }
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-rose-400 focus:ring-4 focus:ring-rose-500/10";
+  "w-full rounded-xl border border-border bg-surface-2 px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-fg-2 focus:border-rose-400 focus:ring-4 focus:ring-rose-500/10";
 
 export default function AdminParametresPage() {
   // Section Plateforme

@@ -58,9 +58,9 @@ const CATEGORIES: { value: string; icon: React.ReactNode; desc: string }[] = [
 ];
 
 const inputCls =
-  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft";
+  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft";
 const selectCls =
-  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent-soft";
+  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-accent focus:ring-4 focus:ring-accent-soft";
 
 function Stepper({ current }: { current: number }) {
   return (
@@ -93,7 +93,7 @@ function Stepper({ current }: { current: number }) {
               </span>
             </div>
             {idx < STEPS.length - 1 && (
-              <div className={`mb-5 h-px flex-1 mx-3 transition-colors ${done ? "bg-accent" : "bg-border"}`} />
+              <div className={`mb-5 h-px flex-1 mx-3 transition-smooth ${done ? "bg-accent" : "bg-border"}`} />
             )}
           </li>
         );
@@ -206,7 +206,7 @@ export function OnboardingFlow() {
                 type="button"
                 onClick={next}
                 disabled={!displayName.trim()}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continuer
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -241,7 +241,7 @@ export function OnboardingFlow() {
                         : "border-border bg-surface hover:border-accent/40 hover:bg-surface-2 shadow-soft"
                     }`}
                   >
-                    <span className={`grid size-10 place-items-center rounded-xl transition-colors ${
+                    <span className={`grid size-10 place-items-center rounded-xl transition-smooth ${
                       selected ? "bg-accent text-accent-fg" : "bg-bg text-fg"
                     }`}>
                       {cat.icon}
@@ -261,7 +261,7 @@ export function OnboardingFlow() {
               <button
                 type="button"
                 onClick={back}
-                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface"
               >
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="m15 18-6-6 6-6" />
@@ -272,7 +272,7 @@ export function OnboardingFlow() {
                 type="button"
                 onClick={next}
                 disabled={!category}
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continuer
                 <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -312,7 +312,7 @@ export function OnboardingFlow() {
                 type="button"
                 onClick={finish}
                 disabled={pending}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {pending ? "Création en cours…" : "Accéder à mon espace créateur"}
                 {!pending && (
@@ -326,7 +326,7 @@ export function OnboardingFlow() {
             <button
               type="button"
               onClick={back}
-              className="flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg"
+              className="flex items-center gap-2 text-sm text-muted transition-smooth hover:text-fg"
             >
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="m15 18-6-6 6-6" />

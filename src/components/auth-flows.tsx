@@ -23,14 +23,14 @@ function PasswordField({
           type={visible ? "text" : "password"}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 pr-11 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+          className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 pr-11 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft"
         />
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           aria-pressed={visible}
-          className="absolute inset-y-0 right-0 grid w-11 place-items-center text-muted transition-colors hover:text-fg"
+          className="absolute inset-y-0 right-0 grid w-11 place-items-center text-muted transition-smooth hover:text-fg"
         >
           {visible ? (
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

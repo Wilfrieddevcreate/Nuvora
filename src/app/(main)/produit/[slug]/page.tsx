@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
+import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { ProductCard, type DbProduct } from "@/components/product-card";
 import { ProductReviews } from "@/components/product-reviews";
 import { BuyButton } from "@/components/buy-button";
+import { trackProductView } from "@/app/actions/products";
 
 const CATEGORY_SLUG: Record<string, string> = {
   Formation: "formation",
@@ -78,12 +80,20 @@ export default async function ProductPage({
 
   const session = await getSession();
 
-  // Post-render : views + RecentView si connecté
+  // En-têtes lus pendant le rendu : indisponibles dans le callback `after`.
+  const headersList = await headers();
+  const ipAddress =
+    headersList.get("x-forwarded-for")?.split(",")[0] ||
+    headersList.get("x-real-ip") ||
+    "unknown";
+  const userAgent = headersList.get("user-agent") || undefined;
+
+  // Post-rendu : rien de tout ceci ne doit retarder l'affichage de la page.
   after(async () => {
-    await db.product.update({
-      where: { id: product.id },
-      data: { views: { increment: 1 } },
-    });
+    // Comptage des vues, avec détection de bots et anti-abus.
+    await trackProductView(product.id, { ipAddress, userAgent });
+
+    // Historique de consultation : alimente les recommandations personnalisées.
     if (session?.userId) {
       await db.recentView.upsert({
         where: { userId_productId: { userId: session.userId, productId: product.id } },
@@ -178,7 +188,10 @@ export default async function ProductPage({
 
           <div className="mt-8">
             <h2 className="text-lg font-bold">Description</h2>
-            <p className="mt-3 leading-relaxed text-fg-2">{product.description}</p>
+            <div
+              className="mt-3 leading-relaxed text-fg-2 prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           </div>
 
           {tags.length > 0 && (

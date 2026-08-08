@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LogoBadge } from "@/components/logo";
+import { NotificationsBell } from "@/components/notifications-panel";
 
 const BREADCRUMBS: Record<string, string> = {
   "/admin": "Vue d'ensemble",
@@ -64,12 +65,13 @@ export function AdminHeader({
       {/* Actions droite */}
       <div className="ml-auto flex items-center gap-2">
         <ThemeToggle />
+        <NotificationsBell />
 
         {/* Avatar */}
         <Link
           href="/admin"
           aria-label="Admin"
-          className="grid size-9 place-items-center rounded-full bg-rose-500 text-sm font-bold text-white transition-opacity hover:opacity-85"
+          className="grid size-9 place-items-center rounded-full bg-rose-500 text-sm font-bold text-white transition-smooth hover:bg-rose-600 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
         >
           A
         </Link>

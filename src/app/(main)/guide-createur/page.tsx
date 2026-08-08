@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
+import Faqs from "@/components/faqs";
 
 export const metadata: Metadata = {
   title: "Guide créateur : comment référencer vos produits sur Nuvora",
@@ -259,38 +260,7 @@ export default function GuideCreateurPage() {
       </section>
 
       {/* ─── FAQ ─── */}
-      <section className="bg-surface-2/60">
-        <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-20">
-          <h2 className="text-center text-2xl font-extrabold sm:text-3xl">
-            Questions fréquentes
-          </h2>
-
-          <div className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-            {FAQS.map((item) => (
-              <details key={item.q} className="group px-6 py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg">
-                  {item.q}
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180"
-                    aria-hidden="true"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </summary>
-                <p className="mt-3 text-[15px] leading-relaxed text-fg-2">
-                  {item.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Faqs FAQS={FAQS} />
 
       {/* ─── CTA FINAL ─── */}
       <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { mapDbProduct } from "@/lib/product-mapper";
 import { ProductCard, type DbProduct } from "@/components/product-card";
 
 const AVATAR_COLORS = [
@@ -57,24 +58,10 @@ export default async function CreatorProfilePage({
   });
   if (!creator) notFound();
 
-  const products: DbProduct[] = creator.products.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    category: p.category as DbProduct["category"],
-    subCategory: p.subCategory ?? "",
-    tags: JSON.parse(p.tags ?? "[]") as string[],
-    price: p.price,
-    isFree: p.isFree,
-    language: p.language,
-    platform: p.platform,
-    views: p.views,
-    clicks: p.clicks,
-    createdAt: p.createdAt.toISOString(),
-    creatorName: creator.user.name,
-    creatorSlug: creator.slug,
-    creatorVerified: creator.verified,
-  }));
+  const products: DbProduct[] = creator.products.map((p) => {
+    const mapped = mapDbProduct(p);
+    return { ...mapped, creatorName: creator.user.name, creatorSlug: creator.slug };
+  });
 
   const totalViews = products.reduce((sum, p) => sum + (p.views ?? 0), 0);
   const totalClicks = products.reduce((sum, p) => sum + (p.clicks ?? 0), 0);

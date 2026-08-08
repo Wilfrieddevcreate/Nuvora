@@ -1,4 +1,39 @@
+"use client";
+
+import { motion, type Variants } from "framer-motion";
 import { getFeatured } from "@/data/products";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.21, 0.47, 0.32, 0.98],
+    },
+  },
+};
+
+const headerVariants: Variants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
 
 /**
  * Section preuve sociale — 3 avis de créateurs.
@@ -11,7 +46,13 @@ export function Testimonials() {
 
   return (
     <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-      <div className="mb-8 max-w-2xl">
+      <motion.div
+        className="mb-8 max-w-2xl"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={headerVariants}
+      >
         <h2 className="text-2xl font-extrabold sm:text-3xl">
           Ils font confiance à Nuvora
         </h2>
@@ -19,12 +60,20 @@ export function Testimonials() {
           Des créateurs gagnent en visibilité et en ventes en référençant
           leurs produits.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-5 md:grid-cols-3">
+      <motion.div
+        className="grid gap-5 md:grid-cols-3"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={containerVariants}
+      >
         {featured.map(({ product, testimonial }) => (
-          <figure
+          <motion.figure
             key={product.slug}
+            variants={itemVariants}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
             className="flex flex-col rounded-2xl border border-border bg-surface p-6 transition-shadow hover:shadow-soft"
           >
             {/* guillemet décoratif */}
@@ -64,9 +113,9 @@ export function Testimonials() {
                 <div className="text-xs text-muted">{testimonial.role}</div>
               </div>
             </figcaption>
-          </figure>
+          </motion.figure>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

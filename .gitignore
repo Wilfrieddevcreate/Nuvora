@@ -46,3 +46,7 @@ next-env.d.ts
 *.db
 *.db-shm
 *.db-wal
+
+# TEMPORAIRE — base embarquée pour la démo Render, en attendant Turso.
+# À supprimer (cette ligne uniquement) une fois la base distante en place.
+!prisma/dev.db

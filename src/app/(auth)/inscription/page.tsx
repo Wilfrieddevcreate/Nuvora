@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 import { AuthScreen } from "@/components/auth-screen";
 import { SignupForm } from "@/components/auth-forms";
 
@@ -21,6 +23,9 @@ export default async function InscriptionPage({
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
+  const session = await getSession();
+  if (session?.userId) redirect("/");
+
   const params = await searchParams;
   const oauthError = params.error ? (OAUTH_ERRORS[params.error] ?? undefined) : undefined;
 

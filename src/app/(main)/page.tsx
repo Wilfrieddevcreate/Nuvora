@@ -9,6 +9,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { db } from "@/lib/db";
 import { Recommendations } from "@/components/recommendations";
+import FadeIn from "@/components/animations/FadeIn";
+import HowItsWork from "@/components/how-its-work";
+import Faqs from "@/components/faqs";
 
 const AVATAR_COLORS = [
   "bg-indigo-500", "bg-violet-500", "bg-rose-500", "bg-amber-500",
@@ -49,47 +52,42 @@ export const metadata: Metadata = {
 
 const FAQS = [
   {
+    icon: "M13 10V3L4 14h7v7l9-11h-7z",
     q: "Nuvora vend-il directement les produits ?",
     a: "Non. Nuvora est un moteur de découverte. On référence les produits et on vous redirige vers la boutique du créateur (Gumroad, Systeme.io, Podia…) pour finaliser l'achat. On ne traite aucun paiement.",
   },
   {
+    icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
     q: "Les produits sont-ils vérifiés ?",
     a: "Chaque produit soumis est examiné manuellement par notre équipe avant publication. Les créateurs qui passent une vérification approfondie obtiennent le badge « Vérifié ».",
   },
   {
+    icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-5a4 4 0 100 8 4 4 0 000-8z",
     q: "Comment fonctionne l'assistant IA ?",
     a: "Décrivez votre besoin en langage naturel et l'assistant analyse le catalogue pour vous recommander les produits les plus adaptés, avec une explication personnalisée pour chacun.",
   },
   {
+    icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     q: "Est-ce gratuit pour les acheteurs ?",
     a: "Totalement. Parcourir Nuvora, utiliser l'assistant et être redirigé vers un produit est 100 % gratuit. Vous ne payez que le produit, directement chez le créateur.",
   },
   {
+    icon: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z",
     q: "Je suis créateur, comment référencer mes produits ?",
-    a: "Créez un compte, soumettez vos produits avec les informations demandées et notre équipe valide sous 24 à 72 h. Le référencement est gratuit et Nuvora ne prend aucune commission.",
+    a: "Créez un compte, soumettez vos produits avec les informations demandées et notre équipe valide sous 8 à 12 h. Le référencement est gratuit et Nuvora ne prend aucune commission.",
   },
 ];
 
-const STEPS = [
-  {
-    n: "1",
-    title: "Découvrez",
-    desc: "Explorez le catalogue ou décrivez votre besoin à l’assistant IA. Nuvora sélectionne les meilleurs produits pour vous.",
-  },
-  {
-    n: "2",
-    title: "Comparez",
-    desc: "Consultez les fiches, les avis et les créateurs vérifiés pour choisir en confiance, sans vous perdre.",
-  },
-  {
-    n: "3",
-    title: "Achetez ailleurs",
-    desc: "On vous redirige vers la plateforme du créateur (Gumroad, Chariow, Systeme.io…) pour finaliser l’achat.",
-  },
-];
 
 export default async function Home() {
-  const [newProducts, popularProducts, verifiedCreators] = await Promise.all([
+  // Requêtes ciblées (main) + compteurs attendus par le bloc statistiques (dev).
+  const [
+    newProducts,
+    popularProducts,
+    verifiedCreators,
+    totalProducts,
+    verifiedCreatorsCount,
+  ] = await Promise.all([
     db.product.findMany({
       where: { status: "active" },
       orderBy: { createdAt: "desc" },
@@ -107,6 +105,8 @@ export default async function Home() {
       take: 4,
       include: { user: { select: { name: true } } },
     }),
+    db.product.count({ where: { status: "active" } }),
+    db.creator.count({ where: { verified: true } }),
   ]);
 
   function mapProduct(p: (typeof newProducts)[0]): DbProduct {
@@ -119,12 +119,13 @@ export default async function Home() {
       subCategory: p.subCategory ?? "",
       tags,
       price: p.price,
-      isFree: p.price === 0,
+      isFree: p.isFree,
       language: p.language ?? undefined,
       platform: p.platform,
       views: p.views,
       clicks: p.clicks,
       createdAt: p.createdAt.toISOString(),
+      coverImage: p.coverImage ?? undefined,
       creatorName: p.creator.user.name,
       creatorSlug: p.creator.slug,
       creatorVerified: p.creator.verified,
@@ -155,11 +156,12 @@ export default async function Home() {
               <span className="text-accent">trouvé pour vous.</span>
             </h1>
 
-            <p className="mt-5 max-w-lg text-lg text-fg-2">
-              Ebooks, formations, templates et logiciels,
-              réunis au même endroit. Nuvora vous aide à choisir, puis vous
-              redirige vers le créateur pour l’achat.
-            </p>
+            <FadeIn>
+              <p className="mt-5 max-w-lg text-lg text-fg-2">
+                Ebooks, formations, templates et logiciels, réunis au même endroit.
+                Nuvora vous aide à choisir, puis vous redirige vers le créateur pour l’achat.
+              </p>
+            </FadeIn>
 
             {/* Recherche à onglets (façon Rent/Buy/Sell) */}
             <div className="mt-8 max-w-lg">
@@ -170,14 +172,14 @@ export default async function Home() {
             <dl className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
               {[
                 {
-                  value: "200+",
+                  value: totalProducts > 0 ? `${totalProducts}${totalProducts >= 100 ? "+" : ""}` : "0",
                   label: "produits référencés",
                   icon: (
                     <path d="M4 7h16M4 12h16M4 17h10" />
                   ),
                 },
                 {
-                  value: "37",
+                  value: `${verifiedCreatorsCount}`,
                   label: "créateurs vérifiés",
                   icon: (
                     <>
@@ -288,30 +290,8 @@ export default async function Home() {
       <Testimonials />
 
       {/* ---------------- COMMENT ÇA MARCHE ---------------- */}
-      <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-        <div className="rounded-3xl border border-border bg-surface p-8 shadow-soft sm:p-12">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-extrabold sm:text-3xl">
-              Comment ça marche
-            </h2>
-            <p className="mt-2 text-fg-2">
-              Nuvora est un moteur de découverte, pas une boutique. On vous
-              oriente, l’achat se fait toujours chez le créateur.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-8 md:grid-cols-3">
-            {STEPS.map((s) => (
-              <div key={s.n} className="flex flex-col items-start">
-                <span className="grid size-10 place-items-center rounded-full bg-accent-soft text-accent font-bold">
-                  {s.n}
-                </span>
-                <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
-                <p className="mt-1.5 text-[15px] text-fg-2">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+ 
+      <HowItsWork />
 
       {/* ---------------- CRÉATEURS VEDETTES ---------------- */}
       <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
@@ -320,7 +300,7 @@ export default async function Home() {
             <h2 className="text-2xl font-extrabold">Créateurs vérifiés</h2>
             <p className="mt-1 text-fg-2">Des experts indépendants, chacun dans son domaine.</p>
           </div>
-          <ButtonLink href="/catalogue" variant="ghost" size="sm">
+          <ButtonLink href="/createurs-verifies" variant="ghost" size="sm">
             Voir tout
             <ArrowRight className="size-4" />
           </ButtonLink>
@@ -350,38 +330,8 @@ export default async function Home() {
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="bg-surface-2/50">
-        <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-extrabold sm:text-3xl">Questions fréquentes</h2>
-            <p className="mt-2 text-fg-2">Tout ce qu&apos;il faut savoir avant de commencer.</p>
-          </div>
-
-          <div className="mt-10 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-soft">
-            {FAQS.map((item) => (
-              <details key={item.q} className="group px-6 py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-fg">
-                  {item.q}
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180"
-                    aria-hidden="true"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </summary>
-                <p className="mt-3 text-[15px] leading-relaxed text-fg-2">{item.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
+     <Faqs FAQS={FAQS} />
+     
       {/* ---------------- CTA CRÉATEUR ---------------- */}
       <section className="mx-auto max-w-6xl px-5 pb-16 sm:px-8">
         <div className="relative overflow-hidden rounded-3xl bg-accent px-8 py-12 text-center sm:px-12 sm:py-16">

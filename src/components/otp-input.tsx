@@ -61,7 +61,7 @@ export function OtpInput({ length = 6 }: { length?: number }) {
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
           aria-label={`Chiffre ${i + 1}`}
-          className="h-14 w-full min-w-0 rounded-xl border border-border bg-surface text-center text-xl font-bold text-fg outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent-soft"
+          className="h-14 w-full min-w-0 rounded-xl border border-border bg-surface text-center text-xl font-bold text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft focus:bg-surface hover:border-border-2"
         />
       ))}
     </div>

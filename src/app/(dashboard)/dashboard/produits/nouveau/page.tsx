@@ -12,7 +12,7 @@ export default function NouveauProduitPage() {
       <div>
         <h1 className="text-2xl font-extrabold">Référencer un produit</h1>
         <p className="mt-1 text-sm text-muted">
-          Remplissez les informations ci-dessous. Notre équipe validera votre fiche sous 24 à 72 h.
+          Remplissez les informations ci-dessous. Notre équipe validera votre fiche sous 8 à 12 h.
         </p>
       </div>
       <NewProductForm />

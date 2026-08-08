@@ -43,7 +43,7 @@ export function SearchTabs() {
               aria-selected={isActive}
               onClick={() => setActive(tab)}
               className={
-                "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors " +
+                "shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-smooth active:scale-95 " +
                 (isActive
                   ? "bg-accent-soft text-accent"
                   : "text-fg-2 hover:bg-surface-2 hover:text-fg")
@@ -80,12 +80,12 @@ export function SearchTabs() {
               ? "Rechercher un produit…"
               : `Rechercher dans ${active.toLowerCase()}s…`
           }
-          className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+          className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2 transition-smooth"
         />
         <button
           type="submit"
           aria-label="Rechercher"
-          className="flex shrink-0 items-center justify-center rounded-lg bg-accent px-3.5 py-2.5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover sm:px-5"
+          className="flex shrink-0 items-center justify-center rounded-lg bg-accent px-3.5 py-2.5 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5"
         >
           {/* icône seule sur très petit écran, libellé dès sm */}
           <SearchIcon className="size-5 sm:hidden" />

@@ -183,7 +183,7 @@ export default async function BlogPostPage({
             </p>
             <Link
               href="/createur"
-              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-opacity hover:opacity-90"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               Démarrer gratuitement
               <ArrowRight className="size-3.5" />

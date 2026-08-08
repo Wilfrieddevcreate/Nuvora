@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES, PLATFORMS } from "@/data/products";
+import { RichTextEditor } from "@/components/rich-text-editor";
 import { useToast } from "@/contexts/toast";
 import { submitProduct } from "@/app/actions/products";
+import { scrapeProduct } from "@/app/actions/scrape";
 
 const SUB_CATEGORIES: Record<string, string[]> = {
   Formation: ["IA", "Dev", "Design", "Marketing", "Business", "Finance", "Autre"],
@@ -13,18 +15,20 @@ const SUB_CATEGORIES: Record<string, string[]> = {
   Logiciel: ["SaaS", "Plugin", "Extension", "Autre"],
 };
 
-const PLATFORM_DOMAINS: Record<string, string> = {
-  "chariow.com": "Chariow",
-  "gumroad.com": "Gumroad",
-  "systeme.io": "Systeme.io",
-  "podia.com": "Podia",
+const PLATFORM_KEYWORDS: Record<string, string> = {
+  "chariow": "Chariow",
+  "gumroad": "Gumroad",
+  "systeme": "Systeme.io",
+  "podia": "Podia",
+  "lemonsqueezy": "Lemon Squeezy",
+  "payhip": "Payhip",
 };
 
 function detectPlatform(url: string): string {
   try {
-    const host = new URL(url).hostname.replace(/^www\./, "");
-    for (const [domain, name] of Object.entries(PLATFORM_DOMAINS)) {
-      if (host === domain || host.endsWith("." + domain)) return name;
+    const urlLower = url.toLowerCase();
+    for (const [keyword, name] of Object.entries(PLATFORM_KEYWORDS)) {
+      if (urlLower.includes(keyword)) return name;
     }
   } catch {
     // URL invalide
@@ -66,13 +70,13 @@ const TIPS: Record<number, { title: string; items: string[] }> = {
 };
 
 const inputCls =
-  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft";
+  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft focus:bg-bg hover:border-border-2";
 const inputErrCls =
-  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-danger focus:ring-4 focus:ring-danger/20";
+  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-danger focus:ring-4 focus:ring-danger/20 hover:border-danger/50";
 const selectCls =
-  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-accent focus:ring-4 focus:ring-accent-soft";
+  "w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-accent focus:ring-4 focus:ring-accent-soft hover:border-border-2";
 const selectErrCls =
-  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-colors focus:border-danger focus:ring-4 focus:ring-danger/20";
+  "w-full rounded-xl border border-danger bg-bg px-4 py-2.5 text-[15px] text-fg outline-none transition-smooth focus:border-danger focus:ring-4 focus:ring-danger/20 hover:border-danger/50";
 
 function Label({ label, required, hint }: { label: string; required?: boolean; hint?: string }) {
   return (
@@ -139,6 +143,35 @@ export function NewProductForm() {
   const [pending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Auto-remplissage IA
+  const [scrapeUrl, setScrapeUrl] = useState("");
+  const [scraping, startScraping] = useTransition();
+  const [scrapeError, setScrapeError] = useState<string | null>(null);
+  const [scraped, setScraped] = useState(false);
+
+  function handleScrape() {
+    if (!scrapeUrl.trim()) return;
+    setScrapeError(null);
+    setScraped(false);
+    startScraping(async () => {
+      const result = await scrapeProduct(scrapeUrl.trim());
+      if (result.error) {
+        setScrapeError(result.error);
+        return;
+      }
+      if (result.title) setTitle(result.title);
+      if (result.description) setDescription(result.description);
+      if (result.category) { setCategory(result.category); setSubCategory(""); }
+      if (result.subCategory) setSubCategory(result.subCategory);
+      if (result.tags) setTags(result.tags);
+      if (result.isFree) { setIsFree(true); setPrice("0"); }
+      else if (typeof result.price === "number" && result.price > 0) setPrice(String(result.price));
+      if (result.language) setLanguage(result.language);
+      setScraped(true);
+      toast("Champs pré-remplis par l'IA — vérifiez et ajustez !", "success");
+    });
+  }
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -148,11 +181,71 @@ export function NewProductForm() {
 
   const [isFree, setIsFree] = useState(false);
   const [price, setPrice] = useState("");
+  const [currency, setCurrency] = useState("EUR");
   const [language, setLanguage] = useState("");
   const [country, setCountry] = useState("");
 
   const [platform, setPlatform] = useState("");
   const [purchaseUrl, setPurchaseUrl] = useState("");
+
+  // Image upload
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string>("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadedImagePath, setUploadedImagePath] = useState<string>("");
+
+  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Vérifier type
+    if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
+      setUploadError("Format non autorisé (JPG, PNG, WebP ou GIF)");
+      return;
+    }
+
+    // Vérifier taille (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Fichier trop gros (max 5MB)");
+      return;
+    }
+
+    setCoverImage(file);
+    setUploadError(null);
+
+    // Aperçu
+    const reader = new FileReader();
+    reader.onload = (e) => setCoverImagePreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async function uploadImage() {
+    if (!coverImage) return;
+    setUploadingImage(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", coverImage);
+
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setUploadError(data.error || "Erreur upload");
+        setUploadingImage(false);
+        return;
+      }
+
+      setUploadedImagePath(data.url);
+      toast("Image uploadée !", "success");
+      setUploadingImage(false);
+    } catch (err) {
+      setUploadError("Erreur lors de l'upload");
+      setUploadingImage(false);
+    }
+  }
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -206,7 +299,9 @@ export function NewProductForm() {
       const result = await submitProduct({
         title, description, category, subCategory, tags,
         price: parseFloat(price) || 0,
+        currency,
         isFree, language, country, platform, purchaseUrl,
+        coverImage: uploadedImagePath,
       });
       if (result?.error) {
         setSubmitError(result.error);
@@ -222,6 +317,7 @@ export function NewProductForm() {
     setTitle(""); setDescription(""); setCategory(""); setSubCategory(""); setTags([]);
     setIsFree(false); setPrice(""); setLanguage(""); setCountry("");
     setPlatform(""); setPurchaseUrl(""); setErrors({});
+    setCoverImage(null); setCoverImagePreview(""); setUploadedImagePath(""); setUploadError(null);
   }
 
   const ic = (f: string) => (errors[f] ? inputErrCls : inputCls);
@@ -238,21 +334,21 @@ export function NewProductForm() {
         </div>
         <h2 className="text-xl font-extrabold">Produit soumis avec succès !</h2>
         <p className="mt-2 text-[15px] leading-relaxed text-fg-2">
-          Notre équipe va examiner votre fiche dans les prochaines 24 à 72 h.{" "}
+          Notre équipe va examiner votre fiche dans les prochaines 8 à 12 h.{" "}
           Vous recevrez une notification dès qu&apos;elle sera en ligne.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <button
             type="button"
             onClick={() => router.push("/dashboard/produits")}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Voir mes produits
           </button>
           <button
             type="button"
             onClick={resetForm}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface-2 hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Ajouter un autre produit
           </button>
@@ -266,6 +362,58 @@ export function NewProductForm() {
   // ── Wizard ────────────────────────────────────────────────────────────────
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+
+      {/* ── Bandeau auto-remplissage IA ── */}
+      <div className="rounded-2xl border border-accent/40 bg-accent-soft/60 p-5 shadow-soft">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-xl bg-accent text-accent-fg">
+            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 2a8 8 0 1 0 0 16A8 8 0 0 0 12 2z" />
+              <path d="M12 8v4l3 3" />
+            </svg>
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-fg">Auto-remplissage IA</p>
+            <p className="mt-0.5 text-xs text-muted">Collez l'URL de votre page produit (Gumroad, Podia…) et l'IA pré-remplit les champs.</p>
+            <div className="mt-3 flex gap-2">
+              <input
+                type="url"
+                value={scrapeUrl}
+                onChange={(e) => { setScrapeUrl(e.target.value); setScrapeError(null); setScraped(false); }}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleScrape())}
+                placeholder="https://gumroad.com/l/mon-produit"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-bg px-4 py-2 text-[14px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft hover:border-border-2"
+              />
+              <button
+                type="button"
+                onClick={handleScrape}
+                disabled={scraping || !scrapeUrl.trim()}
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                {scraping ? (
+                  <>
+                    <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true"><circle cx="12" cy="12" r="10" strokeOpacity={0.25} /><path d="M12 2a10 10 0 0 1 10 10" /></svg>
+                    Analyse…
+                  </>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                    Analyser
+                  </>
+                )}
+              </button>
+            </div>
+            {scrapeError && <p className="mt-2 text-xs font-medium text-danger">{scrapeError}</p>}
+            {scraped && !scrapeError && (
+              <p className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                Champs pré-remplis — vérifiez avant de soumettre.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Stepper pleine largeur */}
       <div className="rounded-2xl border border-border bg-surface px-6 py-5 shadow-soft">
         <Stepper current={step} />
@@ -298,15 +446,67 @@ export function NewProductForm() {
 
           <div>
             <Label label="Description" required hint="Pour qui c'est conçu et ce que l'utilisateur en retirera." />
-            <textarea
+            <RichTextEditor
               value={description}
-              onChange={(e) => { setDescription(e.target.value); clearErr("description"); }}
-              rows={4}
-              maxLength={600}
+              onChange={(value) => { setDescription(value); clearErr("description"); }}
               placeholder="ex. Une formation complète pour concevoir des agents IA fiables avec Claude…"
-              className={`${ic("description")} resize-none`}
             />
             <FieldError msg={errors.description} />
+          </div>
+
+          <div>
+            <Label label="Couverture du produit" hint="JPG, PNG, WebP ou GIF (max 5MB)" />
+            <div className="flex gap-4">
+              <div className="flex-1">
+                {!uploadedImagePath ? (
+                  <label className="flex cursor-pointer items-center justify-center gap-3 rounded-xl border-2 border-dashed border-border bg-bg/50 px-6 py-8 transition-colors hover:border-accent hover:bg-accent-soft/30">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                    <div className="text-center">
+                      <svg viewBox="0 0 24 24" className="mx-auto size-6 text-muted" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="M21 15 16 10 5 21" />
+                      </svg>
+                      <p className="mt-2 text-sm font-medium text-fg">Cliquez pour uploader</p>
+                      {coverImagePreview && (
+                        <p className="mt-1 text-xs text-muted">{coverImage?.name}</p>
+                      )}
+                    </div>
+                  </label>
+                ) : (
+                  <div className="rounded-xl border border-accent bg-accent-soft/30 p-4 text-center">
+                    <p className="text-sm font-semibold text-accent">✓ Image uploadée</p>
+                    <p className="mt-1 text-xs text-muted">{uploadedImagePath}</p>
+                    <button
+                      type="button"
+                      onClick={() => { setUploadedImagePath(""); setCoverImagePreview(""); setCoverImage(null); }}
+                      className="mt-2 text-xs font-medium text-accent hover:text-accent-hover"
+                    >
+                      Changer
+                    </button>
+                  </div>
+                )}
+              </div>
+              {coverImagePreview && !uploadedImagePath && (
+                <div className="flex flex-col items-end gap-2">
+                  <img src={coverImagePreview} alt="Aperçu" className="max-h-24 rounded-lg border border-border" />
+                  <button
+                    type="button"
+                    onClick={uploadImage}
+                    disabled={uploadingImage}
+                    className="rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {uploadingImage ? "Upload…" : "Valider"}
+                  </button>
+                </div>
+              )}
+            </div>
+            {uploadError && <p className="mt-2 text-xs font-medium text-danger">{uploadError}</p>}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -343,7 +543,7 @@ export function NewProductForm() {
               {tags.map((tag) => (
                 <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent">
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} aria-label={`Supprimer ${tag}`} className="hover:text-accent-hover">
+                  <button type="button" onClick={() => removeTag(tag)} aria-label={`Supprimer ${tag}`} className="transition-smooth hover:text-accent-hover active:scale-75">
                     <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
                   </button>
                 </span>
@@ -356,7 +556,7 @@ export function NewProductForm() {
                   onKeyDown={handleTagKey}
                   onBlur={() => tagInput && addTag(tagInput)}
                   placeholder={tags.length === 0 ? "ia, formation, débutant…" : ""}
-                  className="min-w-20 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+                  className="min-w-20 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2"
                 />
               )}
             </div>
@@ -372,7 +572,7 @@ export function NewProductForm() {
             <p className="mt-0.5 text-xs text-muted">Ces informations aident les visiteurs à filtrer.</p>
           </div>
 
-          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-bg px-4 py-3 select-none hover:bg-surface-2 transition-colors">
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-bg px-4 py-3 select-none hover:bg-surface-2 hover:border-border-2 transition-smooth">
             <input
               type="checkbox"
               checked={isFree}
@@ -383,9 +583,50 @@ export function NewProductForm() {
           </label>
 
           {!isFree && (
-            <div>
+            <div className="space-y-3">
               <Label label="Prix" required />
-              <div className="relative">
+              <div className="grid gap-2 sm:grid-cols-3">
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="rounded-xl border border-border bg-bg px-3 py-2 text-sm font-medium text-fg transition-smooth hover:border-border-2 focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent-soft"
+                >
+                  <optgroup label="Europe">
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="CHF">CHF (CHF)</option>
+                  </optgroup>
+                  <optgroup label="Amérique">
+                    <option value="USD">USD ($)</option>
+                    <option value="CAD">CAD ($)</option>
+                    <option value="MXN">MXN ($)</option>
+                    <option value="BRL">BRL (R$)</option>
+                  </optgroup>
+                  <optgroup label="Asie-Pacifique">
+                    <option value="AUD">AUD (A$)</option>
+                    <option value="JPY">JPY (¥)</option>
+                    <option value="CNY">CNY (¥)</option>
+                    <option value="INR">INR (₹)</option>
+                    <option value="SGD">SGD ($)</option>
+                    <option value="THB">THB (฿)</option>
+                    <option value="MYR">MYR (RM)</option>
+                    <option value="PHP">PHP (₱)</option>
+                    <option value="IDR">IDR (Rp)</option>
+                    <option value="VND">VND (₫)</option>
+                    <option value="KRW">KRW (₩)</option>
+                    <option value="TWD">TWD (NT$)</option>
+                    <option value="HKD">HKD (HK$)</option>
+                  </optgroup>
+                  <optgroup label="Afrique">
+                    <option value="ZAR">ZAR (R)</option>
+                    <option value="EGP">EGP (£)</option>
+                    <option value="NGN">NGN (₦)</option>
+                    <option value="KES">KES (Sh)</option>
+                    <option value="GHS">GHS (₵)</option>
+                    <option value="XOF">XOF (CFA Ouest)</option>
+                    <option value="XAF">XAF (CFA Centre)</option>
+                  </optgroup>
+                </select>
                 <input
                   type="number"
                   min={1}
@@ -393,10 +634,12 @@ export function NewProductForm() {
                   value={price}
                   onChange={(e) => { setPrice(e.target.value); clearErr("price"); }}
                   placeholder="29"
-                  className={`${ic("price")} pr-14`}
+                  className={`${ic("price")} sm:col-span-2`}
                 />
-                <span className="absolute inset-y-0 right-4 flex items-center text-sm font-semibold text-muted">EUR</span>
               </div>
+              <p className="text-xs text-muted">
+                {price && currency ? `${price} ${currency}` : "Entrez un prix"}
+              </p>
               <FieldError msg={errors.price} />
             </div>
           )}
@@ -453,7 +696,7 @@ export function NewProductForm() {
                   <svg viewBox="0 0 24 24" className="size-4 text-accent" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
                   <span className="text-sm font-semibold text-accent">{platform} détecté</span>
                 </div>
-                <button type="button" onClick={() => setPlatform("")} className="text-xs text-muted hover:text-fg transition-colors">
+                <button type="button" onClick={() => setPlatform("")} className="text-xs text-muted hover:text-fg transition-smooth active:scale-90">
                   Changer
                 </button>
               </div>
@@ -480,7 +723,7 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={back}
-            className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface"
+            className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
             Précédent
@@ -489,7 +732,7 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface"
+            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-fg transition-smooth hover:bg-surface hover:border-border-2 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Annuler
           </button>
@@ -499,7 +742,7 @@ export function NewProductForm() {
           <button
             type="button"
             onClick={next}
-            className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover"
+            className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             Continuer
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
@@ -512,7 +755,7 @@ export function NewProductForm() {
             <button
               type="submit"
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-colors hover:bg-accent-hover disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-accent-fg shadow-soft transition-smooth hover:bg-accent-hover hover:shadow-soft-lg active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               {pending ? (
                 "Envoi en cours…"

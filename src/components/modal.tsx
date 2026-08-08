@@ -101,7 +101,7 @@ export function Modal({ open, onClose, title, children, size = "md" }: ModalProp
               type="button"
               onClick={onClose}
               aria-label="Fermer"
-              className="grid size-8 place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-fg"
+              className="grid size-8 place-items-center rounded-lg text-muted transition-smooth hover:bg-surface-2 hover:text-fg active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true">
                 <path d="M18 6 6 18M6 6l12 12" />

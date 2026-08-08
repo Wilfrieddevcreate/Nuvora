@@ -31,11 +31,11 @@ export function SearchBar() {
         placeholder="Rechercher un produit…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-muted"
+        className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2 transition-smooth"
       />
       <button
         type="submit"
-        className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover"
+        className="rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         Rechercher
       </button>

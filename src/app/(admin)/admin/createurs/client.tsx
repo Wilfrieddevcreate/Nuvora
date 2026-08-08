@@ -110,7 +110,7 @@ function CreatorCard({ c }: { c: Creator }) {
             type="button"
             onClick={handleVerify}
             disabled={pending}
-            className="flex items-center justify-center gap-1.5 rounded-xl bg-rose-500 py-2 text-xs font-semibold text-white transition-colors hover:bg-rose-600 disabled:opacity-60"
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-rose-500 py-2 text-xs font-semibold text-white transition-smooth hover:bg-rose-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
           >
             <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3l7 4v5c0 4-3 7-7 8-4-1-7-4-7-8V7z" /><path d="M9 12l2 2 4-4" /></svg>
             {pending ? "…" : "Vérifier"}

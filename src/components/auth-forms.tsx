@@ -39,14 +39,14 @@ function PasswordField({
           aria-required={required ? true : undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 pr-11 text-[15px] text-fg outline-none transition-colors placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent-soft"
+          className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 pr-11 text-[15px] text-fg outline-none transition-smooth placeholder:text-fg-2 focus:border-accent focus:ring-4 focus:ring-accent-soft focus:bg-surface"
         />
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           aria-pressed={visible}
-          className="absolute inset-y-0 right-0 grid w-11 place-items-center text-muted transition-colors hover:text-fg"
+          className="absolute inset-y-0 right-0 grid w-11 place-items-center text-muted transition-smooth hover:text-fg active:scale-90"
         >
           {visible ? (
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -118,7 +118,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
         </label>
         <Link
           href="/mot-de-passe-oublie"
-          className="font-medium text-accent hover:text-accent-hover"
+          className="font-medium text-accent link-underline hover:text-accent-hover"
         >
           Mot de passe oublié ?
         </Link>

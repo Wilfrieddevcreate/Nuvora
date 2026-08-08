@@ -36,6 +36,15 @@ async function main() {
   // ── Créateurs ─────────────────────────────────────────────────────────────
   const creatorsData = [
     {
+      name: "Équipe Nuvora",
+      email: "team@nuvora.app",
+      tagline: "Guides & ressources pour réussir sur Nuvora",
+      bio: "<p>Nous créons des ressources pour aider les créateurs à mieux référencer leurs produits sur Nuvora et atteindre plus de clients. Nos guides sont gratuits ou à bas prix — on veut que vous réussissiez.</p>",
+      specialty: "Guides & Ressources",
+      platform: "Nuvora",
+      verified: true,
+    },
+    {
       name: "Studio Lumen",
       email: "lumen@nuvora.app",
       tagline: "IA appliquée & marketing de contenu",
@@ -138,6 +147,25 @@ async function main() {
 
   // ── Produits ──────────────────────────────────────────────────────────────
   const products = [
+    // ── Équipe Nuvora ──
+    {
+      creator: "Équipe Nuvora",
+      title: "Guide complet : Bien référencer vos produits sur Nuvora",
+      description: "Découvrez comment optimiser votre présence sur Nuvora pour attirer plus de clients. Titres efficaces, descriptions convaincantes, tags stratégiques, et comment augmenter vos vues et clics. Guide complet gratuit pour tous les créateurs.",
+      category: "Formation",
+      subCategory: "Marketing",
+      tags: ["nuvora", "guide-createurs", "referencement", "marketing-digital", "ventes"],
+      price: 0,
+      isFree: true,
+      language: "Français",
+      country: "France",
+      platform: "Nuvora",
+      purchaseUrl: "https://nuvora.app/guide-createurs",
+      status: "active",
+      views: 12500,
+      clicks: 1200,
+    },
+
     // ── Studio Lumen ──
     {
       creator: "Studio Lumen",
