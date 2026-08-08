@@ -117,7 +117,8 @@ export function ProductCard({ product }: { product: DbProduct }) {
         <div className="mt-2.5 flex items-center gap-1.5">
           <span className="text-[13px] font-medium text-fg-2">{product.creatorName}</span>
           {product.creatorVerified && (
-            <svg viewBox="0 0 16 16" className="size-3.5 text-blue-500 dark:text-blue-400" fill="currentColor" aria-label="Créateur vérifié" title="Créateur vérifié">
+            <svg viewBox="0 0 16 16" className="size-3.5 text-blue-500 dark:text-blue-400" fill="currentColor" role="img" aria-label="Créateur vérifié">
+              <title>Créateur vérifié</title>
               <path d="M8.5 1a.5.5 0 0 0-.5.5v.793a.5.5 0 0 1-.854.354l-.561-.561a.5.5 0 0 0-.708.708l.561.56a.5.5 0 0 1 0 .708l-.561.561a.5.5 0 0 0 .708.708l.56-.561a.5.5 0 0 1 .854.354v.793a.5.5 0 0 0 1 0v-.793a.5.5 0 0 1 .854-.354l.561.561a.5.5 0 0 0 .708-.708l-.561-.56a.5.5 0 0 1 0-.708l.561-.561a.5.5 0 0 0-.708-.708l-.56.561a.5.5 0 0 1-.854-.354V1.5a.5.5 0 0 0-.5-.5z" />
             </svg>
           )}
