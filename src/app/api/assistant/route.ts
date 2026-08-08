@@ -1,7 +1,47 @@
 import Groq from "groq-sdk";
 import { db } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+import { buildCannedReply, detectIntent } from "@/lib/assistant/intents";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+/** Prénom de l'utilisateur connecté, ou null (l'assistant est aussi public). */
+async function currentFirstName(): Promise<string | null> {
+  try {
+    const session = await getSession();
+    if (!session?.userId) return null;
+    const user = await db.user.findUnique({
+      where: { id: session.userId },
+      select: { name: true },
+    });
+    return user?.name?.trim().split(/\s+/)[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Thèmes réellement présents au catalogue, les plus fournis d'abord.
+ * Sert à proposer des puces cliquables qui mènent quelque part.
+ */
+async function catalogueTopics() {
+  const rows = await db.product.findMany({
+    where: { status: "active" },
+    select: { category: true, subCategory: true },
+  });
+
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const topic = row.subCategory?.trim() || row.category;
+    if (topic) counts.set(topic, (counts.get(topic) ?? 0) + 1);
+  }
+
+  const topics = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([topic]) => topic);
+
+  return { topics, productCount: rows.length };
+}
 
 function buildSystemPrompt(catalogue: string): string {
   return `Tu es l'assistant de Nuvora, une marketplace de produits numériques (formations, ebooks, templates).
@@ -162,6 +202,19 @@ RÈGLES GÉNÉRALES :
 
 export async function POST(req: Request) {
   const { messages, query } = await req.json();
+
+  // Salutation, remerciement, « tu es qui ? »… : réponse écrite à la main,
+  // sans appel au modèle. Instantané, gratuit, et toujours bien formulé.
+  const intent = detectIntent(query ?? "");
+  if (intent) {
+    const [firstName, { topics, productCount }] = await Promise.all([
+      currentFirstName(),
+      catalogueTopics(),
+    ]);
+    return Response.json(
+      buildCannedReply(intent, { firstName, topics, productCount }),
+    );
+  }
 
   const products = await db.product.findMany({
     where: { status: "active" },
