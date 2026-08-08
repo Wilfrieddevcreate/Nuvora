@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "motion/react";
 import {
   BookIcon,
   PlayIcon,
@@ -7,6 +10,9 @@ import {
 } from "@/components/icons";
 import type { Category } from "@/data/products";
 import type { ComponentType, SVGProps } from "react";
+
+// On crée un composant Link animé pour conserver le routing natif de Next.js
+const MotionLink = motion.create(Link);
 
 type Tile = {
   category: Category;
@@ -47,14 +53,45 @@ const TILES: Tile[] = [
   },
 ];
 
+// Variantes pour le conteneur (gère la cascade/stagger des enfants)
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08, // Délai de 80ms entre l'apparition de chaque tuile
+    },
+  },
+};
+
+// Variantes pour chaque tuile individuelle
+const tileVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", damping: 15, stiffness: 120 },
+  },
+};
+
 export function CategoryTiles() {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <motion.div 
+      className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-40px" }}
+    >
       {TILES.map(({ category, label, desc, icon: Icon, tint }) => (
-        <Link
+        <MotionLink
           key={category}
           href={`/catalogue?categorie=${encodeURIComponent(category)}`}
-          className="group flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 transition-all hover:-translate-y-0.5 hover:border-border-2 hover:shadow-soft"
+          variants={tileVariants}
+          // On peut aussi ajouter un micro-effet au survol direct avec Motion en plus de tes classes Tailwind !
+          whileHover={{ y: -2 }} 
+          whileTap={{ scale: 0.98 }}
+          className="group flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-border-2 hover:shadow-soft"
         >
           <span className={`grid size-11 place-items-center rounded-xl ${tint}`}>
             <Icon className="size-5.5" />
@@ -63,8 +100,8 @@ export function CategoryTiles() {
             <div className="font-bold group-hover:text-accent">{label}</div>
             <div className="text-[13px] text-muted">{desc}</div>
           </div>
-        </Link>
+        </MotionLink>
       ))}
-    </div>
+    </motion.div>
   );
 }
