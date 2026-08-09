@@ -61,10 +61,10 @@ const aiResponseVariants: Variants = {
 
 export function AiTeaser() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-8 sm:py-14">
       {/* La Grid englobe LES DEUX colonnes */}
       <motion.div
-        className="grid items-center gap-10 rounded-3xl border border-border bg-surface p-8 shadow-soft sm:p-12 lg:grid-cols-2"
+        className="grid items-center gap-8 rounded-2xl border border-border bg-surface p-5 shadow-soft sm:gap-10 sm:rounded-3xl sm:p-8 lg:grid-cols-2 lg:p-12"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
@@ -85,11 +85,14 @@ export function AiTeaser() {
             Assistant IA
           </motion.div>
 
-          <motion.h2 variants={itemVariants} className="text-2xl font-extrabold sm:text-3xl">
+          <motion.h2
+            variants={itemVariants}
+            className="text-balance text-xl font-extrabold leading-tight sm:text-2xl lg:text-3xl"
+          >
             Décrivez ce que vous cherchez. L’IA s’occupe du reste.
           </motion.h2>
 
-          <motion.p variants={itemVariants} className="max-w-md text-fg-2">
+          <motion.p variants={itemVariants} className="max-w-md text-[15px] text-fg-2 sm:text-base">
             Pas besoin de connaître le bon mot-clé. Posez votre question en
             français, l’assistant compare les produits et vous explique
             lesquels choisir — et pourquoi.
@@ -105,18 +108,18 @@ export function AiTeaser() {
 
         {/* Colonne 2  */}
         <motion.div
-          className="rounded-2xl border border-border bg-bg p-4 shadow-inner"
+          className="rounded-2xl border border-border bg-bg p-3 shadow-inner sm:p-4"
           variants={chatContainerVariants}
         >
           {/* Question utilisateur */}
           <motion.div className="flex justify-end" variants={userBubbleVariants}>
-            <p className="max-w-[85%] rounded-2xl rounded-br-md bg-accent px-4 py-2.5 text-sm text-accent-fg shadow-md">
+            <p className="max-w-[92%] rounded-2xl rounded-br-md bg-accent px-3.5 py-2.5 text-[13px] text-accent-fg shadow-md sm:max-w-[85%] sm:px-4 sm:text-sm">
               Je cherche une formation React en français, pour débuter.
             </p>
           </motion.div>
 
            <motion.div
-            className="mt-3 max-w-[92%] rounded-2xl rounded-bl-md border border-border bg-surface px-4 py-3 shadow-lg"
+            className="mt-3 rounded-2xl rounded-bl-md border border-border bg-surface px-3.5 py-3 shadow-lg sm:max-w-[92%] sm:px-4"
             variants={aiResponseVariants}
           >
             <p className="text-sm text-fg-2">
@@ -126,7 +129,7 @@ export function AiTeaser() {
               {PICKS.map((p, index) => (
                 <motion.li
                   key={p.rank}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-bg px-3 py-2 transition-colors duration-200"
+                  className="flex items-center gap-2.5 rounded-xl border border-border bg-bg px-2.5 py-2 transition-colors duration-200 sm:gap-3 sm:px-3"
                   initial={{ opacity: 0, y: 8 }}
                   whileInView={{
                     opacity: 1,
@@ -140,7 +143,7 @@ export function AiTeaser() {
                     {p.rank}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[13px] font-semibold">
+                    <span className="line-clamp-2 text-[13px] font-semibold leading-snug sm:truncate">
                       {p.title}
                     </span>
                     <span className="block text-[11px] text-muted">

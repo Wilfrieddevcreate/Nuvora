@@ -246,7 +246,9 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
     !thinking && lastMessage?.role === "assistant" && lastMessage.slugs.length > 0;
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-4rem)] max-w-3xl flex-col px-5 sm:px-8">
+    // 100dvh et non 100vh : sur mobile, 100vh vaut la hauteur barre d'URL
+    // masquée, ce qui pousse le champ de saisie sous le bord de l'écran.
+    <div className="mx-auto flex h-[calc(100dvh-4rem)] max-w-3xl flex-col px-4 sm:px-8">
       {/* Zone messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-hide py-8">
         {isEmpty ? (
@@ -424,15 +426,16 @@ export function AssistantChat({ products }: { products: DbProduct[] }) {
             <button
               type="button"
               onClick={reset}
-              className="shrink-0 rounded-xl px-3 py-2.5 text-sm font-medium text-muted transition-smooth hover:bg-surface-2 hover:text-fg"
+              className="shrink-0 rounded-xl px-2.5 py-2.5 text-sm font-medium text-muted transition-smooth hover:bg-surface-2 hover:text-fg sm:px-3"
             >
-              Nouvelle conv.
+              <span className="sm:hidden">Nouv.</span>
+              <span className="hidden sm:inline">Nouvelle conv.</span>
             </button>
           )}
           <button
             type="submit"
             disabled={!input.trim() || thinking}
-            className="shrink-0 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover disabled:opacity-40"
+            className="shrink-0 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover disabled:opacity-40 sm:px-5"
           >
             Envoyer
           </button>
