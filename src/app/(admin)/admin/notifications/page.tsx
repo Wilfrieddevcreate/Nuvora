@@ -49,7 +49,7 @@ export default async function AdminNotificationsPage() {
 
       {notifications.length === 0 ? (
         <div className="rounded-2xl border border-border bg-surface p-12 text-center">
-          <div className="text-4xl mb-3">📭</div>
+          <div className="text-3xl sm:text-4xl mb-3">📭</div>
           <p className="text-fg font-medium">Aucune notification</p>
           <p className="text-fg-2 text-sm mt-2">Vous recevrez une notification dès qu'il y a des tâches de modération ou des demandes.</p>
         </div>

@@ -27,7 +27,7 @@ export default function NotFound() {
           Erreur 404
         </div>
 
-        <p className="mt-6 font-mono text-6xl font-extrabold tracking-tight text-accent sm:text-7xl">
+        <p className="mt-6 font-mono text-5xl sm:text-6xl font-extrabold tracking-tight text-accent sm:text-7xl">
           404
         </p>
 

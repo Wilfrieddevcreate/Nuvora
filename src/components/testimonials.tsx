@@ -79,7 +79,7 @@ export function Testimonials() {
             {/* guillemet décoratif */}
             <span
               aria-hidden
-              className="font-serif text-5xl leading-[0.6] text-accent/25"
+              className="font-serif text-4xl sm:text-5xl leading-[0.6] text-accent/25"
             >
               &ldquo;
             </span>

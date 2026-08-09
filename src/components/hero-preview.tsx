@@ -44,7 +44,7 @@ export async function HeroPreview() {
           {featured.coverImage ? (
             <img src={featured.coverImage} alt={featured.title} className="size-full object-cover" />
           ) : (
-            <span className="text-5xl font-extrabold text-fg/15">
+            <span className="text-4xl sm:text-5xl font-extrabold text-fg/15">
               {featured.title.charAt(0)}
             </span>
           )}

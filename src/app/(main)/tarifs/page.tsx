@@ -121,7 +121,7 @@ export default function TarifsPage() {
               <p className="text-sm font-semibold uppercase tracking-wide text-accent">
                 Gratuit
               </p>
-              <p className="mt-2 text-4xl font-extrabold">
+              <p className="mt-2 text-3xl sm:text-4xl font-extrabold">
                 0&nbsp;<span className="text-xl font-bold text-fg-2">€/mois</span>
               </p>
               <p className="mt-2 text-sm text-fg-2">
@@ -166,7 +166,7 @@ export default function TarifsPage() {
                   Bientôt
                 </span>
               </div>
-              <p className="mt-2 text-4xl font-extrabold text-muted">
+              <p className="mt-2 text-3xl sm:text-4xl font-extrabold text-muted">
                 —&nbsp;<span className="text-xl font-bold">€/mois</span>
               </p>
               <p className="mt-2 text-sm text-fg-2">
@@ -213,7 +213,7 @@ export default function TarifsPage() {
                   Bientôt
                 </span>
               </div>
-              <p className="mt-2 text-4xl font-extrabold text-muted">
+              <p className="mt-2 text-3xl sm:text-4xl font-extrabold text-muted">
                 —&nbsp;<span className="text-xl font-bold">€/mois</span>
               </p>
               <p className="mt-2 text-sm text-fg-2">

@@ -160,7 +160,7 @@ export default async function ProductPage({
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <div className={`flex aspect-16/10 items-center justify-center rounded-3xl border border-border bg-linear-to-br ${cover}`}>
-            <span className="text-7xl font-extrabold text-fg/15">{product.title.charAt(0)}</span>
+            <span className="text-5xl sm:text-7xl font-extrabold text-fg/15">{product.title.charAt(0)}</span>
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-2">
@@ -226,7 +226,7 @@ export default async function ProductPage({
         <aside className="order-first lg:order-none lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft">
             <div className="flex items-end justify-between">
-              <span className="text-4xl font-extrabold">{formatPrice(product.price, product.isFree)}</span>
+              <span className="text-3xl sm:text-4xl font-extrabold">{formatPrice(product.price, product.isFree)}</span>
             </div>
 
             <BuyButton
@@ -262,7 +262,7 @@ export default async function ProductPage({
       {related.length > 0 && (
         <section className="mt-16 border-t border-border pt-12">
           <h2 className="mb-6 text-2xl font-extrabold">Produits similaires</h2>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             {related.map((p) => <ProductCard key={p.slug} product={p} />)}
           </div>
         </section>

@@ -221,7 +221,7 @@ export function CatalogView({ products }: { products: DbProduct[] }) {
             value={filters.sort}
             options={SORTS.map((s) => ({ value: s.id, label: s.label }))}
             onChange={(v) => update({ sort: v as SortId })}
-            className="min-w-[190px]"
+            className="w-full sm:w-auto sm:min-w-[190px]"
           />
         </div>
       </div>
@@ -235,7 +235,7 @@ export function CatalogView({ products }: { products: DbProduct[] }) {
           </div>
 
           {results.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
               {results.map((p) => <ProductCard key={p.slug} product={p} />)}
             </div>
           ) : (

@@ -88,7 +88,7 @@ export function ProductCard({ product }: { product: DbProduct }) {
         )}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {isNew && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[11px] font-semibold text-accent-fg shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold text-accent-fg shadow-sm sm:px-2.5 sm:py-1 sm:text-[11px]">
               <svg viewBox="0 0 16 16" className="size-3" fill="currentColor" aria-hidden="true">
                 <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
               </svg>
@@ -96,7 +96,7 @@ export function ProductCard({ product }: { product: DbProduct }) {
             </span>
           )}
           {product.creatorVerified && (
-            <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-500/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur shadow-sm">
+            <span className="hidden items-center gap-0.5 rounded-full bg-blue-500/90 sm:inline-flex px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur shadow-sm">
               <svg viewBox="0 0 16 16" className="size-3.5" fill="currentColor" aria-hidden="true">
                 <path d="M8.5 1a.5.5 0 0 0-.5.5v.793a.5.5 0 0 1-.854.354l-.561-.561a.5.5 0 0 0-.708.708l.561.56a.5.5 0 0 1 0 .708l-.561.561a.5.5 0 0 0 .708.708l.56-.561a.5.5 0 0 1 .854.354v.793a.5.5 0 0 0 1 0v-.793a.5.5 0 0 1 .854-.354l.561.561a.5.5 0 0 0 .708-.708l-.561-.56a.5.5 0 0 1 0-.708l.561-.561a.5.5 0 0 0-.708-.708l-.56.561a.5.5 0 0 1-.854-.354V1.5a.5.5 0 0 0-.5-.5z" />
               </svg>
@@ -107,15 +107,18 @@ export function ProductCard({ product }: { product: DbProduct }) {
         <FavButton slug={product.slug} />
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <div className="text-xs font-medium text-muted">
-          {product.category}{product.subCategory ? ` · ${product.subCategory}` : ""}
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
+        <div className="truncate text-[11px] font-medium text-muted sm:text-xs">
+          {product.category}
+          {product.subCategory ? (
+            <span className="hidden sm:inline"> · {product.subCategory}</span>
+          ) : null}
         </div>
-        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-bold leading-snug text-fg group-hover:text-accent">
+        <h3 className="mt-1 line-clamp-2 text-[13px] font-bold leading-snug text-fg group-hover:text-accent sm:mt-1.5 sm:text-[15px]">
           {product.title}
         </h3>
-        <div className="mt-2.5 flex items-center gap-1.5">
-          <span className="text-[13px] font-medium text-fg-2">{product.creatorName}</span>
+        <div className="mt-2 flex min-w-0 items-center gap-1.5 sm:mt-2.5">
+          <span className="truncate text-[12px] font-medium text-fg-2 sm:text-[13px]">{product.creatorName}</span>
           {product.creatorVerified && (
             <svg viewBox="0 0 16 16" className="size-3.5 text-blue-500 dark:text-blue-400" fill="currentColor" role="img" aria-label="Créateur vérifié">
               <title>Créateur vérifié</title>
@@ -124,11 +127,11 @@ export function ProductCard({ product }: { product: DbProduct }) {
           )}
         </div>
 
-        <div className="mt-auto flex items-center justify-between pt-4">
-          <span className="text-lg font-extrabold">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3 sm:pt-4">
+          <span className="text-base font-extrabold sm:text-lg">
             {formatPrice(product.price, product.isFree)}
           </span>
-          <span className="rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-medium text-muted">
+          <span className="shrink-0 truncate rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-medium text-muted sm:px-2.5 sm:py-1 sm:text-[11px]">
             {product.platform}
           </span>
         </div>

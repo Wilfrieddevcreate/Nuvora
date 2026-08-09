@@ -118,7 +118,7 @@ export function ProductReviewsClient({
       {reviews.length > 0 && (
         <div className="mt-6 flex flex-col gap-6 rounded-2xl border border-border bg-surface p-6 shadow-soft sm:flex-row sm:items-center">
           <div className="flex flex-col items-center gap-1 sm:w-32 sm:shrink-0">
-            <span className="text-5xl font-extrabold">{avg.toFixed(1)}</span>
+            <span className="text-4xl sm:text-5xl font-extrabold">{avg.toFixed(1)}</span>
             <Stars rating={Math.round(avg)} size="lg" />
             <span className="text-xs text-muted">{reviews.length} avis</span>
           </div>
