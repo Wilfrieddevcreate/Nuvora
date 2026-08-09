@@ -70,9 +70,9 @@ const tileVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring" as const, damping: 15, stiffness: 120 },
+    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
   },
-};
+} as const;
 
 export function CategoryTiles() {
   return (
