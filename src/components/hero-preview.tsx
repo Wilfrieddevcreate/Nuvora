@@ -16,19 +16,25 @@ const COVER: Record<string, string> = {
  * Statique et sobre.
  */
 export async function HeroPreview() {
+  console.log("[HeroPreview] Starting...");
   let featured;
   try {
+    console.log("[HeroPreview] Fetching featured product from DB");
     featured = await db.product.findFirst({
       where: { status: "active" },
       orderBy: { views: "desc" },
       include: { creator: { include: { user: { select: { name: true } } } } },
     });
+    console.log("[HeroPreview] Fetched successfully:", featured?.slug);
   } catch (error) {
-    console.error("[HeroPreview] Failed to fetch featured product:", error);
+    console.error("[HeroPreview] Database error:", error instanceof Error ? error.message : String(error));
     return null;
   }
 
-  if (!featured) return null;
+  if (!featured) {
+    console.log("[HeroPreview] No featured product found, returning null");
+    return null;
+  }
 
   return (
     <div className="relative">

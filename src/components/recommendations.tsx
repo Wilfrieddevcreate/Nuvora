@@ -30,75 +30,89 @@ function mapProduct(p: {
 }
 
 export async function Recommendations() {
-  const session = await getSession();
-  if (!session?.userId) return null;
+  try {
+    const session = await getSession();
+    if (!session?.userId) return null;
 
-  // Les 5 dernières vues de l'utilisateur
-  const recentViews = await db.recentView.findMany({
-    where: { userId: session.userId },
-    orderBy: { viewedAt: "desc" },
-    take: 5,
-    include: { product: { select: { category: true, subCategory: true, tags: true } } },
-  });
+    console.log("[Recommendations] Fetching recent views for user:", session.userId);
+    // Les 5 dernières vues de l'utilisateur
+    const recentViews = await db.recentView.findMany({
+      where: { userId: session.userId },
+      orderBy: { viewedAt: "desc" },
+      take: 5,
+      include: { product: { select: { category: true, subCategory: true, tags: true } } },
+    });
 
-  if (recentViews.length === 0) return null;
-
-  // Score de chaque catégorie/sous-catégorie selon l'historique
-  const catScore: Record<string, number> = {};
-  const subCatScore: Record<string, number> = {};
-  const seenIds = new Set(recentViews.map((v) => v.productId));
-
-  recentViews.forEach(({ product }, i) => {
-    const weight = recentViews.length - i; // vue la plus récente = poids le plus élevé
-    catScore[product.category] = (catScore[product.category] ?? 0) + weight;
-    if (product.subCategory) {
-      subCatScore[product.subCategory] = (subCatScore[product.subCategory] ?? 0) + weight;
+    if (recentViews.length === 0) {
+      console.log("[Recommendations] No recent views found");
+      return null;
     }
-  });
 
-  const topCategory = Object.entries(catScore).sort((a, b) => b[1] - a[1])[0][0];
-  const topSubCategory = Object.entries(subCatScore).sort((a, b) => b[1] - a[1])[0]?.[0];
+    // Score de chaque catégorie/sous-catégorie selon l'historique
+    const catScore: Record<string, number> = {};
+    const subCatScore: Record<string, number> = {};
+    const seenIds = new Set(recentViews.map((v) => v.productId));
 
-  // Chercher des produits dans la catégorie préférée, hors déjà vus
-  const candidates = await db.product.findMany({
-    where: {
-      status: "active",
-      category: topCategory,
-      NOT: { id: { in: [...seenIds] } },
-    },
-    include: { creator: { select: { slug: true, verified: true, user: { select: { name: true } } } } },
-    take: 20,
-  });
+    recentViews.forEach(({ product }, i) => {
+      const weight = recentViews.length - i; // vue la plus récente = poids le plus élevé
+      catScore[product.category] = (catScore[product.category] ?? 0) + weight;
+      if (product.subCategory) {
+        subCatScore[product.subCategory] = (subCatScore[product.subCategory] ?? 0) + weight;
+      }
+    });
 
-  if (candidates.length === 0) return null;
+    const topCategory = Object.entries(catScore).sort((a, b) => b[1] - a[1])[0][0];
+    const topSubCategory = Object.entries(subCatScore).sort((a, b) => b[1] - a[1])[0]?.[0];
 
-  // Score par sous-catégorie + views comme tie-breaker
-  const scored = candidates
-    .map((p) => {
-      let score = 0;
-      if (topSubCategory && p.subCategory === topSubCategory) score += 2;
-      score += p.views / 1000; // favorise légèrement les populaires
-      return { p, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 4)
-    .map(({ p }) => mapProduct(p));
+    console.log("[Recommendations] Top category:", topCategory);
+    // Chercher des produits dans la catégorie préférée, hors déjà vus
+    const candidates = await db.product.findMany({
+      where: {
+        status: "active",
+        category: topCategory,
+        NOT: { id: { in: [...seenIds] } },
+      },
+      include: { creator: { select: { slug: true, verified: true, user: { select: { name: true } } } } },
+      take: 20,
+    });
 
-  return (
-    <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-      <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-extrabold">Recommandés pour vous</h2>
-          <p className="mt-1 text-sm text-muted">
-            Basé sur vos {recentViews.length} dernière{recentViews.length > 1 ? "s" : ""} consultation{recentViews.length > 1 ? "s" : ""}
-          </p>
+    if (candidates.length === 0) {
+      console.log("[Recommendations] No candidates found");
+      return null;
+    }
+
+    // Score par sous-catégorie + views comme tie-breaker
+    const scored = candidates
+      .map((p) => {
+        let score = 0;
+        if (topSubCategory && p.subCategory === topSubCategory) score += 2;
+        score += p.views / 1000; // favorise légèrement les populaires
+        return { p, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4)
+      .map(({ p }) => mapProduct(p));
+
+    console.log("[Recommendations] Returning", scored.length, "recommendations");
+    return (
+      <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-extrabold">Recommandés pour vous</h2>
+            <p className="mt-1 text-sm text-muted">
+              Basé sur vos {recentViews.length} dernière{recentViews.length > 1 ? "s" : ""} consultation{recentViews.length > 1 ? "s" : ""}
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {scored.map((p) => (
-          <ProductCard key={p.slug} product={p} />
-        ))}
-      </div>
-    </section>
-  );
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {scored.map((p) => (
+            <ProductCard key={p.slug} product={p} />
+          ))}
+        </div>
+      </section>
+    );
+  } catch (error) {
+    console.error("[Recommendations] Error:", error instanceof Error ? error.message : String(error));
+    return null;
+  }
 }
