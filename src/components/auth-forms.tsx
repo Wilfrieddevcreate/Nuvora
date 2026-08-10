@@ -80,7 +80,7 @@ export function LoginForm({ oauthError }: { oauthError?: string }) {
       <AuthDivider />
       <form className="space-y-4" action={action} noValidate>
       {(state.errors?.general || oauthError) && (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
           {oauthError ?? state.errors?.general?.[0]}
         </p>
       )}
@@ -139,7 +139,7 @@ export function SignupForm({ oauthError }: { oauthError?: string }) {
       <AuthDivider />
       <form className="space-y-4" action={action} noValidate>
       {(state.errors?.general || oauthError) && (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
           {oauthError ?? state.errors?.general?.[0]}
         </p>
       )}
