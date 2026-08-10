@@ -67,11 +67,11 @@ export function SearchTabs() {
       <form
         role="search"
         onSubmit={submit}
-        className="flex items-center gap-2 rounded-xl border border-border bg-bg p-1.5 pl-4 focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft"
+        className="flex items-center gap-2 rounded-xl border border-border bg-bg px-4 py-2 focus-within:border-accent focus-within:ring-4 focus-within:ring-accent-soft"
       >
         <SearchIcon className="size-5 shrink-0 text-muted" />
         <input
-          type="search"
+          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Rechercher un produit"
@@ -80,12 +80,13 @@ export function SearchTabs() {
               ? "Rechercher un produit…"
               : `Rechercher dans ${active.toLowerCase()}s…`
           }
-          className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2 transition-smooth"
+          className="min-w-0 flex-1 bg-transparent text-[15px] text-fg outline-none placeholder:text-fg-2"
+          autoComplete="off"
         />
         <button
           type="submit"
           aria-label="Rechercher"
-          className="flex shrink-0 items-center justify-center rounded-lg bg-accent px-3.5 py-2.5 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5"
+          className="flex shrink-0 items-center justify-center rounded-lg bg-accent px-3.5 py-2 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5"
         >
           {/* icône seule sur très petit écran, libellé dès sm */}
           <SearchIcon className="size-5 sm:hidden" />
