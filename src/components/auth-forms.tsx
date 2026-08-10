@@ -63,7 +63,7 @@ function PasswordField({
         </button>
       </div>
       {error && (
-        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-red-600">
+        <p id={`${id}-error`} role="alert" className="mt-1.5 text-sm text-red-600 dark:text-red-400">
           {error}
         </p>
       )}

@@ -262,7 +262,7 @@ export function EditProductForm({
       </div>
 
       {serverError && (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{serverError}</p>
+        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">{serverError}</p>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5 lg:flex-row lg:items-start">
