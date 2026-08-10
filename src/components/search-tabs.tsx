@@ -88,7 +88,6 @@ export function SearchTabs() {
           aria-label="Rechercher"
           className="flex shrink-0 items-center justify-center rounded-lg bg-accent px-3.5 py-2 text-sm font-semibold text-accent-fg transition-smooth hover:bg-accent-hover active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5"
         >
-          {/* icône seule sur très petit écran, libellé dès sm */}
           <SearchIcon className="size-5 sm:hidden" />
           <span className="hidden sm:inline">Rechercher</span>
         </button>

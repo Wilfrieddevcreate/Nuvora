@@ -38,38 +38,48 @@ async function getProducts(searchParams: {
   const query = searchParams.q?.trim().toLowerCase() ?? "";
   const category = searchParams.categorie;
 
+  // Charger seulement les produits nécessaires (limiter à 200)
   const rows = await db.product.findMany({
     where: {
       status: "active",
       ...(category && { category }),
     },
-    orderBy: { views: "desc" },
     include: {
       creator: {
         select: { slug: true, verified: true, user: { select: { name: true } } },
       },
     },
+    take: 200,
   });
 
-  // Filtrer par query en JavaScript (case-insensitive)
-  let filtered = rows;
+  // Filtrer et trier en une seule passe
   if (query) {
-    filtered = rows.filter((p) =>
-      p.title.toLowerCase().includes(query) ||
-      p.description.toLowerCase().includes(query) ||
-      p.tags?.toLowerCase().includes(query)
-    );
+    return rows
+      .filter((p) =>
+        p.title.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query) ||
+        p.tags?.toLowerCase().includes(query)
+      )
+      .sort((a, b) => {
+        // Créateurs vérifiés en premier
+        if (a.creator.verified !== b.creator.verified) {
+          return b.creator.verified ? -1 : 1;
+        }
+        // Puis par nombre de vues
+        return b.views - a.views;
+      })
+      .map(mapDbProduct);
   }
 
-  // Trier par créateur vérifié en premier, puis par vues
-  filtered.sort((a, b) => {
-    if (a.creator.verified !== b.creator.verified) {
-      return b.creator.verified ? -1 : 1;
-    }
-    return 0;
-  });
-
-  return filtered.map(mapDbProduct);
+  // Pas de requête = trier par créateur vérifié, puis vues
+  return rows
+    .sort((a, b) => {
+      if (a.creator.verified !== b.creator.verified) {
+        return b.creator.verified ? -1 : 1;
+      }
+      return b.views - a.views;
+    })
+    .map(mapDbProduct);
 }
 
 export default async function CataloguePage({
@@ -93,10 +103,14 @@ export default async function CataloguePage({
 function CatalogFallback() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-      <div className="h-9 w-40 rounded-lg bg-surface-2" />
-      <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="aspect-4/5 rounded-2xl border border-border bg-surface" />
+      <div className="h-9 w-40 rounded-lg bg-surface-2 animate-pulse" />
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="aspect-4/5 rounded-2xl border border-border bg-surface animate-pulse"
+            style={{ animationDelay: `${i * 50}ms` }}
+          />
         ))}
       </div>
     </div>
