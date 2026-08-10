@@ -42,13 +42,6 @@ async function getProducts(searchParams: {
     where: {
       status: "active",
       ...(category && { category }),
-      ...(query && {
-        OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { description: { contains: query, mode: "insensitive" } },
-          { tags: { contains: query, mode: "insensitive" } },
-        ],
-      }),
     },
     orderBy: { views: "desc" },
     include: {
@@ -58,15 +51,25 @@ async function getProducts(searchParams: {
     },
   });
 
+  // Filtrer par query en JavaScript (case-insensitive)
+  let filtered = rows;
+  if (query) {
+    filtered = rows.filter((p) =>
+      p.title.toLowerCase().includes(query) ||
+      p.description.toLowerCase().includes(query) ||
+      p.tags?.toLowerCase().includes(query)
+    );
+  }
+
   // Trier par créateur vérifié en premier, puis par vues
-  rows.sort((a, b) => {
+  filtered.sort((a, b) => {
     if (a.creator.verified !== b.creator.verified) {
       return b.creator.verified ? -1 : 1;
     }
     return 0;
   });
 
-  return rows.map(mapDbProduct);
+  return filtered.map(mapDbProduct);
 }
 
 export default async function CataloguePage({
