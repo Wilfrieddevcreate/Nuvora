@@ -31,9 +31,25 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://nuvora.app/catalogue" },
 };
 
-async function getProducts(): Promise<DbProduct[]> {
+async function getProducts(searchParams: {
+  q?: string;
+  categorie?: string;
+}): Promise<DbProduct[]> {
+  const query = searchParams.q?.trim().toLowerCase() ?? "";
+  const category = searchParams.categorie;
+
   const rows = await db.product.findMany({
-    where: { status: "active" },
+    where: {
+      status: "active",
+      ...(category && { category }),
+      ...(query && {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+          { tags: { contains: query, mode: "insensitive" } },
+        ],
+      }),
+    },
     orderBy: { views: "desc" },
     include: {
       creator: {
@@ -41,6 +57,7 @@ async function getProducts(): Promise<DbProduct[]> {
       },
     },
   });
+
   // Trier par créateur vérifié en premier, puis par vues
   rows.sort((a, b) => {
     if (a.creator.verified !== b.creator.verified) {
@@ -48,11 +65,21 @@ async function getProducts(): Promise<DbProduct[]> {
     }
     return 0;
   });
+
   return rows.map(mapDbProduct);
 }
 
-export default async function CataloguePage() {
-  const products = await getProducts();
+export default async function CataloguePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const products = await getProducts({
+    q: params.q,
+    categorie: params.categorie,
+  });
+
   return (
     <Suspense fallback={<CatalogFallback />}>
       <CatalogView products={products} />
